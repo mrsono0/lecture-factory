@@ -167,3 +167,58 @@ All review and decision-making applies these **3 expert perspectives simultaneou
 - **Auto Input Detection**: 2단계 이후 입력 파일 생략 시 이전 단계 결과물을 자동 탐색합니다.
 - **Agent-specific Feedback**: "A4 에이전트에게 어조를 좀 더 친근하게 바꿔줘"와 같이 특정 에이전트에 지시 가능합니다.
 - **Pipeline 4 vs 5 vs 7**: 코드 중심 → 04, 로컬 AI 이미지 → 05, 클라우드 AI → 07.
+
+---
+
+## Git Branching Rule (MANDATORY)
+
+**`.agent/` 또는 `.claude/` 디렉토리 내 파일을 수정하는 모든 작업에 적용됩니다.**
+
+에이전트 설정, 워크플로, 커맨드, 프롬프트 등 프로젝트 인프라 파일은 반드시 브랜치 워크플로를 따릅니다.
+
+### Workflow
+
+1. **브랜치 생성**: 작업 시작 전 `main`에서 feature 브랜치를 생성합니다.
+   - 네이밍: `feat/<간단한-설명>` (예: `feat/update-writer-agent`, `feat/add-slide-command`)
+   - 버그 수정: `fix/<간단한-설명>`
+   - 구조 변경: `refactor/<간단한-설명>`
+2. **작업 수행**: 브랜치에서 파일 수정 및 커밋합니다.
+3. **머지**: 작업 완료 후 `main`으로 머지합니다. (`--no-ff` 권장)
+4. **푸시**: `main` 브랜치를 원격에 푸시합니다.
+5. **정리**: 머지 완료된 feature 브랜치를 삭제합니다.
+
+### Scope
+
+| 대상 경로 | 브랜치 필수 |
+|-----------|:-----------:|
+| `.agent/agents/` | O |
+| `.agent/workflows/` | O |
+| `.agent/scripts/` | O |
+| `.agent/skills/` | O |
+| `.claude/agents/` | O |
+| `.claude/commands/` | O |
+| `.claude/Lecture_Creation_Guide.md` | O |
+| `.opencode/oh-my-opencode.jsonc` | O |
+| `AGENTS.md` | O |
+| 그 외 파일 (`.gitignore` 등) | X (main 직접 커밋 가능) |
+
+### Example
+
+```bash
+# 1. 브랜치 생성
+git checkout -b feat/update-writer-agent
+
+# 2. 작업 & 커밋
+git add .agent/agents/02_writer/A4_Technical_Writer.md
+git commit -m "feat: A4 Technical Writer 대본 스타일 가이드 추가"
+
+# 3. main 머지 & 푸시
+git checkout main
+git merge --no-ff feat/update-writer-agent
+git push
+
+# 4. 브랜치 정리
+git branch -d feat/update-writer-agent
+```
+
+> **Note**: 별도 지시 없어도 AI 에이전트는 위 경로 수정 시 이 워크플로를 자동으로 수행합니다.
