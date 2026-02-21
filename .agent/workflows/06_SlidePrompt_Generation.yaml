@@ -1,0 +1,173 @@
+name: "Slide Prompt Generation Pipeline"
+description: >
+  완성된 교안(02_Material)을 분석하여, Nano Banana Pro 등 AI 이미지 생성 도구에서
+  원샷으로 실행 가능한 '슬라이드 생성 프롬프트.md'를 생성하는 워크플로우 (5인 에이전트 팀).
+  입력 교안 파일 수는 동적(N개)이며, 각 교안 파일당 1개의 독립 프롬프트 파일을 생성합니다.
+  ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents
+  using list_dir/read_file BEFORE proceeding.
+version: "1.1"
+
+# ───────────────────────────────────────────────────────────
+# 산출물 정책 (Output Policy) — v1.1 변경
+# ───────────────────────────────────────────────────────────
+# [변경] 모놀리식 단일 파일 → 교안별 개별 파일 저장
+#   - 교안 1개 → 독립 프롬프트 파일 1개
+#   - 파일명: {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md
+#   - 예: Day1_AM_환경구축_슬라이드 생성 프롬프트.md
+#   - 저장 경로: {project_folder}/06_SlidePrompt/
+# ───────────────────────────────────────────────────────────
+
+# ───────────────────────────────────────────────────────────
+# 입력 정책 (Input Policy)
+# ───────────────────────────────────────────────────────────
+# [필수] 02_Material 폴더 또는 교안 파일이 있는 폴더 경로
+#   - 폴더 내 *.md 파일을 자동 탐색하여 N개를 발견
+#   - 파일명 패턴: 자유 (Day{N}_{AM|PM}, 교시별, 챕터별 등)
+#   - 파일 수 제한: 없음 (1개 ~ 수십 개)
+#
+# [선택] 03_Slides 폴더 (03_Slide_Generation 산출물)
+#   - 존재 시: IR/Glossary/DesignTokens/SequenceMap을 참조하여 품질 향상
+#   - 미존재 시: 02_Material만으로 독립 생성
+# ───────────────────────────────────────────────────────────
+
+steps:
+  # ═══════════════════════════════════════════════════════════
+  # Phase A: 입력 수집 및 전역 스캐폴딩
+  # ═══════════════════════════════════════════════════════════
+  - id: step_1_discovery
+    agent: "06_prompt_generator/P0_Orchestrator"
+    action: "discover_and_scaffold"
+    input: >
+      교안 폴더 경로 (02_Material/ 또는 사용자 지정 폴더),
+      (선택) 03_Slides/ 폴더,
+      Output Language: Korean
+    output: >
+      File Manifest (발견된 N개 파일 목록 + 순서 + 세션 ID),
+      Global Template Scaffold (공통 Role/Style/Quality 섹션),
+      03 Artifacts Availability Map (선택적 참조 가능 여부)
+    description: >
+      교안 폴더를 스캔하여 처리 대상 파일 N개를 발견하고 순서를 결정합니다.
+      파일 수는 고정값이 아니며, 발견된 만큼 처리합니다.
+      파일명에서 세션 식별자(Day/교시/챕터 등)를 추출합니다.
+      03_Slides 산출물 존재 시 참조 가능 항목을 매핑합니다.
+
+  # ═══════════════════════════════════════════════════════════
+  # Phase B: 교육 구조 추출 ∥ 비주얼 스펙 준비 (병렬)
+  # ═══════════════════════════════════════════════════════════
+  - id: step_2_education_structure
+    agent: "06_prompt_generator/P1_Education_Structurer"
+    action: "extract_education_elements"
+    input: >
+      File Manifest의 각 파일 (×N),
+      (선택) 03 IR/Glossary,
+      Output Language: Korean
+    output: >
+      교안별 교육 메타 (과정명, 주제, 대상, 난이도, 진도율, 학습 단계),
+      교시별 학습요소 맵 (학습목표, 핵심 개념, 암기장치, 퀴즈, 오개념/트러블슈팅),
+      교시별 슬라이드 장수 추정치
+    description: >
+      [파일당 1회 실행 × N회]
+      각 교안 파일의 교시(섹션) 경계를 식별하고,
+      학습목표·난이도·핵심 개념·기억법·퀴즈·흔한 실수를 구조화하여 추출합니다.
+      Day/교시 패턴이 없는 교안도 자체 섹션 경계를 감지하여 처리합니다.
+
+  - id: step_3_visual_spec
+    agent: "06_prompt_generator/P3_Visual_Spec_Curator"
+    action: "prepare_visual_template"
+    input: >
+      (선택) 03 DesignTokens,
+      기본 내장 스타일 가이드,
+      Output Language: Korean
+    output: >
+      전역 시각 스타일 가이드 (프롬프트 문장 형태),
+      전역 품질 기준 (프롬프트 문장 형태)
+    description: >
+      [전역 1회 실행 — 모든 파일에 공통 적용]
+      디자인 토큰(색상, UI 요소, 아이콘 스타일, 코드 블록 스타일)을
+      프롬프트에 삽입 가능한 텍스트 형태로 정규화합니다.
+      03 DesignTokens가 있으면 우선 적용하고, 없으면 내장 기본값을 사용합니다.
+
+  # ═══════════════════════════════════════════════════════════
+  # Phase C: 슬라이드 단위 명세 생성
+  # ═══════════════════════════════════════════════════════════
+  - id: step_4_slide_blueprint
+    agent: "06_prompt_generator/P2_Slide_Prompt_Architect"
+    action: "generate_slide_specs"
+    input: >
+      교안별 교육 메타 + 교시별 학습요소 맵 (P1 산출물),
+      교안 원문 (×N),
+      (선택) 03 SequenceMap,
+      Output Language: Korean
+    output: >
+      교안별 슬라이드 구성 지시사항 (교시 파트 × 슬라이드 단위 명세)
+    description: >
+      [파일당 1회 실행 × N회]
+      P1의 교육 구조를 기반으로 교시별 슬라이드 단위 명세를 생성합니다.
+      각 슬라이드: 타입(T-CONCEPT/T-CODE/T-COMPARE/T-QUIZ 등),
+      내용 요약, 레이아웃 지시(벤토 그리드/좌우 대비/트리 다이어그램 등),
+      다이어그램·차트 요구사항을 포함합니다.
+      Type Palette를 강제 적용하여 명세의 구체성을 보장합니다.
+
+  # ═══════════════════════════════════════════════════════════
+  # Phase D: 교안별 개별 조립 + QA 루프
+  # ═══════════════════════════════════════════════════════════
+  - id: step_5_assembly
+    agent: "06_prompt_generator/P0_Orchestrator"
+    action: "assemble_prompt_per_file"
+    input: >
+      File Manifest (N개),
+      Global Template (Role/Style/Quality),
+      교안별 교육 메타 (P1 × N),
+      교안별 슬라이드 구성 지시사항 (P2 × N),
+      전역 시각 스타일 가이드 (P3),
+      전역 품질 기준 (P3),
+      교안 원문 파일 (02_Material/*.md × N — §⑥ 전문 삽입용),
+      Output Language: Korean
+    output: >
+      교안별 Draft 프롬프트 파일 (N개 독립 파일)
+      파일명 패턴: {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md
+    description: >
+      각 교안 파일에 대해 독립적인 프롬프트 파일을 개별 조립합니다.
+      각 파일은 완결된 6-섹션 고정 스키마를 포함합니다:
+      ①Role ②교안 정보 ③슬라이드 구성 지시사항
+      ④시각 스타일 가이드 ⑤품질 기준 ⑥교안 원문 전문.
+      §⑥에는 교안 원문의 마크다운 전문을 삽입합니다 (파일 경로만 기재 금지).
+      세션 분할 교안의 경우 해당 교시 섹션만 추출하여 삽입합니다.
+      파일명은 File Manifest의 세션 ID와 세션 제목으로 결정합니다.
+
+  - id: step_6_qa
+    agent: "06_prompt_generator/P4_QA_Auditor"
+    action: "validate_prompt_quality"
+    input: >
+      교안별 Draft 프롬프트 파일 (N개),
+      교안 원문 (×N, 대조용),
+      Output Language: Korean
+    output: >
+      교안별 QA Report (파일별 통과/수정 필요 항목)
+    decision:
+      - if: "All Approved" -> step_7_finalize
+      - if: "Partial Rejected" -> step_4_slide_blueprint (리젝된 파일의 에이전트만 재실행)
+    description: >
+      각 교안별 프롬프트 파일을 독립적으로 검증합니다.
+      6개 필수 섹션 존재, 슬라이드 필드 완결성, 교시 커버리지 100%,
+      프롬프트 길이 범위를 파일 단위로 검증합니다.
+      전체 파일 간 스타일 일관성(전역 섹션 ④⑤ 동일성)도 확인합니다.
+      리젝 시 해당 파일의 P1/P2만 재실행 (파일당 최대 2회, 이후 에스컬레이션).
+
+  # ═══════════════════════════════════════════════════════════
+  # Phase E: 교안별 최종 산출물 저장
+  # ═══════════════════════════════════════════════════════════
+  - id: step_7_finalize
+    agent: "06_prompt_generator/P0_Orchestrator"
+    action: "finalize_per_file_output"
+    input: >
+      Approved 교안별 프롬프트 파일 (N개),
+      교안별 QA Report,
+      Output Language: Korean
+    output: >
+      Final 교안별 프롬프트 파일 (N개),
+      Generation Summary (파일 수, 파일별 슬라이드 추정 장수, 총 장수)
+    description: >
+      승인된 교안별 프롬프트 파일을 프로젝트 폴더에 개별 저장하고 생성 요약을 출력합니다.
+      산출물 경로: {project_folder}/06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md (×N개)
+      예시: 06_SlidePrompt/Day1_AM_환경구축_슬라이드 생성 프롬프트.md

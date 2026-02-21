@@ -1,0 +1,55 @@
+name: "Lecture Planning Pipeline"
+description: "강의 주제 선정부터 커리큘럼 확정까지의 기획 단계 워크플로우 (Planner Team) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "2.0"
+
+steps:
+  - id: step_0_scope
+    agent: "01_planner/A0_Orchestrator"
+    action: "analyze_request"
+    input: "User Prompt, Lecture Topic File, NotebookLM URL (Optional), Output Language: Korean"
+    output: "Scope Definition & Agent Task Beliefs"
+
+  - id: step_1_trend_analysis
+    agent: "01_planner/A1_Trend_Researcher"
+    action: "research_trend"
+    input: "Scope Definition, Output Language: Korean"
+    output: "Trend Report & Fact Packet (Preliminary)"
+    # Note: A1 uses Deep Research / NotebookLM skills here
+
+  - id: step_2_learner_analysis
+    agent: "01_planner/A5B_Learner_Analyst"
+    action: "analyze_learner"
+    input: "Scope Definition, Trend Report, Output Language: Korean"
+    output: "Learner Persona & Pain Points"
+
+  - id: step_3_curriculum_design
+    agent: "01_planner/A3_Curriculum_Architect"
+    action: "design_structure"
+    input: "Learner Persona, Scope Definition, Trend Report, Output Language: Korean"
+    output: "Curriculum Structure (Skeleton)"
+
+  - id: step_4_instructional_design
+    agent: "01_planner/A2_Instructional_Designer"
+    action: "design_activities"
+    input: "Curriculum Structure, Learner Persona, Output Language: Korean"
+    output: "Learning Activities & Assessment Plan"
+
+  - id: step_5_differentiation
+    agent: "01_planner/A7_Differentiation_Advisor"
+    action: "identify_usp"
+    input: "Curriculum Structure, Trend Report, Output Language: Korean"
+    output: "Differentiation Strategy (USP)"
+
+  - id: step_6_qa_review
+    agent: "01_planner/A5A_QA_Manager"
+    action: "verify_plan"
+    input: "Curriculum Structure, Learning Activities, Differentiation Strategy, Output Language: Korean"
+    output: "QA Report & Final Curriculum Plan"
+
+  - id: step_7_final_approval
+    agent: "01_planner/A0_Orchestrator"
+    action: "approve_deliverable"
+    input: "Final Curriculum Plan, Output Language: Korean"
+    decision:
+      - if: "Approved" -> Finish
+      - if: "Rejected" -> Go to step_3_curriculum_design

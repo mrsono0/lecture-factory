@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(python scripts/run.py:*)",
+      "Bash(wc:*)",
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "mcp__filesystem__list_directory",
+      "mcp__filesystem__directory_tree",
+      "WebFetch(domain:open.manus.ai)",
+      "mcp__exa__web_search_exa",
+      "WebFetch(domain:manus.im)",
+      "WebFetch(domain:github.com)",
+      "Bash(cat:*)",
+      "Bash(npx:*)",
+      "Bash(claude mcp add manus-mcp -s project -e MANUS_API_KEY=\"sk-f7DPMo1N8eMjcVp-15qOYnLBMmZqku_6wTlRRoSkF2Aq0GyfaxRtujedD1l3zC9MsmZRxQzCV0ncOHM\" -- npx manus-mcp)",
+      "Bash(python .agent/scripts/manus_slide.py:*)",
+      "Bash(python:*)",
+      "Bash(.venv/bin/python:*)",
+      "WebFetch(domain:open.manus.im)",
+      "WebFetch(domain:manus-api.mintlify.app)",
+      "WebFetch(domain:new2026.medium.com)",
+      "WebFetch(domain:getalai.com)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:help.apiyi.com)",
+      "WebFetch(domain:docs.aimlapi.com)",
+      "WebFetch(domain:manus.so)",
+      "WebFetch(domain:docs.elastic.io)",
+      "WebFetch(domain:www.geeky-gadgets.com)",
+      "WebFetch(domain:help.manus.im)",
+      "WebFetch(domain:gotranscript.com)",
+      "WebFetch(domain:skywork.ai)",
+      "WebFetch(domain:medium.com)",
+      "Bash(omc update:*)",
+      "Bash(brew install:*)",
+      "Bash(chmod:*)",
+      "Bash(bash \"/Users/mrsono0/Obsidian Vault/0 리서치/_lecture-factory/.agent/skills/notebooklm/batch_query.sh\")",
+      "Bash(tee:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7",
+    "exa",
+    "filesystem"
+  ]
+}

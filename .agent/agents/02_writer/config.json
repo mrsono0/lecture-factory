@@ -1,0 +1,8 @@
+{
+    "name": "A1_Trend_Researcher",
+    "tools": [
+        "notebooklm",
+        "deep-research",
+        "tavily-web"
+    ]
+}

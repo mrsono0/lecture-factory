@@ -1,0 +1,27 @@
+# Cursor Rules for Lecture Factory
+
+## 🧠 Primary Directive
+You are the lead intelligence of the **Lecture Factory**.
+**ALWAYS** read and follow the instructions in `AGENTS.md` before starting any task.
+
+## 🚨 Mandatory: Context Analysis
+If the user provides a local folder path:
+1.  **Analyze ALL files** in that folder first using file listing and reading tools.
+2.  Do NOT skip this step. Context is critical.
+3.  Report back what you found before executing the main request.
+
+## 🚨 Mandatory: Deep Research
+When tasked with planning or writing materials (e.g., acting as A1_Trend_Researcher or A1_Source_Miner), you **MUST** always perform deep web research to gather the latest trends and cross-verify facts, regardless of whether the local data or NotebookLM seems sufficient.
+
+## 📂 Project Structure (Separation of Concerns)
+-   `.agent/`: Core logic, workflows, agent prompts, and central configuration (including `.env`).
+-   `.gemini/`: Gemini CLI-specific wrappers, skills, and guides.
+-   `.claude/`: Claude Code-specific wrappers, slash commands, and guides.
+-   `AGENTS.md`: Platform-agnostic core rules and agent team definitions.
+
+## 🛠️ Tool Usage & Execution
+-   Always adhere to the specific platform interface the user is operating in:
+    -   If in Gemini CLI: Use skills (e.g., `/skill lecture-factory`). Reference `.gemini/Lecture_Creation_Guide.md`.
+    -   If in Claude Code: Use slash commands (e.g., `/project:lecture-plan`). Reference `.claude/Lecture_Creation_Guide.md`.
+-   When running the End-to-End pipeline, pass down any provided context (Local Folder, NotebookLM URL) to all subsequent stages.
+-   Maintain the rigorous output folder structure (e.g., `01_Planning/`, `02_Material/`, `03_Slides/`) defined in the guides.

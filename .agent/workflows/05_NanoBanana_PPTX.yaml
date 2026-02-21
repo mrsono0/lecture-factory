@@ -1,0 +1,87 @@
+name: "Nano Banana PPTX Generation Pipeline"
+description: "03_visualizer가 생성한 슬라이드 콘텐츠를 Nano Banana Pro(Gemini 3 Pro Image Preview) 모델로 고품질 이미지 슬라이드를 생성하고 PPTX로 조립하는 워크플로우 (6인 에이전트 팀). 각 슬라이드를 AI 이미지로 생성하여 글래스모피즘/벤토그리드 등 고급 비주얼 스타일을 적용합니다. ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "1.0"
+skill_dependencies:
+  - nanobanana-ppt-skills
+  - imagen
+  - gemini-api-dev
+  - pptx-official
+  - last30days
+required_env:
+  - GEMINI_API_KEY
+
+steps:
+  # Phase 1: 사전 준비
+  - id: step_1_skill_load
+    agent: "05_nanopptx/C0_Orchestrator"
+    action: "load_skills"
+    input: "nanobanana-ppt-skills SKILL.md, imagen SKILL.md, gemini-api-dev SKILL.md, pptx-official SKILL.md, last30days SKILL.md (Nano Banana Pro prompting techniques)"
+    output: "Skill Knowledge Loaded, Available Styles List"
+    description: "관련 스킬 문서를 로드하고, 사용 가능한 비주얼 스타일 목록을 확인합니다."
+
+  - id: step_2_input_validation
+    agent: "05_nanopptx/C0_Orchestrator"
+    action: "validate_input"
+    input: "03_Slides/ directory (Slide Sequence Map, Layout Specs, Design Tokens), GEMINI_API_KEY, Output Language: Korean"
+    output: "Validated Input Manifest, Selected Style, Resolution"
+    description: "03_visualizer 산출물이 완전한지 검증하고, 스타일(gradient-glass/vector-illustration)과 해상도(2K/4K)를 결정합니다."
+
+  # Phase 2: 콘텐츠 플래닝
+  - id: step_3_content_planning
+    agent: "05_nanopptx/C1_Content_Planner"
+    action: "create_slide_plan"
+    input: "Slide Markdown files, Slide Sequence Map, Design Tokens, Output Language: Korean"
+    output: "slides_plan.json, speaker_notes.json, Asset Request Summary"
+    description: "슬라이드 마크다운을 분석하여 Nano Banana Pro 이미지 생성에 최적화된 구조화 데이터(slides_plan.json)를 생성합니다. 텍스트 압축, 유형 매핑(cover/content/data), 시각 요소 지시를 포함합니다."
+
+  # Phase 3: 프롬프트 생성
+  - id: step_4_prompt_engineering
+    agent: "05_nanopptx/C2_Prompt_Engineer"
+    action: "generate_prompts"
+    input: "slides_plan.json, Selected Style Template, Nano Banana Pro prompting best practices, Output Language: Korean"
+    output: "slide_prompts.json, style_preamble.md"
+    description: "슬라이드별 이미지 생성 프롬프트를 작성합니다. JSON 구조 프롬프트 패턴, 스타일 프리앰블, 한글 텍스트 렌더링 전략을 적용합니다."
+
+  # Phase 4: 이미지 생성
+  - id: step_5_image_generation
+    agent: "05_nanopptx/C3_Image_Generator"
+    action: "generate_images"
+    input: "slide_prompts.json, Style Template, Resolution config, Output Language: Korean"
+    output: "Slide PNG images (slide-01.png ~ slide-NN.png), Generation Log"
+    description: "Nano Banana Pro(gemini-3-pro-image-preview)를 호출하여 각 슬라이드를 16:9 이미지로 생성합니다. generate_ppt.py 스크립트 또는 Gemini API 직접 호출을 사용합니다."
+
+  # Phase 5: PPTX 조립
+  - id: step_6_pptx_build
+    agent: "05_nanopptx/C4_PPTX_Builder"
+    action: "build_pptx"
+    input: "Slide PNG images, slides_plan.json, speaker_notes.json, Output Language: Korean"
+    output: "Draft PPTX file, HTML Viewer, Build Log"
+    description: "생성된 이미지를 PptxGenJS 또는 python-pptx로 PPTX에 삽입합니다. 각 슬라이드에 이미지(전체 커버) + Speaker Notes를 추가하고, 인터랙티브 HTML 뷰어도 생성합니다."
+
+  # Phase 6: 품질 검증 및 수정 루프
+  - id: step_7_visual_qa
+    agent: "05_nanopptx/C5_Visual_QA"
+    action: "inspect_quality"
+    input: "Draft PPTX file, Slide PNG images, slides_plan.json, Output Language: Korean"
+    output: "Thumbnail Grid, QA Report, Text Verification Report"
+    description: "썸네일 그리드를 생성하고 시각 품질, 텍스트 정확성(한글 왜곡, 코드 오류), 스타일 일관성을 검사합니다."
+
+  - id: step_8_fix_loop
+    agent: "05_nanopptx/C0_Orchestrator"
+    action: "coordinate_fixes"
+    input: "QA Report, Text Verification Report, Output Language: Korean"
+    output: "Fix Instructions or Final Approval"
+    decision:
+      - if: "Approved" -> step_9_finalize
+      - if: "Conditional" -> step_9_finalize
+      - if: "Partial Regen" -> step_4_prompt_engineering
+      - if: "Rejected" -> step_3_content_planning
+    description: "QA 결과를 분석합니다. 텍스트 왜곡 슬라이드만 부분 재생성(Partial Regen → step_4)하거나, 전체 반려 시 콘텐츠 플래닝(step_3)부터 재실행합니다."
+
+  # Phase 7: 최종 산출물
+  - id: step_9_finalize
+    agent: "05_nanopptx/C0_Orchestrator"
+    action: "finalize_output"
+    input: "Approved PPTX file, QA Report, Generation Log, Output Language: Korean"
+    output: "Final PPTX file, Conversion Report, Interactive Viewer"
+    description: "최종 PPTX 파일 명명, 변환 리포트 작성(생성 시간, 비용 추정, 재생성 이력), 프로젝트 폴더 정리를 수행합니다."

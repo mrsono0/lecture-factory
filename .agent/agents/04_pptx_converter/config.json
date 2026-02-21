@@ -1,0 +1,12 @@
+{
+    "name": "04_pptx_converter",
+    "description": "03_visualizer 산출물을 PPTX로 변환하는 에이전트 팀",
+    "skill_dependency": "pptx-official",
+    "tools": [
+        "html2pptx",
+        "thumbnail",
+        "sharp",
+        "pptxgenjs",
+        "playwright"
+    ]
+}

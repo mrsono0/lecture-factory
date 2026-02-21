@@ -1,0 +1,77 @@
+name: "PPTX Conversion Pipeline"
+description: "03_visualizer가 생성한 슬라이드 콘텐츠를 실제 PowerPoint(.pptx) 파일로 변환하는 워크플로우 (6인 에이전트 팀). pptx-official 스킬의 html2pptx.js 엔진을 사용합니다. ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "1.0"
+skill_dependency: "pptx-official"
+
+steps:
+  # Phase 1: 사전 준비
+  - id: step_1_skill_load
+    agent: "04_pptx_converter/B0_Orchestrator"
+    action: "load_skill_docs"
+    input: "pptx-official SKILL.md, html2pptx.md"
+    output: "Skill Knowledge Loaded"
+    description: "pptx-official 스킬 문서(SKILL.md, html2pptx.md)를 로드하여 변환 규칙과 제약사항을 숙지합니다."
+
+  - id: step_2_input_validation
+    agent: "04_pptx_converter/B0_Orchestrator"
+    action: "validate_input"
+    input: "03_Slides/ directory (Slide Sequence Map, Layout Specs, Design Tokens), Output Language: Korean"
+    output: "Validated Input Manifest"
+    description: "03_visualizer의 산출물(슬라이드 시퀀스 맵, 레이아웃 명세, 디자인 토큰)이 완전한지 검증합니다."
+
+  # Phase 2: 파싱 및 에셋 생성
+  - id: step_3_parsing
+    agent: "04_pptx_converter/B1_Slide_Parser"
+    action: "parse_slides"
+    input: "Slide Markdown files, Slide Sequence Map, Design Tokens, Output Language: Korean"
+    output: "Structured Slide Data (JSON), Asset Request List"
+    description: "슬라이드 마크다운을 구조화된 JSON으로 파싱하고, 필요한 에셋 목록을 추출합니다."
+
+  - id: step_4_asset_generation
+    agent: "04_pptx_converter/B3_Asset_Generator"
+    action: "generate_assets"
+    input: "Asset Request List, Design Tokens, Output Language: Korean"
+    output: "Asset PNG files, Asset Manifest"
+    description: "아이콘, 그래디언트 배경, 다이어그램을 PNG로 사전 렌더링합니다. (Sharp + react-icons)"
+
+  # Phase 3: HTML 렌더링 및 PPTX 빌드
+  - id: step_5_html_rendering
+    agent: "04_pptx_converter/B2_HTML_Renderer"
+    action: "render_html"
+    input: "Structured Slide Data (JSON), Asset Manifest, Design Tokens, Output Language: Korean"
+    output: "HTML slide files (slide_000.html ~ slide_NNN.html)"
+    description: "구조화된 슬라이드 데이터를 html2pptx.js 호환 HTML 파일로 변환합니다. 슬라이드 유형별 템플릿(T-COVER, T-BRIDGE, T-CONCEPT, T-CODE, T-LAB, T-SUMMARY) 적용."
+
+  - id: step_6_pptx_assembly
+    agent: "04_pptx_converter/B4_PPTX_Assembler"
+    action: "assemble_pptx"
+    input: "HTML slide files, Asset files, Slide Data JSON, Output Language: Korean"
+    output: "Draft PPTX file, Build Log"
+    description: "html2pptx.js로 HTML 슬라이드를 PPTX로 변환하고, PptxGenJS API로 차트/표/이미지를 삽입합니다."
+
+  # Phase 4: 품질 검증 및 수정 루프
+  - id: step_7_visual_qa
+    agent: "04_pptx_converter/B5_Visual_QA"
+    action: "inspect_quality"
+    input: "Draft PPTX file, Slide Sequence Map, Output Language: Korean"
+    output: "Thumbnail Grid, QA Report"
+    description: "썸네일 그리드를 생성하고 시각적 결함(텍스트 잘림, 겹침, 정렬 불량, 대비 부족)을 검사합니다."
+
+  - id: step_8_fix_loop
+    agent: "04_pptx_converter/B0_Orchestrator"
+    action: "coordinate_fixes"
+    input: "QA Report, Output Language: Korean"
+    output: "Fix Instructions or Final Approval"
+    decision:
+      - if: "Approved" -> step_9_finalize
+      - if: "Conditional" -> step_9_finalize
+      - if: "Rejected" -> step_5_html_rendering
+    description: "QA 리포트를 분석하여 수정이 필요한 슬라이드를 식별하고, 해당 에이전트(B2/B3)에게 수정을 지시합니다. 반려 시 step_5로 되돌아갑니다."
+
+  # Phase 5: 최종 산출물
+  - id: step_9_finalize
+    agent: "04_pptx_converter/B0_Orchestrator"
+    action: "finalize_output"
+    input: "Approved PPTX file, QA Report, Build Log, Output Language: Korean"
+    output: "Final PPTX file, Conversion Report"
+    description: "최종 PPTX 파일 명명, 변환 리포트 작성, 프로젝트 폴더 정리를 수행합니다."

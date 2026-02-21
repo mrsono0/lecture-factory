@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "manus-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "manus-mcp"
+      ],
+      "env": {
+        "MANUS_API_KEY": "sk-f7DPMo1N8eMjcVp-15qOYnLBMmZqku_6wTlRRoSkF2Aq0GyfaxRtujedD1l3zC9MsmZRxQzCV0ncOHM"
+      }
+    }
+  }
+}
