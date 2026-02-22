@@ -202,7 +202,7 @@ YYYY-MM-DD_강의제목/
 
 모든 파이프라인 실행 시 에이전트별 구조화된 로그를 기록합니다.
 
- **프로토콜 정의**: `.agent/logging-protocol.md` (JSONL 포맷, 19필드 스키마, 토큰/비용 추정 공식)
+ **프로토콜 정의**: `.agent/logging-protocol.md` (JSONL 포맷, 20필드 스키마, 토큰/비용 추정 공식, model 매핑)
  **로그 위치**: `.agent/logs/{YYYY-MM-DD}_{pipeline_name}.jsonl`
  **워크플로우 설정**: 각 `.agent/workflows/*.yaml`의 `logging:` 섹션
  **이벤트 유형**: `START`, `END`, `FAIL`, `RETRY`, `DECISION`

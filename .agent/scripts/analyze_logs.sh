@@ -113,6 +113,7 @@ cmd_bottleneck() {
       rank: (.key + 1),
       step_id: .value.step_id,
       agent: .value.agent,
+      model: (.value.model // "N/A"),
       category: .value.category,
       workflow: .value.workflow,
       duration_sec: .value.duration_sec,
@@ -178,6 +179,7 @@ cmd_agent() {
     | group_by(.agent)
     | map({
       agent: .[0].agent,
+      model: (.[0].model // "N/A"),
       category: .[0].category,
       runs: length,
       avg_duration_sec: ((map(.duration_sec) | add / length * 10 | round) / 10),
@@ -307,6 +309,7 @@ cmd_timeline() {
       status: .status,
       step_id: .step_id,
       agent: .agent,
+      model: (.model // "N/A"),
       category: .category,
       parallel_group: .parallel_group,
       duration_sec: (.duration_sec // null),
@@ -343,7 +346,7 @@ cmd_validate() {
     # 필수 필드 검증 (공통 10필드)
     local missing_fields
     missing_fields=$(jq -c '
-      ["run_id","ts","status","workflow","step_id","agent","category","action","parallel_group","retry"]
+      ["run_id","ts","status","workflow","step_id","agent","category","model","action","parallel_group","retry"]
       - keys | select(length > 0)
     ' "$f" 2>/dev/null | head -5)
     if [[ -n "$missing_fields" ]]; then
@@ -471,13 +474,14 @@ cmd_report() {
     echo ""
     echo "## 4. 에이전트별 통계"
     echo ""
-    echo "| 에이전트 | 카테고리 | 실행 수 | 평균 소요(sec) | 총 비용 |"
-    echo "|----------|----------|---------|---------------|---------|"
+    echo "| 에이전트 | 모델 | 카테고리 | 실행 수 | 평균 소요(sec) | 총 비용 |"
+    echo "|----------|------|----------|---------|---------------|---------|"
     concat_logs | jq -sr '
       map(select(.status=="END")) | group_by(.agent)
       | sort_by(-(map(.est_cost_usd)|add))
       | map(
         "| " + .[0].agent +
+        " | " + (.[0].model // "N/A") +
         " | " + .[0].category +
         " | " + (length|tostring) +
         " | " + ((map(.duration_sec)|add/length*10|round)/10|tostring) +

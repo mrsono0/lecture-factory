@@ -10,6 +10,7 @@ max_retries: 2
 logging:
   enabled: true
   protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
   path: ".agent/logs/{YYYY-MM-DD}_07_Manus_Slide.jsonl"
   format: "jsonl"
 

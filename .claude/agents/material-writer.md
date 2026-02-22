@@ -15,7 +15,7 @@ model: opus
 2. **워크플로우 로드**: `.agent/workflows/02_Material_Writing.yaml`을 읽고 스텝 순서를 파악합니다.
 3. **입력 파일 탐색**: 사용자가 입력 파일을 지정하지 않으면 `01_Planning/강의구성안.md`를 자동 탐색합니다.
 4. **로컬 폴더 분석**: 사용자가 로컬 폴더를 지정한 경우, 해당 폴더의 모든 파일을 먼저 분석합니다.
-5. **로깅 프로토콜**: `.agent/logging-protocol.md`를 읽고 로깅 규칙을 숙지합니다. 워크플로우 YAML의 `logging:` 설정에 따라 각 step 실행 전후로 `.agent/logs/`에 JSONL 로그를 기록합니다.
+5. **로깅 프로토콜**: `.agent/logging-protocol.md`를 읽고 로깅 규칙을 숙지합니다. 워크플로우 YAML의 `logging:` 설정에 따라 각 step 실행 전후로 `.agent/logs/`에 JSONL 로그를 기록합니다. 워크플로우 YAML의 `logging.model_config` 경로(`.opencode/oh-my-opencode.jsonc`)를 읽어 `categories` 섹션에서 각 에이전트의 `category`에 해당하는 `model` 값을 조회하고, 모든 로그 이벤트의 `model` 필드에 기록합니다.
 
 ## 에이전트 역할 참조
 

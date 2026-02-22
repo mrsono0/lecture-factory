@@ -47,6 +47,7 @@
 | `step_id` | string | O | 워크플로우 YAML의 step id | `"step_0_scope"` |
 | `agent` | string | O | 에이전트명 | `"A0_Orchestrator"` |
 | `category` | string | O | config.json의 LLM 카테고리 | `"deep"` / `"ultrabrain"` |
+| `model` | string | O | 실행 시 배정된 LLM 모델명 (model_config에서 category→model 조회) | `"anthropic/claude-opus-4-6"` |
 | `action` | string | O | 워크플로우 YAML의 action 필드 | `"analyze_request"` |
 | `parallel_group` | string | — | 병렬 실행 그룹 (없으면 null) | `"phase3"` / `null` |
 | `retry` | number | O | 재시도 횟수 (0=첫 실행) | `0` |
@@ -134,15 +135,15 @@ run_{YYYYMMDD}_{HHMMSS}
 ## 7. JSONL 예시
 
 ```jsonl
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:05","status":"START","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","action":"analyze_request","parallel_group":null,"retry":0}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:45","status":"END","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","action":"analyze_request","parallel_group":null,"retry":0,"duration_sec":40,"input_bytes":15200,"output_bytes":9600,"est_input_tokens":4606,"est_output_tokens":2909,"est_cost_usd":0.047,"decision":null}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:46","status":"START","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"deep","action":"research_trend","parallel_group":null,"retry":0}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:35:20","status":"END","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"deep","action":"research_trend","parallel_group":null,"retry":0,"duration_sec":274,"input_bytes":9600,"output_bytes":28500,"est_input_tokens":2909,"est_output_tokens":8636,"est_cost_usd":0.138,"decision":null}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:40:00","status":"START","workflow":"01_Lecture_Planning","step_id":"step_4_inst","agent":"A2_Instructional_Designer","category":"deep","action":"design_activities","parallel_group":"phase2_parallel","retry":0}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:40:00","status":"START","workflow":"01_Lecture_Planning","step_id":"step_5_diff","agent":"A7_Differentiation_Advisor","category":"artistry","action":"identify_usp","parallel_group":"phase2_parallel","retry":0}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:48:30","status":"END","workflow":"01_Lecture_Planning","step_id":"step_4_inst","agent":"A2_Instructional_Designer","category":"deep","action":"design_activities","parallel_group":"phase2_parallel","retry":0,"duration_sec":510,"input_bytes":18000,"output_bytes":22000,"est_input_tokens":5454,"est_output_tokens":6666,"est_cost_usd":0.116,"decision":null}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:52:15","status":"FAIL","workflow":"01_Lecture_Planning","step_id":"step_6_qa","agent":"A5A_QA_Manager","category":"ultrabrain","action":"verify_plan","parallel_group":null,"retry":0,"error_message":"QA rejected: 시간 합계 불일치 (40h expected, 38h found)"}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:52:16","status":"RETRY","workflow":"01_Lecture_Planning","step_id":"step_3_curriculum","agent":"A3_Curriculum_Architect","category":"ultrabrain","action":"design_structure","parallel_group":null,"retry":1}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:05","status":"START","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"opencode/claude-sonnet-4-6","action":"analyze_request","parallel_group":null,"retry":0}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:45","status":"END","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"opencode/claude-sonnet-4-6","action":"analyze_request","parallel_group":null,"retry":0,"duration_sec":40,"input_bytes":15200,"output_bytes":9600,"est_input_tokens":4606,"est_output_tokens":2909,"est_cost_usd":0.047,"decision":null}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:46","status":"START","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"deep","model":"anthropic/claude-opus-4-6","action":"research_trend","parallel_group":null,"retry":0}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:35:20","status":"END","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"deep","model":"anthropic/claude-opus-4-6","action":"research_trend","parallel_group":null,"retry":0,"duration_sec":274,"input_bytes":9600,"output_bytes":28500,"est_input_tokens":2909,"est_output_tokens":8636,"est_cost_usd":0.138,"decision":null}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:40:00","status":"START","workflow":"01_Lecture_Planning","step_id":"step_4_inst","agent":"A2_Instructional_Designer","category":"deep","model":"anthropic/claude-opus-4-6","action":"design_activities","parallel_group":"phase2_parallel","retry":0}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:40:00","status":"START","workflow":"01_Lecture_Planning","step_id":"step_5_diff","agent":"A7_Differentiation_Advisor","category":"artistry","model":"google/antigravity-gemini-3.1-pro","action":"identify_usp","parallel_group":"phase2_parallel","retry":0}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:48:30","status":"END","workflow":"01_Lecture_Planning","step_id":"step_4_inst","agent":"A2_Instructional_Designer","category":"deep","model":"anthropic/claude-opus-4-6","action":"design_activities","parallel_group":"phase2_parallel","retry":0,"duration_sec":510,"input_bytes":18000,"output_bytes":22000,"est_input_tokens":5454,"est_output_tokens":6666,"est_cost_usd":0.116,"decision":null}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:52:15","status":"FAIL","workflow":"01_Lecture_Planning","step_id":"step_6_qa","agent":"A5A_QA_Manager","category":"ultrabrain","model":"opencode/gpt-5.3-codex","action":"verify_plan","parallel_group":null,"retry":0,"error_message":"QA rejected: 시간 합계 불일치 (40h expected, 38h found)"}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:52:16","status":"RETRY","workflow":"01_Lecture_Planning","step_id":"step_3_curriculum","agent":"A3_Curriculum_Architect","category":"ultrabrain","model":"opencode/gpt-5.3-codex","action":"design_structure","parallel_group":null,"retry":1}
 ```
 
 ---
@@ -239,3 +240,11 @@ cat .agent/logs/*.jsonl | jq -s '
 1. `config.json`의 `agent_models`에서 현재 에이전트를 찾습니다.
 2. 있으면 → 해당 `category` 사용
 3. 없으면 → `default_category` 사용
+
+### 9.5 model 필드 결정 (category→model 매핑)
+1. 파이프라인 시작 시 워크플로우 YAML의 `logging.model_config` 경로를 읽어 모델 설정 파일을 로드합니다.
+2. 해당 파일의 `categories` 섹션에서 `category` 키로 `model` 값을 조회합니다.
+3. 매 step의 START/END 로그에 조회된 `model` 값을 기록합니다.
+4. 매핑 실패 시(config에 카테고리 없음) `"unknown"`을 기록합니다.
+
+**예시**: `category: "ultrabrain"` → config의 `categories.ultrabrain.model` → `"opencode/gpt-5.3-codex"`
