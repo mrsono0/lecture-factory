@@ -86,7 +86,7 @@ async function createGradient(color1, color2, direction, filename) {
 
 ## 입력
 - **에셋 요청 목록**: `05_PPTX/asset_requests.json` (B1이 생성)
-- **디자인 토큰**: A7의 색상/스타일 정의
+- **디자인 토큰**: 03_visualizer 산출물의 색상/스타일 정의
 
 ## 산출물
 - **에셋 PNG 파일**: `05_PPTX/assets/` 디렉토리에 모든 이미지 저장

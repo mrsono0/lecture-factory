@@ -115,12 +115,13 @@ YYYY-MM-DD_강의제목/
 
 ### Team 4: Slide Prompt Generator (04_prompt_generator) — 5 agents
 **Flow**:
-- Phase A: P0 (입력 탐색, N개 스캐폴딩)
-- Phase B: P1 (교육 구조 ×N) ∥ P3 (비주얼 스펙) [병렬]
-- Phase C: P2 (슬라이드 명세 ×N)
-- Phase D: P0 (조립) → P4 (QA)
+ Phase A: P0 (입력 탐색, N개 스캐폴딩)
+ Phase B: P1 (교육 구조 ×N) ∥ P3 (비주얼 스펙) [병렬]
+ Phase C: P2 (슬라이드 명세 ×N)
+ Phase D: P0 (조립) → P4 (QA)
+ Phase E: P0 (최종 산출물 저장)
 
-> **Pipeline 4 정책**: §④ 교안 원문 섹션에 교안 마크다운 전문을 삽입합니다. 상세 규칙은 P0/P2 에이전트 명세 참조.
+> **Pipeline 4 정책**: §⑥ 교안 원문 섹션에 교안 마크다운 전문을 삽입합니다. 상세 규칙은 P0/P2 에이전트 명세 참조.
 
 ### Team 5: PPTX Converter (05_pptx_converter) — 6 agents
 **Flow**: B0 → B1 → B3 → B2 → B4 → B5 → B0 (승인/반려)
@@ -150,7 +151,7 @@ YYYY-MM-DD_강의제목/
 1. 오케스트레이터가 파이프라인 실행 시 `.agent/agents/{team}/config.json`을 읽습니다.
 2. 에이전트가 `agent_models`에 **있으면** → 지정된 카테고리의 모델 사용
 3. 에이전트가 `agent_models`에 **없으면** → `default_category`의 모델 사용
-4. 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션 참조
+4. 카테고리 → 모델 매핑은 `.Claude/oh-my-Claude.jsonc`의 `categories` 섹션 참조
 
 ### config.json 스키마
 
@@ -263,7 +264,7 @@ All review and decision-making applies these **3 expert perspectives simultaneou
 | `.claude/agents/` | O |
 | `.claude/commands/` | O |
 | `.claude/Lecture_Creation_Guide.md` | O |
-| `.opencode/oh-my-opencode.jsonc` | O |
+| `.Claude/oh-my-Claude.jsonc` | O |
 | `AGENTS.md` | O |
 | 그 외 파일 (`.gitignore` 등) | X (main 직접 커밋 가능) |
 
