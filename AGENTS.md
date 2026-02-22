@@ -171,7 +171,9 @@ YYYY-MM-DD_강의제목/
 | **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |
 | | | A8 Copy Tone Editor | `writing` |
 | | | A9 QA Auditor | `ultrabrain` |
-| **P04** PPTX Converter | `quick` | (없음 — 전원 기본) | — |
+| **P04** PPTX Converter | `quick` | B0 Orchestrator, B1 Slide Parser | `unspecified-low` |
+| | | B2 HTML Renderer | `visual-engineering` |
+| | | B5 Visual QA | `visual-engineering` |
 | **P05** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
 | **P06** Prompt Generator | `writing` | P1 Education Structurer | `deep` |
 | | | P3 Visual Spec Curator | `visual-engineering` |
