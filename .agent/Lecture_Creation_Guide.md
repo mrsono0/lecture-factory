@@ -11,18 +11,18 @@
 | **1. 기획 (Planning)** | 주제 분석 및 커리큘럼 확정 | `01_Lecture_Planning.yaml` | `01_Planning/강의구성안.md` |
 | **2. 집필 (Writing)** | 상세 교안 및 코드 작성 | `02_Material_Writing.yaml` | `02_Material/강의교안_v1.0.md` |
 | **3. 시각화 (Visualizing)** | 발표용 슬라이드 기획 | `03_Slide_Generation.yaml` | `03_Slides/{session}/슬라이드기획안.md` |
-| **4. PPTX 변환** | HTML 기반 PPTX 생성 | `04_PPTX_Conversion.yaml` | `04_PPTX/최종_프레젠테이션.pptx` |
-| **5. NanoBanana PPTX** | AI 이미지 기반 고품질 PPTX | `05_NanoBanana_PPTX.yaml` | `05_NanoPPTX/최종_프레젠테이션.pptx` |
-| **6. 슬라이드 프롬프트 생성** | 교안에서 원샷 슬라이드 생성 프롬프트 생성 | `06_SlidePrompt_Generation.yaml` | `06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개) |
+| **4. 슬라이드 프롬프트 생성** | 교안에서 원샷 슬라이드 생성 프롬프트 생성 | `04_SlidePrompt_Generation.yaml` | `04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개) |
+| **5. PPTX 변환** | HTML 기반 PPTX 생성 | `05_PPTX_Conversion.yaml` | `05_PPTX/최종_프레젠테이션.pptx` |
+| **6. NanoBanana PPTX** | AI 이미지 기반 고품질 PPTX | `06_NanoBanana_PPTX.yaml` | `06_NanoPPTX/최종_프레젠테이션.pptx` |
 | **7. Manus 슬라이드** | Manus AI로 PPTX 생성 | `.agent/scripts/manus_slide.py` | `07_ManusSlides/{세션ID}_{세션제목}.pptx` (×N개) |
-| **E2E 통합 실행** | 1, 2, 3, 6단계 순차 자동 실행 | — (마스터 오케스트레이터) | 기획안→교안→슬라이드→프롬프트 |
+| **E2E 통합 실행** | 1, 2, 3, 4단계 순차 자동 실행 | — (마스터 오케스트레이터) | 기획안→교안→슬라이드→프롬프트 |
 
-> **Note**: Pipelines 4, 5, 7 are alternative PPTX generation methods:
-> - **04**: HTML 기반 변환 (빠름, 코드 중심 슬라이드에 적합)
-> - **05**: AI 이미지 생성 via Nano Banana Pro (높은 시각 품질, 디자인 중심 슬라이드에 적합)
+> **Note**: Pipelines 5, 6, 7 are alternative PPTX generation methods:
+> - **05**: HTML 기반 변환 (빠름, 코드 중심 슬라이드에 적합)
+> - **06**: AI 이미지 생성 via Nano Banana Pro (높은 시각 품질, 디자인 중심 슬라이드에 적합)
 > - **07**: Manus AI 클라우드 (Manus Pro plan 필요, 최고 품질)
 >
-> **6 → 7 연계**: 6단계에서 프롬프트 생성 후 7단계에서 PPTX 자동 생성. 교안에서 최종 PPTX까지 자동화됩니다.
+> **4 → 7 연계**: 4단계에서 프롬프트 생성 후 7단계에서 PPTX 자동 생성. 교안에서 최종 PPTX까지 자동화됩니다.
 
 ---
 
@@ -114,7 +114,7 @@
 
 4.  **결과물**: `YYYY-MM-DD_강의제목/01_Planning/강의구성안.md`
 
-> 💡 **E2E 자동화**: 1, 2, 3, 6단계를 한 번에 실행하려면 "전체 파이프라인 실행해줘"라고 지시하세요. 각 단계의 입력 파일과 URL이 자동으로 전달됩니다. (4·5·7단계 PPTX 생성은 별도 실행)
+> 💡 **E2E 자동화**: 1, 2, 3, 4단계를 한 번에 실행하려면 "전체 파이프라인 실행해줘"라고 지시하세요. 각 단계의 입력 파일과 URL이 자동으로 전달됩니다. (5·6·7단계 PPTX 생성은 별도 실행)
 
 ---
 
@@ -180,14 +180,42 @@
 
 ---
 
-### 4단계: PPTX 변환 (HTML 기반)
+### 4단계: 슬라이드 생성 프롬프트 생성 (Slide Prompt Generation)
+
+**목표**: 교안을 분석하여 Nano Banana Pro 등 AI 이미지 생성 도구에서 원샷으로 실행 가능한 '슬라이드 생성 프롬프트.md'를 생성합니다.
+
+1.  **입력 준비**:
+    -   2단계에서 생성된 `02_Material/` 내 교안 파일(*.md)을 사용합니다.
+    -   또는 사용자가 지정한 외부 교안 폴더를 사용합니다.
+    -   (선택) 3단계 산출물(`03_Slides/`)이 있으면 IR/Glossary/DesignTokens를 참조하여 품질을 향상시킵니다.
+2.  **실행 방법**:
+    -   **기본 명령**:
+        > "04_SlidePrompt_Generation 워크플로우를 실행해줘." (`02_Material/` 내 `*.md` 파일 자동 탐색)
+    -   **외부 폴더 지정 시**:
+        > "04_SlidePrompt_Generation 워크플로우 실행해줘. 교안 폴더는 `/Users/.../ADsP/강의 교안/` 이야."
+    -   **03 산출물 참조 시**:
+        > "04_SlidePrompt_Generation 워크플로우 실행해줘. 교안 폴더는 `/Users/.../강의 교안/` 이고, 03_Slides 산출물도 참조해줘."
+
+3.  **내부 프로세스 (자동)**:
+    -   **Phase A**: P0 (Orchestrator) — 교안 폴더 스캔, N개 파일 발견 및 순서 결정
+    -   **Phase B**: P1 (Education Structurer, ×N) ∥ P3 (Visual Spec Curator) — 교육 구조 추출 + 비주얼 스펙 준비 [병렬]
+    -   **Phase C**: P2 (Slide Prompt Architect, ×N) — 교시별 슬라이드 단위 명세 생성
+    -   **Phase D**: P0 (교안별 개별 조립) → P4 (QA Auditor) — 파일별 검증 및 승인/반려
+
+4.  **결과물**: `{project_folder}/04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (교안별 개별 파일 ×N개)
+
+> **Note**: 입력 파일 수는 고정값이 아닙니다. 교안 폴더에서 발견된 `*.md` 파일 수에 따라 1개~수십 개까지 동적으로 처리합니다.
+
+---
+
+### 5단계: PPTX 변환 (HTML 기반)
 
 **목표**: 3단계 슬라이드 기획안을 실제 PowerPoint 파일로 변환합니다.
 
 1.  **입력 준비**: 3단계에서 생성된 `03_Slides/{session}/` 디렉토리의 슬라이드 산출물 (시퀀스 맵, 레이아웃 명세, 디자인 토큰). 세션 서브폴더가 복수인 경우 처리할 세션을 지정합니다.
 2.  **실행 방법**:
     -   **기본 명령**:
-        > "04_PPTX_Conversion 워크플로우를 실행해줘." (`03_Slides/` 내 세션 서브폴더 자동 탐색 — 1개면 자동 선택, 복수면 확인)
+        > "05_PPTX_Conversion 워크플로우를 실행해줘." (`03_Slides/` 내 세션 서브폴더 자동 탐색 — 1개면 자동 선택, 복수면 확인)
 
 3.  **내부 프로세스 (자동)**:
     -   **B0 (Orchestrator)**: 입력 검증 및 스킬 로드 (`pptx-official`)
@@ -198,11 +226,11 @@
     -   **B5 (Visual QA)**: 썸네일 검증, 시각적 결함 검사
     -   **B0**: 승인/반려/재작업 결정
 
-4.  **결과물**: `YYYY-MM-DD_강의제목/04_PPTX/최종_프레젠테이션.pptx`, `변환리포트.md`
+4.  **결과물**: `YYYY-MM-DD_강의제목/05_PPTX/최종_프레젠테이션.pptx`, `변환리포트.md`
 
 ---
 
-### 5단계: NanoBanana PPTX (AI 이미지 기반)
+### 6단계: NanoBanana PPTX (AI 이미지 기반)
 
 **목표**: 3단계 슬라이드 기획안을 Nano Banana Pro AI로 고품질 이미지 슬라이드를 생성하고 PPTX로 조립합니다.
 
@@ -211,7 +239,7 @@
     -   `GEMINI_API_KEY` 환경변수 설정 필수
 2.  **실행 방법**:
     -   **기본 명령**:
-        > "05_NanoBanana_PPTX 워크플로우를 실행해줘." (`03_Slides/` 내 세션 서브폴더 자동 탐색 — 1개면 자동 선택, 복수면 확인)
+        > "06_NanoBanana_PPTX 워크플로우를 실행해줘." (`03_Slides/` 내 세션 서브폴더 자동 탐색 — 1개면 자동 선택, 복수면 확인)
 
 3.  **내부 프로세스 (자동)**:
     -   **C0 (Orchestrator)**: 입력 검증, 스타일/해상도 결정
@@ -222,41 +250,13 @@
     -   **C5 (Visual QA)**: 텍스트 정확성, 스타일 일관성 검사
     -   **C0**: 승인/부분 재생성/전체 반려 결정
 
-4.  **결과물**: `YYYY-MM-DD_강의제목/05_NanoPPTX/최종_프레젠테이션.pptx`, `변환리포트.md`, `index.html` (인터랙티브 뷰어)
-
----
-
-### 6단계: 슬라이드 생성 프롬프트 생성 (Slide Prompt Generation)
-
-**목표**: 교안을 분석하여 Nano Banana Pro 등 AI 이미지 생성 도구에서 원샷으로 실행 가능한 '슬라이드 생성 프롬프트.md'를 생성합니다.
-
-1.  **입력 준비**:
-    -   2단계에서 생성된 `02_Material/` 내 교안 파일(*.md)을 사용합니다.
-    -   또는 사용자가 지정한 외부 교안 폴더를 사용합니다.
-    -   (선택) 3단계 산출물(`03_Slides/`)이 있으면 IR/Glossary/DesignTokens를 참조하여 품질을 향상시킵니다.
-2.  **실행 방법**:
-    -   **기본 명령**:
-        > "06_SlidePrompt_Generation 워크플로우를 실행해줘." (`02_Material/` 내 `*.md` 파일 자동 탐색)
-    -   **외부 폴더 지정 시**:
-        > "06_SlidePrompt_Generation 워크플로우 실행해줘. 교안 폴더는 `/Users/.../ADsP/강의 교안/` 이야."
-    -   **03 산출물 참조 시**:
-        > "06_SlidePrompt_Generation 워크플로우 실행해줘. 교안 폴더는 `/Users/.../강의 교안/` 이고, 03_Slides 산출물도 참조해줘."
-
-3.  **내부 프로세스 (자동)**:
-    -   **Phase A**: P0 (Orchestrator) — 교안 폴더 스캔, N개 파일 발견 및 순서 결정
-    -   **Phase B**: P1 (Education Structurer, ×N) ∥ P3 (Visual Spec Curator) — 교육 구조 추출 + 비주얼 스펙 준비 [병렬]
-    -   **Phase C**: P2 (Slide Prompt Architect, ×N) — 교시별 슬라이드 단위 명세 생성
-    -   **Phase D**: P0 (교안별 개별 조립) → P4 (QA Auditor) — 파일별 검증 및 승인/반려
-
-4.  **결과물**: `{project_folder}/06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (교안별 개별 파일 ×N개)
-
-> **Note**: 입력 파일 수는 고정값이 아닙니다. 교안 폴더에서 발견된 `*.md` 파일 수에 따라 1개~수십 개까지 동적으로 처리합니다.
+4.  **결과물**: `YYYY-MM-DD_강의제목/06_NanoPPTX/최종_프레젠테이션.pptx`, `변환리포트.md`, `index.html` (인터랙티브 뷰어)
 
 ---
 
 ### 7단계: Manus AI 슬라이드 생성
 
-**목표**: 6단계에서 생성된 프롬프트 파일을 Manus AI에 전송하여 Nano Banana Pro로 슬라이드를 생성하고 PPTX를 다운로드합니다.
+**목표**: 4단계에서 생성된 프롬프트 파일을 Manus AI에 전송하여 Nano Banana Pro로 슬라이드를 생성하고 PPTX를 다운로드합니다.
 
 > **참고**: 이 파이프라인은 별도의 워크플로우 YAML 없이 Python 스크립트(`.agent/scripts/manus_slide.py`)로 직접 실행됩니다.
 
@@ -279,7 +279,7 @@
         ```
 
 3.  **실행 흐름**:
-    -   `06_SlidePrompt/*.md` (N개 프롬프트) → Manus AI POST → 30초 간격 폴링 → PPTX 다운로드
+    -   `04_SlidePrompt/*.md` (N개 프롬프트) → Manus AI POST → 30초 간격 폴링 → PPTX 다운로드
 
 4.  **결과물**: `07_ManusSlides/{세션ID}_{세션제목}.pptx` (×N개), `generation_report.json`, `manus_task_log.json`
 
@@ -302,7 +302,7 @@
 
 #### 교시 분할 전략 (Chunking)
 
-P06 프롬프트 파일이 대용량인 경우, Manus AI의 최적 처리를 위해 교시(세션) 단위로 자동 분할합니다:
+P04 프롬프트 파일이 대용량인 경우, Manus AI의 최적 처리를 위해 교시(세션) 단위로 자동 분할합니다:
 
 | 조건 | 동작 |
 |------|------|
@@ -348,22 +348,22 @@ YYYY-MM-DD_강의제목/
 │   ├── Day1_PM/
 │   │   └── (동일 구조)
 │   └── ...
-├── 04_PPTX/                 (Pipeline 4 사용 시)
+├── 04_SlidePrompt/          (Pipeline 4 사용 시)
+│   ├── {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md  (교안별 개별 파일 ×N개)
+│   ├── Day1_AM_환경구축_슬라이드 생성 프롬프트.md      (예시)
+│   └── Day1_PM_변수와자료형_슬라이드 생성 프롬프트.md  (예시)
+├── 05_PPTX/                 (Pipeline 5 사용 시)
 │   ├── 최종_프레젠테이션.pptx
 │   ├── 변환리포트.md
 │   ├── html/                (슬라이드별 HTML)
 │   ├── assets/              (아이콘/그래디언트 PNG)
 │   └── thumbnails/          (QA 썸네일)
-├── 05_NanoPPTX/             (Pipeline 5 사용 시)
+├── 06_NanoPPTX/             (Pipeline 6 사용 시)
 │   ├── 최종_프레젠테이션.pptx
 │   ├── 변환리포트.md
 │   ├── images/              (슬라이드 PNG)
 │   ├── prompts/             (이미지 생성 프롬프트)
 │   └── index.html           (인터랙티브 뷰어)
-├── 06_SlidePrompt/          (Pipeline 6 사용 시)
-│   ├── {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md  (교안별 개별 파일 ×N개)
-│   ├── Day1_AM_환경구축_슬라이드 생성 프롬프트.md      (예시)
-│   └── Day1_PM_변수와자료형_슬라이드 생성 프롬프트.md  (예시)
 ├── 07_ManusSlides/          (Pipeline 7 사용 시)
 │   ├── {세션ID}_{세션제목}.pptx  (Manus AI 생성 PPTX ×N개)
 │   ├── manus_task_log.json      (task_id 로그, 중단 복구용)
@@ -437,7 +437,7 @@ FLOWITH_MODEL="claude-opus-4.6"
 - **수정 요청**: 각 단계가 끝날 때마다 에이전트가 결과물을 보여줍니다. 마음에 들지 않는 부분은 "A4 에이전트에게 어조를 좀 더 친근하게 바꾸라고 해줘"와 같이 구체적으로 피드백하면 수정해줍니다.
 - **NotebookLM 활용**: 자료가 많을수록 `A1` 에이전트의 성능이 좋아집니다. 관련 PDF나 문서를 미리 NotebookLM에 올려두세요.
 - **Flowith KB 활용**: NotebookLM 대안 또는 보완으로, Flowith Knowledge Garden에 참고자료를 업로드하면 API를 통한 자동 검색이 가능합니다. 특히 A1 Source Miner 단계에서 효과적입니다.
-- **Pipeline 4 vs 5 vs 7**: 코드 중심 → 04(HTML 기반), 로컬 AI 이미지 → 05(Gemini API), 클라우드 AI 생성 → 07(Manus API).
-- **Pipeline 6 → 7 연계**: 6단계에서 프롬프트 생성 후 7단계에서 PPTX 자동 생성. 교안에서 최종 PPTX까지 자동화됩니다.
- **E2E 통합 실행**: "전체 파이프라인 실행해줘"로 1, 2, 3, 6단계를 순차 자동 실행할 수 있습니다. (4·5·7단계 PPTX 생성은 별도 실행)
+- **Pipeline 5 vs 6 vs 7**: 코드 중심 → 05(HTML 기반), 로컬 AI 이미지 → 06(Gemini API), 클라우드 AI 생성 → 07(Manus API).
+- **Pipeline 4 → 7 연계**: 4단계에서 프롬프트 생성 후 7단계에서 PPTX 자동 생성. 교안에서 최종 PPTX까지 자동화됩니다.
+ **E2E 통합 실행**: "전체 파이프라인 실행해줘"로 1, 2, 3, 4단계를 순차 자동 실행할 수 있습니다. (5·6·7단계 PPTX 생성은 별도 실행)
 - **Manus 파일 보존**: Manus에 업로드된 파일은 48시간 후 자동 삭제됩니다. 생성 즉시 다운로드하세요.
