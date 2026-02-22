@@ -5,7 +5,10 @@ description: >
   입력 교안 파일 수는 동적(N개)이며, 각 교안 파일당 1개의 독립 프롬프트 파일을 생성합니다.
   ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents
   using list_dir/read_file BEFORE proceeding.
-version: "1.1"
+version: "1.2"
+
+output_path: "{YYYY-MM-DD_강의제목}/04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md"
+max_retries: 2
 
 # ───────────────────────────────────────────────────────────
 # 산출물 정책 (Output Policy) — v1.1 변경
@@ -57,6 +60,8 @@ steps:
   - id: step_2_education_structure
     agent: "04_prompt_generator/P1_Education_Structurer"
     action: "extract_education_elements"
+    depends_on: "step_1_discovery"
+    parallel_group: "phase_b"
     input: >
       File Manifest의 각 파일 (×N),
       (선택) 03 IR/Glossary,
@@ -74,6 +79,8 @@ steps:
   - id: step_3_visual_spec
     agent: "04_prompt_generator/P3_Visual_Spec_Curator"
     action: "prepare_visual_template"
+    depends_on: "step_1_discovery"
+    parallel_group: "phase_b"
     input: >
       (선택) 03 DesignTokens,
       기본 내장 스타일 가이드,
@@ -93,6 +100,9 @@ steps:
   - id: step_4_slide_blueprint
     agent: "04_prompt_generator/P2_Slide_Prompt_Architect"
     action: "generate_slide_specs"
+    depends_on:
+      - "step_2_education_structure"
+      - "step_3_visual_spec"
     input: >
       교안별 교육 메타 + 교시별 학습요소 맵 (P1 산출물),
       교안 원문 (×N),
@@ -114,6 +124,7 @@ steps:
   - id: step_5_assembly
     agent: "04_prompt_generator/P0_Orchestrator"
     action: "assemble_prompt_per_file"
+    depends_on: "step_4_slide_blueprint"
     input: >
       File Manifest (N개),
       Global Template (Role/Style/Quality),
@@ -138,6 +149,7 @@ steps:
   - id: step_6_qa
     agent: "04_prompt_generator/P4_QA_Auditor"
     action: "validate_prompt_quality"
+    depends_on: "step_5_assembly"
     input: >
       교안별 Draft 프롬프트 파일 (N개),
       교안 원문 (×N, 대조용),
@@ -145,8 +157,8 @@ steps:
     output: >
       교안별 QA Report (파일별 통과/수정 필요 항목)
     decision:
-      - if: "All Approved" -> step_7_finalize
-      - if: "Partial Rejected" -> step_4_slide_blueprint (리젝된 파일의 에이전트만 재실행)
+      approved: "step_7_finalize"
+      partial_rejected: "step_4_slide_blueprint (리젝된 파일의 에이전트만 재실행, 파일당 최대 2회)"
     description: >
       각 교안별 프롬프트 파일을 독립적으로 검증합니다.
       6개 필수 섹션 존재, 슬라이드 필드 완결성, 교시 커버리지 100%,
@@ -160,6 +172,7 @@ steps:
   - id: step_7_finalize
     agent: "04_prompt_generator/P0_Orchestrator"
     action: "finalize_per_file_output"
+    depends_on: "step_6_qa"
     input: >
       Approved 교안별 프롬프트 파일 (N개),
       교안별 QA Report,
