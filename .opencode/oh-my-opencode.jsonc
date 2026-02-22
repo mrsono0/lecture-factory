@@ -1,6 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
-
   // ============================================================
   // Lecture Factory - Project-Specific Model Configuration
   // ============================================================
@@ -11,36 +10,36 @@
   //            Only prompt_append (domain context injection)
   //            and select model overrides are project-specific.
   // ============================================================
-
   // === Agent-Level Model Overrides ===
   "agents": {
     // Main Orchestrator: Multi-pipeline coordination (7 pipelines)
     // Needs maximum reasoning for complex agent team management
     "sisyphus": {
-      "model": "opencode/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-6",
       "variant": "max"
     },
-
     // Codebase Explorer: Pattern search within lecture materials
     // Fast & cheap - just grep/read operations
     "explore": {
-      "model": "opencode/claude-sonnet-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
-
     // Reference Researcher: Technical docs, library lookups
     // Cost-efficient for external search tasks
     "librarian": {
       "model": "opencode/glm-5"
     },
-
     // Architecture Consultant: Curriculum/material structure review
     // Reasoning-specialized model for strategic decisions
     "oracle": {
       "model": "opencode/gpt-5.2",
       "variant": "high"
+    },
+    // Deep Executor: Complex autonomous goal-oriented tasks
+    // Reasoning-specialized for multi-step implementation
+    "hephaestus": {
+      "model": "opencode/gpt-5.2-codex"
     }
   },
-
   // === Category-Level Model + Context Injection ===
   // Categories are used via task(category="...", prompt="...")
   // prompt_append injects Lecture Factory domain context
@@ -48,11 +47,10 @@
     // Pipeline 02 (Material Writing): Long-form lecture scripts
     // Requires highest quality for instructor scripts + learner narratives
     "deep": {
-      "model": "opencode/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-6",
       "variant": "max",
       "prompt_append": "You are writing Korean lecture materials for the Lecture Factory system. Follow these conventions:\n- Use friendly spoken Korean tone (~haeyo, ~imnida), never formal written style (~handa)\n- Include instructor scripts with the emoji prefix: '\ud83d\udde3\ufe0f \uac15\uc0ac \ub300\ubcf8 (Script):'\n- Include lab guide scripts with: '\ud83c\udf99\ufe0f \uc2e4\uc2b5 \uac00\uc774\ub4dc \ub300\ubcf8:'\n- Use rich analogies and narrative tone ('AI \uc2dc\ub300\uc758 \uc11c\uc0ac')\n- Follow Why -> What -> How structure for every new concept\n- All outputs must be in Korean (except technical terms)"
     },
-
     // Pipeline 03 (Slide Generation): Visual slide planning
     // Gemini 3.1 Pro — latest model, 1M context, enhanced visual reasoning
     "visual-engineering": {
@@ -60,14 +58,12 @@
       "variant": "high",
       "prompt_append": "You are creating slide storyboards for the Lecture Factory system. Follow these conventions:\n- Use Bento Grid layout with Sketch Note (ink-pen) visual style\n- One core concept per slide, max 2 new terms per slide\n- Instructor notes go in Speaker Notes area\n- Include T-BRIDGE transition slides between major sections\n- Checkpoint slides every 5-7 slides\n- All slide copy in Korean, friendly tone"
     },
-
     // Pipeline 04/05/07 (PPTX Conversion / Manus): Mechanical transformation
     // Fast & cheap — no creativity needed, just accurate conversion
     // NOTE: Requires Anthropic provider auth — run /connect in OpenCode TUI
     "quick": {
       "model": "anthropic/claude-haiku-4-5"
     },
-
     // Pipeline 06 (Slide Prompt Generation): Precise prompt crafting
     // 1M context window essential — embeds FULL lecture material in each prompt
     "writing": {
@@ -75,27 +71,23 @@
       "variant": "high",
       "prompt_append": "You are generating slide creation prompts for the Lecture Factory system (Pipeline 06). Follow these conventions:\n- Include the FULL lecture material markdown in section 6 (\uad50\uc548 \uc6d0\ubb38)\n- Follow the P0/P2 agent specifications for prompt structure\n- Output format must be compatible with Manus AI (Nano Banana Pro)\n- Each prompt file covers one session (AM/PM)\n- All outputs in Korean"
     },
-
     // Curriculum Design: Complex learning architecture
     // Reasoning-specialized for dependency mapping and scaffolding
     "ultrabrain": {
-      "model": "openai/gpt-5.3-codex",
+      "model": "opencode/gpt-5.2-codex",
       "variant": "xhigh"
     },
-
     // Creative Tasks: Differentiation strategies, narrative design
     // Gemini 3.1 Pro — latest model for creative/artistic content
     "artistry": {
       "model": "google/antigravity-gemini-3.1-pro",
       "variant": "high"
     },
-
     // General High-Effort: Fallback for unclassified complex tasks
     "unspecified-high": {
-      "model": "opencode/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-6",
       "variant": "max"
     },
-
     // General Low-Effort: Fallback for unclassified simple tasks
     "unspecified-low": {
       "model": "opencode/claude-sonnet-4-6"
