@@ -4,5 +4,10 @@
     "default_category": "quick",
     "skill_dependency": "pptx-official",
     "tools": ["html2pptx", "thumbnail", "sharp", "pptxgenjs", "playwright"],
-    "agent_models": {}
+    "agent_models": {
+        "B0_Orchestrator":  { "category": "unspecified-low",    "note": "품질 게이트 판단 — Sonnet 수준 필요" },
+        "B1_Slide_Parser":  { "category": "unspecified-low",    "note": "콘텐츠 품질 규칙 복잡 — Sonnet 수준" },
+        "B2_HTML_Renderer": { "category": "visual-engineering", "note": "★ 레이아웃·CSS·문구·디자인 — 핵심 품질 결정자" },
+        "B5_Visual_QA":     { "category": "visual-engineering", "note": "시각 품질 판단 — Gemini 시각 추론 필요" }
+    }
 }
