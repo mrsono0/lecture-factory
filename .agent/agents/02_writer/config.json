@@ -1,8 +1,13 @@
 {
-    "name": "A1_Trend_Researcher",
-    "tools": [
-        "notebooklm",
-        "deep-research",
-        "tavily-web"
-    ]
+    "name": "02_writer",
+    "description": "확정된 커리큘럼을 바탕으로 교안 본문과 코드를 작성하는 집필 에이전트 팀",
+    "default_category": "deep",
+    "tools": ["notebooklm", "deep-research", "tavily-web"],
+    "agent_models": {
+        "A2_Traceability_Curator":       { "category": "quick",              "note": "출처 추적 구축 — 기계적 매핑" },
+        "A5_Code_Validator":             { "category": "quick",              "note": "코드 실행 검증 — 정확성만 필요" },
+        "A6_Visualization_Designer":     { "category": "visual-engineering", "note": "다이어그램/표 설계 — 시각 전문" },
+        "A8_QA_Editor":                  { "category": "ultrabrain",         "note": "최종 QA — 다관점 통합 검증" },
+        "A10_Differentiation_Strategist":{ "category": "artistry",           "note": "차별화 강화 — 창의적 전략" }
+    }
 }
