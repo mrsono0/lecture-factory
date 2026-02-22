@@ -4,6 +4,12 @@ version: "2.1"
 output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
 max_retries: 2
 
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  path: ".agent/logs/{YYYY-MM-DD}_02_Material_Writing.jsonl"
+  format: "jsonl"
+
 steps:
   # Phase 1: 소스 분석 및 구조화
   - id: step_1_source_mining

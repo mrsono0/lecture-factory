@@ -17,6 +17,7 @@ model: sonnet
    - 특정 파일 지정 → **단일 파일 모드**
    - 폴더 지정 → **배치 모드** (폴더 내 `*.md` N개 순차 처리)
    - 미지정 → `02_Material/` 내 최신 교안 자동 탐색
+4. **로깅 프로토콜**: `.agent/logging-protocol.md`를 읽고 로깅 규칙을 숙지합니다. 워크플로우 YAML의 `logging:` 설정에 따라 각 step 실행 전후로 `.agent/logs/`에 JSONL 로그를 기록합니다.
 
 ## 에이전트 역할 참조
 

@@ -17,6 +17,7 @@ model: sonnet
    - 미지정 → `02_Material/` 내 `*.md` 자동 탐색
    - 외부 폴더 지정 → 해당 폴더 스캔
 4. **03_Slides 참조**: 존재 시 IR/Glossary/DesignTokens/SequenceMap 활용
+5. **로깅 프로토콜**: `.agent/logging-protocol.md`를 읽고 로깅 규칙을 숙지합니다. 워크플로우 YAML의 `logging:` 설정에 따라 각 step 실행 전후로 `.agent/logs/`에 JSONL 로그를 기록합니다.
 
 ## 에이전트 역할 참조
 
