@@ -247,4 +247,18 @@ cat .agent/logs/*.jsonl | jq -s '
 3. 매 step의 START/END 로그에 조회된 `model` 값을 기록합니다.
 4. 매핑 실패 시(config에 카테고리 없음) `"unknown"`을 기록합니다.
 
+---
+
+## 10. model 필드 하위 호환 정책
+
+2026-02-22 이전에 생성된 로그는 `model` 필드가 포함되어 있지 않을 수 있습니다.
+
+### 10.1 호환성 규칙
+ `model` 필드가 없거나 `null`/빈 문자열인 로그 이벤트는 **유효한 레코드로 처리**합니다.
+ 분석 도구(`analyze_logs.sh`)는 `model` 필드 부재 시 `"unknown"`으로 대체하여 집계합니다.
+ QA 감사(L5)는 `model` 필드 누락 로그에 대해 "⚠️ model 필드 누락 (레거시)"로 경고하되 반려하지 않습니다.
+
+### 10.2 적용 기준일
+ **2026-02-23 이후** 생성되는 모든 로그는 `model` 필드를 **필수**로 포함해야 합니다.
+ 기존 로그는 재처리 없이 현재 상태로 유지합니다.
 **예시**: `category: "ultrabrain"` → config의 `categories.ultrabrain.model` → `"opencode/gpt-5.3-codex"`

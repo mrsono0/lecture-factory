@@ -21,11 +21,11 @@
   - 근거: `retry` 횟수, `FAIL` 빈도
 
 
-**동적 라우팅 캐스케이드 (Dynamic Routing Cascade):**
- 작은 모델(quick)로 먼저 시도 → 실패/저품질 시 상위 모델로 에스컬레이션
+#### 1.1 동적 라우팅 캐스케이드 (Dynamic Routing Cascade)
+ 작은 모델(quick)로 먼저 시도 → 실패/저품질 시 상위 모델로 에스칼레이션
  90%의 쿼리를 경량 모델로 처리할 수 있는 가능성 분석
  근거: 에이전트별 `retry` 빈도와 `FAIL` 후 카테고리 상향 시 성공률
-**카테고리별 비용 단가 참조** (logging-protocol.md §5):
+#### 1.2 카테고리별 비용 단가 참조 (logging-protocol.md §5)
 
 | category | input ($/1K) | output ($/1K) |
 |----------|:------------:|:-------------:|
