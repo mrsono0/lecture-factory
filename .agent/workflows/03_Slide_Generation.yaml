@@ -10,6 +10,12 @@ version: "2.2"
 output_path: "{YYYY-MM-DD_강의제목}/03_Slides/{session}/슬라이드기획안.md"
 max_retries: 2  # step_10 반려 시 step_5부터 재실행 최대 횟수
 
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  path: ".agent/logs/{YYYY-MM-DD}_03_Slide_Generation.jsonl"
+  format: "jsonl"
+
 # ───────────────────────────────────────────────────────────
 # 입력 정책 (Input Policy)
 # ───────────────────────────────────────────────────────────

@@ -5,6 +5,12 @@ version: "2.1"
 output_path: "{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md"
 max_retries: 2  # step_7 반려 시 step_3부터 재실행 최대 횟수
 
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  path: ".agent/logs/{YYYY-MM-DD}_01_Lecture_Planning.jsonl"
+  format: "jsonl"
+
 steps:
   # Phase 1: 순차 실행 — 스코프 정의 → 트렌드 리서치 → 학습자 분석 → 커리큘럼 설계
   - id: step_0_scope

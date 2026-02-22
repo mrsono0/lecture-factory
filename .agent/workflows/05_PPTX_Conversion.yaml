@@ -6,6 +6,12 @@ skill_dependency: "pptx-official"
 output_path: "{YYYY-MM-DD_강의제목}/05_PPTX/최종_프레젠테이션.pptx"
 max_retries: 2
 
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  path: ".agent/logs/{YYYY-MM-DD}_05_PPTX_Conversion.jsonl"
+  format: "jsonl"
+
 steps:
   # Phase 1: 사전 준비
   - id: step_1_skill_load

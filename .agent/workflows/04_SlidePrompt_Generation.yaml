@@ -10,6 +10,12 @@ version: "1.2"
 output_path: "{YYYY-MM-DD_강의제목}/04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md"
 max_retries: 2
 
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  path: ".agent/logs/{YYYY-MM-DD}_04_SlidePrompt_Generation.jsonl"
+  format: "jsonl"
+
 # ───────────────────────────────────────────────────────────
 # 산출물 정책 (Output Policy) — v1.1 변경
 # ───────────────────────────────────────────────────────────

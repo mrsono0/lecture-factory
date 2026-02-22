@@ -198,6 +198,22 @@ YYYY-MM-DD_강의제목/
 
 ---
 
+## Agent Execution Logging
+
+모든 파이프라인 실행 시 에이전트별 구조화된 로그를 기록합니다.
+
+ **프로토콜 정의**: `.agent/logging-protocol.md` (JSONL 포맷, 19필드 스키마, 토큰/비용 추정 공식)
+ **로그 위치**: `.agent/logs/{YYYY-MM-DD}_{pipeline_name}.jsonl`
+ **워크플로우 설정**: 각 `.agent/workflows/*.yaml`의 `logging:` 섹션
+ **이벤트 유형**: `START`, `END`, `FAIL`, `RETRY`, `DECISION`
+ **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)` (input_bytes + output_bytes 기반, 정확도 ~85-90%)
+ **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (quick=Haiku급, deep=Sonnet급, ultrabrain=Opus급)
+
+오케스트레이터는 각 step 실행 전후로 `logging-protocol.md`를 참조하여 JSONL 로그를 기록합니다.
+로그 파일(`.jsonl`)은 `.gitignore`에 의해 Git 추적에서 제외됩니다.
+
+---
+
 ## Integrated Quality Perspective
 
 All review and decision-making applies these **3 expert perspectives simultaneously**:
