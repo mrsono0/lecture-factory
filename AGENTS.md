@@ -175,7 +175,9 @@ YYYY-MM-DD_강의제목/
 | | | B2 HTML Renderer | `visual-engineering` |
 | | | B5 Visual QA | `visual-engineering` |
 | **P05** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
-| **P06** Prompt Generator | `writing` | P1 Education Structurer | `deep` |
+| **P06** Prompt Generator | `writing` | P0 Orchestrator | `unspecified-low` |
+| | | P1 Education Structurer | `deep` |
+| | | P2 Slide Prompt Architect | `deep` |
 | | | P3 Visual Spec Curator | `visual-engineering` |
 | | | P4 QA Auditor | `ultrabrain` |
 

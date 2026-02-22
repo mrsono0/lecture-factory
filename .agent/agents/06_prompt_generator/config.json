@@ -15,8 +15,10 @@
         "count": "N개 (교안 파일당 1개)"
     },
     "agent_models": {
-        "P1_Education_Structurer": { "category": "deep",              "note": "교육 구조 추출 — 깊은 분석력" },
-        "P3_Visual_Spec_Curator":  { "category": "visual-engineering", "note": "비주얼 스펙 — 시각 전문" },
-        "P4_QA_Auditor":           { "category": "ultrabrain",         "note": "6-섹션 완결성 QA — 다관점 검증" }
+        "P0_Orchestrator":           { "category": "unspecified-low",   "note": "오케스트레이션/파일 조립 — 절차적 작업" },
+        "P1_Education_Structurer":   { "category": "deep",              "note": "교육 구조 추출 — 깊은 분석력" },
+        "P2_Slide_Prompt_Architect": { "category": "deep",              "note": "핵심 에이전트 — 교안→명세 정밀 변환" },
+        "P3_Visual_Spec_Curator":    { "category": "visual-engineering", "note": "비주얼 스펙 — 시각 전문" },
+        "P4_QA_Auditor":             { "category": "ultrabrain",         "note": "6-섹션 완결성 QA — 다관점 검증" }
     }
 }
