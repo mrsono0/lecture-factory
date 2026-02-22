@@ -161,8 +161,8 @@ YYYY-MM-DD_강의제목/
 
 | Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 오버라이드 카테고리 |
 |----------|:---:|---|:---:|
-| **P01** Planner | `deep` | A0 Orchestrator, A5A QA Manager | `quick` |
-| | | A3 Curriculum Architect | `ultrabrain` |
+| **P01** Planner | `deep` | A0 Orchestrator | `unspecified-low` |
+| | | A3 Curriculum Architect, A5A QA Manager | `ultrabrain` |
 | | | A7 Differentiation Advisor | `artistry` |
 | **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
 | | | A6 Visualization Designer | `visual-engineering` |
