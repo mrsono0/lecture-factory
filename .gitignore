@@ -84,7 +84,7 @@ AI-native_스프링부트기초.md
 # ── 로그 / 임시 파일 ────────────────────────────────────────
 *.log
 *.jsonl
-.agent/dashboard/analysis_report_*.md
+.agent/dashboard/*.md
 *.tmp
 *.swp
 *.swo
