@@ -14,7 +14,7 @@ version: "1.1"
 #   - 교안 1개 → 독립 프롬프트 파일 1개
 #   - 파일명: {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md
 #   - 예: Day1_AM_환경구축_슬라이드 생성 프롬프트.md
-#   - 저장 경로: {project_folder}/06_SlidePrompt/
+#   - 저장 경로: {project_folder}/04_SlidePrompt/
 # ───────────────────────────────────────────────────────────
 
 # ───────────────────────────────────────────────────────────
@@ -35,7 +35,7 @@ steps:
   # Phase A: 입력 수집 및 전역 스캐폴딩
   # ═══════════════════════════════════════════════════════════
   - id: step_1_discovery
-    agent: "06_prompt_generator/P0_Orchestrator"
+    agent: "04_prompt_generator/P0_Orchestrator"
     action: "discover_and_scaffold"
     input: >
       교안 폴더 경로 (02_Material/ 또는 사용자 지정 폴더),
@@ -55,7 +55,7 @@ steps:
   # Phase B: 교육 구조 추출 ∥ 비주얼 스펙 준비 (병렬)
   # ═══════════════════════════════════════════════════════════
   - id: step_2_education_structure
-    agent: "06_prompt_generator/P1_Education_Structurer"
+    agent: "04_prompt_generator/P1_Education_Structurer"
     action: "extract_education_elements"
     input: >
       File Manifest의 각 파일 (×N),
@@ -72,7 +72,7 @@ steps:
       Day/교시 패턴이 없는 교안도 자체 섹션 경계를 감지하여 처리합니다.
 
   - id: step_3_visual_spec
-    agent: "06_prompt_generator/P3_Visual_Spec_Curator"
+    agent: "04_prompt_generator/P3_Visual_Spec_Curator"
     action: "prepare_visual_template"
     input: >
       (선택) 03 DesignTokens,
@@ -91,7 +91,7 @@ steps:
   # Phase C: 슬라이드 단위 명세 생성
   # ═══════════════════════════════════════════════════════════
   - id: step_4_slide_blueprint
-    agent: "06_prompt_generator/P2_Slide_Prompt_Architect"
+    agent: "04_prompt_generator/P2_Slide_Prompt_Architect"
     action: "generate_slide_specs"
     input: >
       교안별 교육 메타 + 교시별 학습요소 맵 (P1 산출물),
@@ -112,7 +112,7 @@ steps:
   # Phase D: 교안별 개별 조립 + QA 루프
   # ═══════════════════════════════════════════════════════════
   - id: step_5_assembly
-    agent: "06_prompt_generator/P0_Orchestrator"
+    agent: "04_prompt_generator/P0_Orchestrator"
     action: "assemble_prompt_per_file"
     input: >
       File Manifest (N개),
@@ -136,7 +136,7 @@ steps:
       파일명은 File Manifest의 세션 ID와 세션 제목으로 결정합니다.
 
   - id: step_6_qa
-    agent: "06_prompt_generator/P4_QA_Auditor"
+    agent: "04_prompt_generator/P4_QA_Auditor"
     action: "validate_prompt_quality"
     input: >
       교안별 Draft 프롬프트 파일 (N개),
@@ -158,7 +158,7 @@ steps:
   # Phase E: 교안별 최종 산출물 저장
   # ═══════════════════════════════════════════════════════════
   - id: step_7_finalize
-    agent: "06_prompt_generator/P0_Orchestrator"
+    agent: "04_prompt_generator/P0_Orchestrator"
     action: "finalize_per_file_output"
     input: >
       Approved 교안별 프롬프트 파일 (N개),
@@ -169,5 +169,5 @@ steps:
       Generation Summary (파일 수, 파일별 슬라이드 추정 장수, 총 장수)
     description: >
       승인된 교안별 프롬프트 파일을 프로젝트 폴더에 개별 저장하고 생성 요약을 출력합니다.
-      산출물 경로: {project_folder}/06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md (×N개)
-      예시: 06_SlidePrompt/Day1_AM_환경구축_슬라이드 생성 프롬프트.md
+      산출물 경로: {project_folder}/04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md (×N개)
+      예시: 04_SlidePrompt/Day1_AM_환경구축_슬라이드 생성 프롬프트.md

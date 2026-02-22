@@ -17,7 +17,7 @@
 | **3. 시각화** | 슬라이드 스토리보드 기획 | `/project:slide-gen` | `slide-generator` | `03_Slides/{session}/슬라이드기획안.md` |
 | **4. PPTX 변환** | HTML 기반 PPTX 생성 | `/project:pptx-convert` | `pptx-converter` | `04_PPTX/최종_프레젠테이션.pptx` |
 | **5. AI PPTX** | AI 이미지 기반 고품질 PPTX | `/project:nano-pptx` | `nano-pptx` | `05_NanoPPTX/최종_프레젠테이션.pptx` |
-| **6. 프롬프트 생성** | 원샷 슬라이드 생성 프롬프트 | `/project:slide-prompt` | `slide-prompt-gen` | `06_SlidePrompt/...프롬프트.md` (×N개) |
+| **6. 프롬프트 생성** | 원샷 슬라이드 생성 프롬프트 | `/project:slide-prompt` | `slide-prompt-gen` | `04_SlidePrompt/...프롬프트.md` (×N개) |
 | **7. Manus 슬라이드** | Manus AI로 PPTX 생성 | `/project:manus-slide` | — (Python 스크립트) | `07_ManusSlides/*.pptx` (×N개) |
 | **전체 자동화** | 1, 2, 3, 6단계 자동 연결 실행 | `/project:lecture-factory` | `Master Orchestrator` | `기획안→교안→슬라이드→프롬프트` |
 
@@ -287,7 +287,7 @@
 
 #### 결과물
 
-`{project_folder}/06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개)
+`{project_folder}/04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개)
 
 #### 교안 원문 전문 삽입 정책 (v1.1)
 
@@ -327,7 +327,7 @@
 # 슬래시 커맨드 (Claude Code 내에서)
 /project:manus-slide
 
-# 전체 파일 처리 (06_SlidePrompt/ 내 모든 프롬프트)
+# 전체 파일 처리 (04_SlidePrompt/ 내 모든 프롬프트)
 python .agent/scripts/manus_slide.py 2026-02-19_AI-native_데이터사이언스기초
 
 # 단일 파일만 처리 (세션ID로 지정)
@@ -354,7 +354,7 @@ python .agent/scripts/manus_slide.py
 #### 실행 흐름
 
 ```text
-06_SlidePrompt/*.md (N개 프롬프트)
+04_SlidePrompt/*.md (N개 프롬프트)
     ↓ POST /v1/tasks (순차 제출)
 Manus AI (Nano Banana Pro 슬라이드 생성, 3~15분/파일)
     ↓ 30초 간격 폴링
@@ -398,9 +398,9 @@ Manus AI (Nano Banana Pro 슬라이드 생성, 3~15분/파일)
 | `/project:lecture-plan` | `.claude/commands/lecture-plan.md` | `01_Lecture_Planning.yaml` |
 | `/project:material-write` | `.claude/commands/material-write.md` | `02_Material_Writing.yaml` |
 | `/project:slide-gen` | `.claude/commands/slide-gen.md` | `03_Slide_Generation.yaml` |
-| `/project:pptx-convert` | `.claude/commands/pptx-convert.md` | `04_PPTX_Conversion.yaml` |
-| `/project:nano-pptx` | `.claude/commands/nano-pptx.md` | `05_NanoBanana_PPTX.yaml` |
-| `/project:slide-prompt` | `.claude/commands/slide-prompt.md` | `06_SlidePrompt_Generation.yaml` |
+| `/project:pptx-convert` | `.claude/commands/pptx-convert.md` | `05_PPTX_Conversion.yaml` |
+| `/project:nano-pptx` | `.claude/commands/nano-pptx.md` | `06_NanoBanana_PPTX.yaml` |
+| `/project:slide-prompt` | `.claude/commands/slide-prompt.md` | `04_SlidePrompt_Generation.yaml` |
 | `/project:manus-slide` | `.claude/commands/manus-slide.md` | `.agent/scripts/manus_slide.py` |
 | `/project:lecture-factory` | `.claude/commands/lecture-factory.md` | `전체 파이프라인 E2E 통합 오케스트레이션` |
 
@@ -451,7 +451,7 @@ Manus AI (Nano Banana Pro 슬라이드 생성, 3~15분/파일)
   │
   └─ /project:manus-slide
       └─ python .agent/scripts/manus_slide.py
-          ├─ 06_SlidePrompt/*.md 탐색
+          ├─ 04_SlidePrompt/*.md 탐색
           ├─ Manus API POST /v1/tasks (순차 제출)
           ├─ 30초 폴링 → 완료 감지
           ├─ PPTX 자동 다운로드
@@ -497,7 +497,7 @@ YYYY-MM-DD_강의제목/
 │   ├── images/
 │   ├── prompts/
 │   └── index.html
-├── 06_SlidePrompt/          (Pipeline 6 사용 시)
+├── 04_SlidePrompt/          (Pipeline 6 사용 시)
 │   ├── Day1_AM_환경구축_슬라이드 생성 프롬프트.md
 │   └── Day1_PM_변수와자료형_슬라이드 생성 프롬프트.md
 ├── 07_ManusSlides/          (Pipeline 7 사용 시)

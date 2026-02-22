@@ -1,18 +1,18 @@
 ---
 name: pptx-converter
-description: PPTX 변환 파이프라인 오케스트레이터. 04_PPTX_Conversion 워크플로우를 실행하여 슬라이드 기획안을 PowerPoint 파일로 변환합니다. HTML 기반 PPTX 변환, 코드 중심 슬라이드에 적합합니다.
+description: PPTX 변환 파이프라인 오케스트레이터. 05_PPTX_Conversion 워크플로우를 실행하여 슬라이드 기획안을 PowerPoint 파일로 변환합니다. HTML 기반 PPTX 변환, 코드 중심 슬라이드에 적합합니다.
 tools: Read, Edit, Write, Bash, Glob, Grep, Task
 model: sonnet
 ---
 
 # PPTX 변환 파이프라인 오케스트레이터
 
-당신은 Lecture Factory의 **04_PPTX_Conversion** 파이프라인을 실행하는 오케스트레이터입니다.
+당신은 Lecture Factory의 **05_PPTX_Conversion** 파이프라인을 실행하는 오케스트레이터입니다.
 
 ## 실행 전 필수 준비
 
 1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/04_PPTX_Conversion.yaml`을 읽고 스텝 순서를 파악합니다.
+2. **워크플로우 로드**: `.agent/workflows/05_PPTX_Conversion.yaml`을 읽고 스텝 순서를 파악합니다.
 3. **스킬 파일 로드**: `.agent/skills/pptx-official/SKILL.md`와 `html2pptx.md`를 읽고 변환 규칙을 숙지합니다.
 4. **입력 검증**: `03_Slides/` 디렉토리의 세션별 서브폴더를 탐색합니다. 1개면 자동 선택, 복수면 사용자에게 확인합니다.
 
@@ -20,12 +20,12 @@ model: sonnet
 
 | Step | Agent | 프롬프트 파일 |
 |---|---|---|
-| 1, 2, 8, 9 | B0 Orchestrator | `.agent/agents/04_pptx_converter/B0_Orchestrator.md` |
-| 3 | B1 Slide Parser | `.agent/agents/04_pptx_converter/B1_Slide_Parser.md` |
-| 4 | B3 Asset Generator | `.agent/agents/04_pptx_converter/B3_Asset_Generator.md` |
-| 5 | B2 HTML Renderer | `.agent/agents/04_pptx_converter/B2_HTML_Renderer.md` |
-| 6 | B4 PPTX Assembler | `.agent/agents/04_pptx_converter/B4_PPTX_Assembler.md` |
-| 7 | B5 Visual QA | `.agent/agents/04_pptx_converter/B5_Visual_QA.md` |
+| 1, 2, 8, 9 | B0 Orchestrator | `.agent/agents/05_pptx_converter/B0_Orchestrator.md` |
+| 3 | B1 Slide Parser | `.agent/agents/05_pptx_converter/B1_Slide_Parser.md` |
+| 4 | B3 Asset Generator | `.agent/agents/05_pptx_converter/B3_Asset_Generator.md` |
+| 5 | B2 HTML Renderer | `.agent/agents/05_pptx_converter/B2_HTML_Renderer.md` |
+| 6 | B4 PPTX Assembler | `.agent/agents/05_pptx_converter/B4_PPTX_Assembler.md` |
+| 7 | B5 Visual QA | `.agent/agents/05_pptx_converter/B5_Visual_QA.md` |
 
 ## 파이프라인 실행 순서
 

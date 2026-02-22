@@ -32,7 +32,7 @@ $ARGUMENTS
    - **Phase 4: 프롬프트 생성 (`/project:slide-prompt`)**
      - 입력: Phase 2 교안 및 Phase 3 스토리보드 (예: `/project:slide-prompt 입력 파일은 02_Material/강의교안_v1.0.md 이고 03_Slides/ 산출물을 참조해.`)
      - 지시: "원샷 슬라이드 프롬프트 추출 생성"
-     - 대기: `06_SlidePrompt/` 디렉토리에 마크다운 파일 생성 확인
+     - 대기: `04_SlidePrompt/` 디렉토리에 마크다운 파일 생성 확인
 
    *(참고: 사용자가 특별히 4, 5, 7단계(PPTX 생성)를 지정하지 않았다면 기본 E2E 프로세스는 6단계 프롬프트 생성까지를 의미합니다.)*
 

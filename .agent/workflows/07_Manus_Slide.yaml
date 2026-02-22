@@ -1,5 +1,5 @@
 name: "Manus Slide Generation Pipeline"
-description: "06_SlidePrompt가 생성한 슬라이드 프롬프트를 교시 단위로 분할하여 Manus AI(Nano Banana Pro)에 제출하고, PPTX를 다운로드·병합하는 워크플로우 (6인 에이전트 팀). 대형 프롬프트(1000줄+)는 세션 경계에서 자동 분할되어 품질과 안정성을 확보합니다. ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+description: "04_SlidePrompt가 생성한 슬라이드 프롬프트를 교시 단위로 분할하여 Manus AI(Nano Banana Pro)에 제출하고, PPTX를 다운로드·병합하는 워크플로우 (6인 에이전트 팀). 대형 프롬프트(1000줄+)는 세션 경계에서 자동 분할되어 품질과 안정성을 확보합니다. ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
 version: "1.0"
 required_env:
   - MANUS_API_KEY
@@ -9,9 +9,9 @@ steps:
   - id: step_1_input_discovery
     agent: "07_manus_slide/D0_Orchestrator"
     action: "discover_inputs"
-    input: "06_SlidePrompt/ directory, MANUS_API_KEY, Output Language: Korean"
+    input: "04_SlidePrompt/ directory, MANUS_API_KEY, Output Language: Korean"
     output: "Input Manifest (prompt files list, sizes, slide counts)"
-    description: "06_SlidePrompt/ 폴더에서 프롬프트 파일을 탐색하고, MANUS_API_KEY 유효성을 확인합니다. 파일별 줄 수·슬라이드 수를 집계하여 분할 필요 여부를 사전 판단합니다."
+    description: "04_SlidePrompt/ 폴더에서 프롬프트 파일을 탐색하고, MANUS_API_KEY 유효성을 확인합니다. 파일별 줄 수·슬라이드 수를 집계하여 분할 필요 여부를 사전 판단합니다."
 
   - id: step_2_prompt_validation
     agent: "07_manus_slide/D1_Prompt_Validator"
