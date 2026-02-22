@@ -13,10 +13,9 @@
   // === Agent-Level Model Overrides ===
   "agents": {
     // Main Orchestrator: Multi-pipeline coordination (7 pipelines)
-    // Needs maximum reasoning for complex agent team management
+    // Kimi K2.5 — Agent Swarm (100 sub-agents), tool-use #1, 256K context, ~30x cost reduction
     "sisyphus": {
-      "model": "anthropic/claude-opus-4-6",
-      "variant": "max"
+      "model": "opencode/kimi-k2.5"
     },
     // Codebase Explorer: Pattern search within lecture materials
     // Fast & cheap - just grep/read operations
@@ -37,7 +36,7 @@
     // Deep Executor: Complex autonomous goal-oriented tasks
     // Reasoning-specialized for multi-step implementation
     "hephaestus": {
-      "model": "opencode/gpt-5.2-codex"
+      "model": "opencode/gpt-5.3-codex"
     }
   },
   // === Category-Level Model + Context Injection ===
@@ -74,7 +73,7 @@
     // Curriculum Design: Complex learning architecture
     // Reasoning-specialized for dependency mapping and scaffolding
     "ultrabrain": {
-      "model": "opencode/gpt-5.2-codex",
+      "model": "opencode/gpt-5.3-codex",
       "variant": "xhigh"
     },
     // Creative Tasks: Differentiation strategies, narrative design
