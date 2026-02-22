@@ -1,21 +1,18 @@
-AGENTS.md의 규칙을 따라 03_Slide_Generation 워크플로우를 실행합니다.
+03_Slide_Generation 워크플로우를 실행합니다.
 
 ## 입력
 $ARGUMENTS
 
-## 실행 지침
+## 실행
 
-1. 프로젝트 루트의 `AGENTS.md`를 읽고 전체 운영 규칙을 숙지하세요.
-2. `.agent/workflows/03_Slide_Generation.yaml`을 읽고 파이프라인 스텝 순서를 확인하세요.
-3. **입력 모드 판별**:
-   - 특정 파일 지정 → 단일 파일 모드 (파일명에서 세션 ID 추출)
-   - 폴더 지정 → 배치 모드 (`*.md` N개 순차 처리)
-   - 미지정 → `02_Material/` 내 최신 교안 자동 탐색
-4. 각 스텝 실행 전 `.agent/agents/03_visualizer/` 내 해당 에이전트 프롬프트 파일을 읽고 역할을 수행하세요.
-5. 파이프라인을 실행하세요 (파일당 1회):
-   - Phase 1: A1 (분석) → A2 (용어)
-   - Phase 2: A3 (시퀀스) → A7 (디자인 토큰)
-   - Phase 3: A4, A5, A8 (병렬) → A6 (Lab 카드, A5 완료 후)
-   - Phase 4: A10 (추적성) → A9 (QA — 승인/반려)
-6. 배치 모드 시: 파일 간 A2 용어집 누적 참조, 완료 시 `[{완료}/{전체}]` 보고
-7. 산출물을 `03_Slides/{session}/`에 저장하세요.
+`slide-generator` 서브에이전트에게 위임하여 실행합니다.
+
+```
+Task(subagent_type="slide-generator", prompt=$ARGUMENTS)
+```
+
+서브에이전트가 AGENTS.md 규칙, `.agent/workflows/03_Slide_Generation.yaml` 스텝 순서,
+`.agent/agents/03_visualizer/` 에이전트 프롬프트를 참조하여 파이프라인을 자율 실행합니다.
+
+- 단일 파일 / 배치 모드 / 자동 탐색 모드를 서브에이전트가 판별합니다.
+- 산출물: `03_Slides/{session}/슬라이드기획안.md` 및 Phase별 중간 산출물
