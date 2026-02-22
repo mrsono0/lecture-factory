@@ -5,7 +5,7 @@
     "skill_dependencies": ["nanobanana-ppt-skills", "imagen", "gemini-api-dev", "pptx-official", "last30days"],
     "required_env": ["GEMINI_API_KEY"],
     "optional_env": ["KLING_ACCESS_KEY", "KLING_SECRET_KEY"],
-    "tools": ["gemini-3-pro-image-preview", "generate_ppt.py", "pptxgenjs", "thumbnail.py"],
+    "tools_reference": ["gemini-3-pro-image-preview", "generate_ppt.py", "pptxgenjs", "thumbnail.py"],
     "agent_models": {
         "C2_Prompt_Engineer": { "category": "writing", "note": "이미지 프롬프트 작성 — 정밀한 문장력 필요" }
     }
