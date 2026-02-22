@@ -1,11 +1,14 @@
 name: "Slide Generation Pipeline"
 description: >
-  완성된 교안을 바탕으로 슬라이드를 기획하고 생성하는 시각화 단계 워크플로우 (10인 에이전트 팀).
+  완성된 교안을 바탕으로 슬라이드를 기획하고 생성하는 시각화 단계 워크플로우 (11인 에이전트 팀).
   단일 파일 또는 폴더 지정 배치 모드를 지원합니다. 배치 모드 시 폴더 내 *.md 파일을
   동적으로 탐색하여 N개를 순차 처리합니다 (파일 수 가변).
   ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents
   using list_dir/read_file BEFORE proceeding.
-version: "2.1"
+version: "2.2"
+
+output_path: "{YYYY-MM-DD_강의제목}/03_Slides/{session}/슬라이드기획안.md"
+max_retries: 2  # step_10 반려 시 step_5부터 재실행 최대 횟수
 
 # ───────────────────────────────────────────────────────────
 # 입력 정책 (Input Policy)
@@ -28,6 +31,7 @@ steps:
   - id: step_2_terminology
     agent: "03_visualizer/A2_Terminology_Manager"
     action: "extract_terms"
+    depends_on: "step_1_analysis"
     input: "Content Inventory, Output Language: Korean"
     output: "Glossary & Prerequisite Map"
 
@@ -35,31 +39,39 @@ steps:
   - id: step_3_structure
     agent: "03_visualizer/A3_Slide_Architect"
     action: "design_sequence"
+    depends_on: "step_2_terminology"
     input: "Content Inventory, Glossary, Output Language: Korean"
     output: "Slide Sequence Map"
 
   - id: step_4_design_system
     agent: "03_visualizer/A7_Visual_Design_Director"
     action: "define_style"
+    depends_on: "step_3_structure"
     input: "Slide Sequence Map, Output Language: Korean"
     output: "Design Tokens & Style Guide"
 
-  # Phase 3: 생성 및 검증 (병렬 실행 권장)
+  # Phase 3: 생성 및 검증 (병렬 실행)
   - id: step_5_layout
-    agent: "03_visualizer/A4_Layout_Designer" # Renamed from Slide Structure Designer for consistency
+    agent: "03_visualizer/A4_Layout_Designer"
     action: "create_layout"
+    depends_on: "step_4_design_system"
+    parallel_group: "phase3"
     input: "Slide Sequence Map, Design Tokens, Output Language: Korean"
     output: "Slide Layout Specs"
 
   - id: step_6_code_validation
     agent: "03_visualizer/A5_Code_Validator"
     action: "validate_code"
+    depends_on: "step_1_analysis"
+    parallel_group: "phase3"
     input: "Content Inventory (Code Blocks), Output Language: Korean"
     output: "Validated Code Blocks"
 
   - id: step_7_copy_editing
     agent: "03_visualizer/A8_Copy_Tone_Editor"
     action: "refine_text"
+    depends_on: "step_5_layout"
+    parallel_group: "phase3"
     input: "Slide Layout Specs, Output Language: Korean"
     output: "Refined Slide Copy"
 
@@ -67,6 +79,7 @@ steps:
   - id: step_8_lab_cards
     agent: "03_visualizer/A6_Lab_Reproducibility_Engineer"
     action: "create_lab_cards"
+    depends_on: "step_6_code_validation"
     input: "Validated Code Blocks, Slide Sequence Map, Output Language: Korean"
     output: "Lab Cards & Troubleshooting Guide"
 
@@ -74,13 +87,18 @@ steps:
   - id: step_9_traceability
     agent: "03_visualizer/A10_Trace_Citation_Keeper"
     action: "verify_sources"
+    depends_on:
+      - "step_5_layout"
+      - "step_7_copy_editing"
+      - "step_8_lab_cards"
     input: "All Agent Outputs, Output Language: Korean"
     output: "Traceability Report"
 
   - id: step_10_final_qa
     agent: "03_visualizer/A9_QA_Auditor"
     action: "final_audit"
+    depends_on: "step_9_traceability"
     input: "All Agent Outputs, Traceability Report, Output Language: Korean"
     decision:
-      - if: "Approved" -> Finish
-      - if: "Rejected" -> Go to step_5_layout (or relevant step)
+      approved: "Finish — 산출물을 03_Slides/{session}/에 저장"
+      rejected: "Go to step_5_layout (최대 2회 재실행)"
