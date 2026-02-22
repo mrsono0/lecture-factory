@@ -2,7 +2,7 @@
     "name": "02_writer",
     "description": "확정된 커리큘럼을 바탕으로 교안 본문과 코드를 작성하는 집필 에이전트 팀",
     "default_category": "deep",
-    "tools": ["notebooklm", "deep-research", "tavily-web"],
+    "tools_reference": ["notebooklm", "deep-research", "tavily-web"],
     "agent_models": {
         "A2_Traceability_Curator":       { "category": "quick",              "note": "출처 추적 구축 — 기계적 매핑" },
         "A5_Code_Validator":             { "category": "quick",              "note": "코드 실행 검증 — 정확성만 필요" },
