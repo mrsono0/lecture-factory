@@ -1,0 +1,80 @@
+name: "Log Analysis Pipeline"
+description: "파이프라인 실행 로그를 분석하여 보틀넥, 비용, 실패 패턴을 진단하고 최적화를 제안하는 분석 워크플로우 (Log Analyzer Team - 6 Agents)"
+version: "1.0"
+
+output_path: ".agent/dashboard/log_analysis_{YYYY-MM-DD}.md"
+max_retries: 1  # step_6 반려 시 step_5부터 재실행 최대 횟수
+
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
+  path: ".agent/logs/{YYYY-MM-DD}_08_Log_Analysis.jsonl"
+  format: "jsonl"
+
+steps:
+  # Phase 1: 순차 실행 — 범위 결정 → 데이터 수집 → 스키마 검증
+  - id: step_0_scope
+    agent: "08_log_analyzer/L0_Orchestrator"
+    action: "define_scope"
+    input: "User Request, Analysis Mode (auto/cost/performance/reliability/compare)"
+    output: "Scope Definition (target logs, focus area, comparison baseline)"
+
+  - id: step_1_collect
+    agent: "08_log_analyzer/L1_Data_Collector"
+    action: "run_analysis_script"
+    depends_on: "step_0_scope"
+    input: "Scope Definition, Script Path: .agent/scripts/analyze_logs.sh"
+    output: "Data Packet (normalized JSON from script output)"
+
+  - id: step_2_validate
+    agent: "08_log_analyzer/L1_Data_Collector"
+    action: "validate_schema"
+    depends_on: "step_1_collect"
+    input: "Data Packet, Schema: .agent/logging-protocol.md"
+    output: "Validation Result (pass/fail + details)"
+
+  # Phase 2: 병렬 실행 — 인사이트 분석과 최적화 제안은 독립적으로 동시 실행
+  - id: step_3_insight
+    agent: "08_log_analyzer/L2_Insight_Analyst"
+    action: "analyze_patterns"
+    parallel: true  # ← L3와 병렬 실행
+    depends_on: "step_2_validate"
+    input: "Data Packet, Scope Definition (focus area)"
+    output: "Insight Packet (patterns, anomalies, trends)"
+
+  - id: step_4_optimize
+    agent: "08_log_analyzer/L3_Optimizer"
+    action: "propose_optimizations"
+    parallel: true  # ← L2와 병렬 실행
+    depends_on: "step_2_validate"
+    input: "Data Packet, Cost Table: .agent/logging-protocol.md §5"
+    output: "Optimization Packet (proposals with ROI estimates)"
+
+  # Phase 3: 리포트 작성 — L2+L3 산출물 통합
+  - id: step_5_report
+    agent: "08_log_analyzer/L4_Report_Writer"
+    action: "write_report"
+    depends_on:
+      - "step_3_insight"
+      - "step_4_optimize"
+    input: "Insight Packet, Optimization Packet, Scope Definition"
+    output: "Analysis Report (.agent/dashboard/log_analysis_{date}.md)"
+
+  # Phase 4: QA 검증
+  - id: step_6_qa
+    agent: "08_log_analyzer/L5_QA_Auditor"
+    action: "verify_report"
+    depends_on: "step_5_report"
+    input: "Analysis Report, Data Packet (ground truth), Insight Packet, Optimization Packet"
+    output: "QA Report (approved/rejected + checklist)"
+
+  # Phase 5: 최종 승인/반려
+  - id: step_7_approval
+    agent: "08_log_analyzer/L0_Orchestrator"
+    action: "approve_report"
+    depends_on: "step_6_qa"
+    input: "QA Report, Analysis Report"
+    decision:
+      approved: "Finish"
+      rejected: "Go to step_5_report"
