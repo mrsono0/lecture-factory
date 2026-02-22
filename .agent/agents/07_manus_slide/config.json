@@ -1,6 +1,6 @@
 {
     "name": "07_manus_slide",
-    "description": "P06 슬라이드 프롬프트를 교시 단위로 분할하여 Manus AI(Nano Banana Pro)에 제출하고 PPTX를 생성·병합하는 6인 에이전트 팀",
+    "description": "P04 슬라이드 프롬프트를 교시 단위로 분할하여 Manus AI(Nano Banana Pro)에 제출하고 PPTX를 생성·병합하는 6인 에이전트 팀",
     "version": "1.0",
     "default_category": "quick",
     "required_env": ["MANUS_API_KEY"],
