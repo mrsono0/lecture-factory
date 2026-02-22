@@ -67,7 +67,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
   - *사용법*: `tavily-web search "키워드"`
 
 ## 산출물
-- 트렌드 분석 리포트 (`00_Plan/01_Trend/`)
+- 트렌드 분석 리포트 (`01_Planning/Trend_Report.md`)
   - 시장 동향 요약 (NotebookLM + Deep Research)
   - 주요 경쟁 강의 분석 (SWOT)
   - 타겟 학습자의 니즈 분석

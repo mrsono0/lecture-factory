@@ -2,7 +2,7 @@
     "name": "01_planner",
     "description": "강의 주제 선정부터 커리큘럼 확정까지의 기획 에이전트 팀",
     "default_category": "deep",
-    "tools": ["notebooklm", "deep-research", "tavily-web"],
+    "tools_reference": ["notebooklm", "deep-research", "tavily-web"],
     "agent_models": {
         "A0_Orchestrator":           { "category": "unspecified-low", "note": "참고자료 충분성 판단·골든 템플릿 조립·품질 게이트 — Sonnet 수준" },
         "A3_Curriculum_Architect":   { "category": "ultrabrain", "note": "커리큘럼 구조 설계 — 복잡한 의존성 매핑" },
