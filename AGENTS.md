@@ -2,6 +2,7 @@
 
 This file defines the operating rules and workflows for the Lecture Factory agent team.
 All agents MUST follow these instructions when executing tasks.
+> **관련 문서**: 사용법은 각 인터페이스의 `Lecture_Creation_Guide.md`를, 시스템 구조 상세는 `Developer_Guide.md`를 참조하세요. (`.claude/` 또는 `.agent/` 디렉토리)
 
 ## Essential Rule: Context Analysis (MANDATORY)
 
