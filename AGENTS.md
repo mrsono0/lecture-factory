@@ -28,7 +28,7 @@ The Lecture Factory system consists of **seven** main pipelines과 **1개의 E2E
 | 4 | **PPTX Conversion** | `04_PPTX_Conversion.yaml` | Convert slide storyboard to PowerPoint file | `04_PPTX/최종_프레젠테이션.pptx` |
 | 5 | **NanoBanana PPTX** | `05_NanoBanana_PPTX.yaml` | AI image-based high-quality slide generation | `05_NanoPPTX/최종_프레젠테이션.pptx` |
 | 6 | **Slide Prompt Generation** | `06_SlidePrompt_Generation.yaml` | Generate one-shot slide generation prompts from lecture materials | `06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개) |
-| 7 | **Manus Slide Generation** | `.agent/scripts/manus_slide.py` | Send slide prompts to Manus AI (Nano Banana Pro) and download PPTX | `07_ManusSlides/{세션ID}_{세션제목}.pptx` (×N개) |
+| 7 | **Manus Slide Generation** | `07_Manus_Slide.yaml` | Send slide prompts to Manus AI (Nano Banana Pro) with session-based chunking and download PPTX | `07_ManusSlides/{세션ID}_{세션제목}.pptx` (×N개) |
 | E2E | **End-to-End** | — (마스터 오케스트레이터) | 1, 2, 3, 6단계 순차 자동 실행 | 기획안→교안→슬라이드→프롬프트 |
 
 > **Note**: Pipelines 4, 5, 7 are alternative PPTX generation methods:
@@ -129,6 +129,15 @@ YYYY-MM-DD_강의제목/
 
 > **Pipeline 6 정책**: §⑥ 교안 원문 섹션에 교안 마크다운 전문을 삽입합니다. 상세 규칙은 P0/P2 에이전트 명세 참조.
 
+### Team 7: Manus Slide (07_manus_slide) — 6 agents
+**Flow**: D0 → D1 → D2 → D3 → D4 → D5 → D0 (승인/재제출/반려)
+**Tech**: Manus AI API (manus-1.6-max), Nano Banana Pro, python-pptx
+**Required**: `MANUS_API_KEY`
+**분할 전략**: 교시 단위 순차 분할 (≤1,000줄 원샷 / 1,000+ 교시 분할)
+- D2(Chunk Splitter): ③⑥ 교시 경계 감지 → 공통 헤더 + 교시별 청크 생성
+- D3(Submission Manager): 청크별 순차 제출 → PPTX 다운로드
+- D4(Post Processor): 청크 PPTX 병합 (python-pptx, 슬라이드 노트 보존)
+
 ---
 
 ## Per-Agent Model Routing
@@ -180,6 +189,9 @@ YYYY-MM-DD_강의제목/
 | | | P2 Slide Prompt Architect | `deep` |
 | | | P3 Visual Spec Curator | `visual-engineering` |
 | | | P4 QA Auditor | `ultrabrain` |
+| **P07** Manus Slide | `quick` | D0 Orchestrator | `unspecified-low` |
+| | | D2 Chunk Splitter | `writing` |
+| | | D5 Visual QA | `ultrabrain` |
 
 ---
 

@@ -1,0 +1,43 @@
+{
+    "name": "07_manus_slide",
+    "description": "P06 슬라이드 프롬프트를 교시 단위로 분할하여 Manus AI(Nano Banana Pro)에 제출하고 PPTX를 생성·병합하는 6인 에이전트 팀",
+    "version": "1.0",
+    "default_category": "quick",
+    "required_env": ["MANUS_API_KEY"],
+    "optional_env": [],
+    "input_policy": {
+        "required": "06_SlidePrompt/*슬라이드 생성 프롬프트.md (N개, 파일 수 가변)",
+        "optional": "02_Material/*.md (교안 원문 대조 검증용)"
+    },
+    "output_policy": {
+        "mode": "per_file",
+        "path": "07_ManusSlides/",
+        "filename_pattern": "{세션ID}_{세션제목}.pptx",
+        "count": "N개 (프롬프트 파일당 1개)",
+        "additional": ["manus_task_log.json", "generation_report.json", "slide_notes.md"]
+    },
+    "chunking_policy": {
+        "strategy": "session_based",
+        "threshold_lines": 1000,
+        "threshold_slides": 35,
+        "chunk_target_slides": "8~20",
+        "split_markers": {
+            "section_3": "#### N. 세션 X-Y 파트:",
+            "section_6": "## 세션 X-Y:"
+        },
+        "common_header_sections": ["①", "②", "④", "⑤"],
+        "modes": {
+            "under_threshold": "원샷 (분할 안 함)",
+            "1000_to_1500": "교시 2분할",
+            "over_1500": "교시 3~4분할"
+        }
+    },
+    "agent_models": {
+        "D0_Orchestrator":       { "category": "unspecified-low", "note": "조율·입력 탐색·승인/반려 — 절차적 작업" },
+        "D1_Prompt_Validator":   { "category": "quick",           "note": "6-섹션 구조 검증·PREFIX 중복 확인 — 규칙 대조" },
+        "D2_Chunk_Splitter":     { "category": "writing",         "note": "교시 단위 분할·프롬프트 최적화 — 문장력 필요" },
+        "D3_Submission_Manager": { "category": "quick",           "note": "manus_slide.py 실행·모니터링 — 기계적 작업" },
+        "D4_Post_Processor":     { "category": "quick",           "note": "PPTX 후처리·청크 병합·파일 정리 — 기계적" },
+        "D5_Visual_QA":          { "category": "ultrabrain",      "note": "★ 최종 방어선 — 콘텐츠 보존·디자인·발표자 노트 다관점 검증" }
+    }
+}

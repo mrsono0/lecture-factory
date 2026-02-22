@@ -34,6 +34,8 @@ POLL_INTERVAL = 30        # 폴링 간격 (초)
 MAX_WAIT_TIME = 1800      # 최대 대기 시간 (30분)
 MAX_CONCURRENT = 5        # 동시 제출 최대 수
 PROMPT_GLOB = "*슬라이드 생성 프롬프트.md"
+CHUNK_THRESHOLD = 1000    # 이 줄 수 이상이면 세션 단위 분할
+CHUNK_MAX_SLIDES = 35     # 이 슬라이드 수 이상이면 분할
 
 # ─── 헤더/풋터 금지 프리픽스 ─────────────────────────────────
 # Manus AI에 프롬프트 전송 시 최상단에 삽입하여 디자인 규칙을 강제합니다.
@@ -364,83 +366,248 @@ def strip_headers_footers(pptx_path):
     return modified
 
 
-def process_single(api_key, prompt_file, output_dir):
-    """단일 프롬프트 파일 처리: 제출 → 폴링 → 다운로드"""
-    filename = prompt_file.stem
-    short_name = filename.replace("_슬라이드 생성 프롬프트", "")
-    print(f"\n{'='*60}", flush=True)
-    print(f"[제출] {short_name}", flush=True)
+def _count_slides(content):
+    import re
+    return len(re.findall(r'^#{2,4}\s*(?:슬라이드|Slide)\s*\d+', content, re.MULTILINE))
 
-    prompt_content = prompt_file.read_text(encoding="utf-8")
 
-    # Task 생성
+def _extract_section(content, section_marker):
+    import re
+    pattern = rf'^(#{1,3}\s*{re.escape(section_marker)}.*)$'
+    match = re.search(pattern, content, re.MULTILINE)
+    if not match:
+        return ""
+    start = match.start()
+    next_section = re.search(r'^#{1,3}\s*[①②③④⑤⑥§]', content[match.end():], re.MULTILINE)
+    if next_section:
+        end = match.end() + next_section.start()
+    else:
+        end = len(content)
+    return content[start:end].rstrip()
+
+
+def _find_session_boundaries(section_text, pattern):
+    import re
+    boundaries = []
+    for m in re.finditer(pattern, section_text, re.MULTILINE):
+        boundaries.append((m.start(), m.group(0).strip()))
+    if not boundaries:
+        return [(0, len(section_text), "전체")]
+    result = []
+    for i, (start, label) in enumerate(boundaries):
+        end = boundaries[i + 1][0] if i + 1 < len(boundaries) else len(section_text)
+        result.append((start, end, label))
+    return result
+
+
+def split_by_session(prompt_content, threshold_lines=CHUNK_THRESHOLD,
+                     threshold_slides=CHUNK_MAX_SLIDES):
+    """
+    대형 프롬프트를 교시(세션) 경계에서 분할.
+
+    분할 조건: 줄 수 >= threshold_lines OR 슬라이드 수 >= threshold_slides
+    분할 단위: ③ 슬라이드 명세의 '#### N. 세션' 경계 + ⑥ 교안 원문의 '## 세션' 경계
+    각 청크 = ①②④⑤ 공통 헤더 + ③-N + ⑥-N
+
+    Returns:
+        list[str]: 분할된 프롬프트 리스트 (분할 불필요 시 원본 1개 리스트)
+    """
+    import re
+
+    lines = prompt_content.splitlines()
+    line_count = len(lines)
+    slide_count = _count_slides(prompt_content)
+
+    if line_count < threshold_lines and slide_count < threshold_slides:
+        return [prompt_content]
+
+    print(f"  [분할] {line_count}줄, ~{slide_count}슬라이드 → 세션 단위 분할 시작", flush=True)
+
+    section_3 = _extract_section(prompt_content, "③")
+    section_6 = _extract_section(prompt_content, "⑥")
+
+    if not section_3 and not section_6:
+        print("  [분할] ③/⑥ 섹션을 찾을 수 없음 — 분할 건너뜀", flush=True)
+        return [prompt_content]
+
+    s3_boundaries = _find_session_boundaries(
+        section_3, r'^####\s*\d+\.\s*세션'
+    ) if section_3 else []
+
+    s6_boundaries = _find_session_boundaries(
+        section_6, r'^##\s*세션'
+    ) if section_6 else []
+
+    split_count = max(len(s3_boundaries), len(s6_boundaries))
+    if split_count <= 1:
+        print("  [분할] 세션 경계가 1개 이하 — 분할 건너뜀", flush=True)
+        return [prompt_content]
+
+    common_header_parts = []
+    for marker in ["①", "②", "④", "⑤"]:
+        section = _extract_section(prompt_content, marker)
+        if section:
+            common_header_parts.append(section)
+    common_header = "\n\n".join(common_header_parts)
+
+    section_3_header = ""
+    if section_3:
+        first_boundary = re.search(r'^####\s*\d+\.\s*세션', section_3, re.MULTILINE)
+        if first_boundary and first_boundary.start() > 0:
+            section_3_header = section_3[:first_boundary.start()].rstrip()
+
+    section_6_header = ""
+    if section_6:
+        first_boundary = re.search(r'^##\s*세션', section_6, re.MULTILINE)
+        if first_boundary and first_boundary.start() > 0:
+            section_6_header = section_6[:first_boundary.start()].rstrip()
+
+    chunks = []
+    for i in range(split_count):
+        parts = [common_header]
+
+        if i < len(s3_boundaries):
+            start, end, label = s3_boundaries[i]
+            s3_chunk = section_3[start:end].rstrip()
+            if section_3_header:
+                parts.append(section_3_header + "\n\n" + s3_chunk)
+            else:
+                parts.append(s3_chunk)
+
+        if i < len(s6_boundaries):
+            start, end, label = s6_boundaries[i]
+            s6_chunk = section_6[start:end].rstrip()
+            if section_6_header:
+                parts.append(section_6_header + "\n\n" + s6_chunk)
+            else:
+                parts.append(s6_chunk)
+
+        chunk_text = "\n\n".join(parts)
+        chunks.append(chunk_text)
+
+    print(f"  [분할] {split_count}개 청크로 분할 완료", flush=True)
+    for i, c in enumerate(chunks):
+        print(f"    청크 {i+1}: {len(c.splitlines())}줄", flush=True)
+
+    return chunks
+
+
+def merge_pptx(chunk_pptx_paths, output_path):
+    """
+    분할 제출된 청크 PPTX들을 하나의 파일로 병합.
+
+    python-pptx Presentation 객체를 사용하여 첫 PPTX를 base로 하고
+    나머지 청크의 슬라이드를 순서대로 추가합니다.
+
+    Args:
+        chunk_pptx_paths: 병합할 PPTX 파일 경로 리스트 (순서대로)
+        output_path: 병합 결과 저장 경로
+
+    Returns:
+        int: 병합된 총 슬라이드 수
+    """
     try:
-        task_id, create_data = create_task(api_key, prompt_content, short_name)
+        from pptx import Presentation
+        import copy
+    except ImportError:
+        print("  [WARN] python-pptx 미설치 — 병합 건너뜀", flush=True)
+        return 0
+
+    valid_paths = [p for p in chunk_pptx_paths if Path(p).exists()]
+    if not valid_paths:
+        print("  [WARN] 병합할 PPTX 파일 없음", flush=True)
+        return 0
+
+    if len(valid_paths) == 1:
+        import shutil
+        shutil.copy2(valid_paths[0], output_path)
+        prs = Presentation(str(valid_paths[0]))
+        return len(prs.slides)
+
+    base_prs = Presentation(str(valid_paths[0]))
+    total_slides = len(base_prs.slides)
+
+    for pptx_path in valid_paths[1:]:
+        src_prs = Presentation(str(pptx_path))
+        for slide in src_prs.slides:
+            slide_layout = base_prs.slide_layouts[6]
+            for layout in base_prs.slide_layouts:
+                if layout.name == "Blank" or "blank" in layout.name.lower():
+                    slide_layout = layout
+                    break
+
+            new_slide = base_prs.slides.add_slide(slide_layout)
+
+            for elem in list(new_slide.shapes._spTree):
+                if elem.tag.endswith('}sp') or elem.tag.endswith('}pic'):
+                    new_slide.shapes._spTree.remove(elem)
+
+            for shape in slide.shapes:
+                el = copy.deepcopy(shape._element)
+                new_slide.shapes._spTree.append(el)
+
+            if slide.has_notes_slide:
+                notes_text = slide.notes_slide.notes_text_frame.text
+                if notes_text:
+                    if not new_slide.has_notes_slide:
+                        new_slide.notes_slide
+                    new_slide.notes_slide.notes_text_frame.text = notes_text
+
+            total_slides += 1
+
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+    base_prs.save(str(output_path))
+    print(f"  [병합] {len(valid_paths)}개 PPTX → {total_slides}슬라이드 병합 완료", flush=True)
+    return total_slides
+
+
+def _submit_single_content(api_key, prompt_content, label, output_dir):
+    """단일 콘텐츠 제출→폴링→다운로드 (분할/비분할 공용)"""
+    try:
+        task_id, create_data = create_task(api_key, prompt_content, label)
         print(f"  task_id: {task_id}", flush=True)
     except requests.RequestException as e:
         print(f"  [ERROR] Task 생성 실패: {e}", flush=True)
-        return {
-            "file": str(prompt_file.name),
-            "status": "submit_failed",
-            "error": str(e),
-        }
+        return {"label": label, "status": "submit_failed", "error": str(e)}
 
-    # 폴링
-    result = poll_task(api_key, task_id, short_name)
+    result = poll_task(api_key, task_id, label)
 
     if result["status"] != "completed":
         print(f"  [FAIL] {result.get('reason', 'unknown')}", flush=True)
         return {
-            "file": str(prompt_file.name),
-            "task_id": task_id,
-            "status": result["status"],
-            "reason": result.get("reason", ""),
+            "label": label, "task_id": task_id,
+            "status": result["status"], "reason": result.get("reason", ""),
         }
 
-    # 파일 다운로드
     task_data = result["data"]
     file_urls = extract_file_urls(task_data)
 
     if not file_urls:
-        print(f"  [WARN] 다운로드 가능한 파일 없음 — Task 페이지 확인 필요", flush=True)
-        # shareable link가 있으면 기록
+        print(f"  [WARN] 다운로드 가능한 파일 없음", flush=True)
         share_link = task_data.get("shareableLink") or task_data.get("shareable_link", "")
         return {
-            "file": str(prompt_file.name),
-            "task_id": task_id,
-            "status": "completed_no_file",
-            "shareable_link": share_link,
-            "note": "Manus 웹에서 수동 다운로드 필요",
+            "label": label, "task_id": task_id,
+            "status": "completed_no_file", "shareable_link": share_link,
         }
 
     downloaded = []
-    pptx_count = 0
     for finfo in file_urls:
         raw_name = finfo.get("name", "")
-        # 파일 확장자 결정
-        if raw_name:
-            ext = Path(raw_name).suffix
-        else:
-            ext = ""
+        ext = Path(raw_name).suffix if raw_name else ""
         if not ext:
-            # URL에서 확장자 추출 시도
             url_path = finfo["url"].split("?")[0]
             ext = Path(url_path).suffix if "." in Path(url_path).name else ".pptx"
 
-        # 파일명 결정: PPTX는 세션명, 기타는 원본 이름 유지
         if ext.lower() == ".pptx":
-            pptx_count += 1
-            save_name = f"{short_name}.pptx"
+            save_name = f"{label}.pptx"
         else:
-            # 발표자 노트 등 부가 파일은 원본 이름 또는 세션명+확장자
-            base = Path(raw_name).stem if raw_name else f"{short_name}_notes"
-            save_name = f"{short_name}_{base}{ext}" if raw_name else f"{short_name}{ext}"
+            base = Path(raw_name).stem if raw_name else f"{label}_notes"
+            save_name = f"{label}_{base}{ext}" if raw_name else f"{label}{ext}"
 
         save_path = output_dir / save_name
         try:
             size = download_file(finfo["url"], save_path)
             print(f"  [OK] 다운로드: {save_name} ({size:,} bytes)", flush=True)
-            # PPTX 후처리: 헤더/풋터/페이지번호 자동 제거
             if ext.lower() == ".pptx":
                 strip_headers_footers(save_path)
                 size = save_path.stat().st_size
@@ -450,9 +617,79 @@ def process_single(api_key, prompt_file, output_dir):
             downloaded.append({"url": finfo["url"], "error": str(e)})
 
     return {
+        "label": label, "task_id": task_id,
+        "status": "completed", "downloaded": downloaded,
+    }
+
+
+def process_single(api_key, prompt_file, output_dir, no_split=False):
+    """단일 프롬프트 파일 처리: (분할 판단→) 제출 → 폴링 → 다운로드 (→ 병합)"""
+    filename = prompt_file.stem
+    short_name = filename.replace("_슬라이드 생성 프롬프트", "")
+    print(f"\n{'='*60}", flush=True)
+    print(f"[제출] {short_name}", flush=True)
+
+    prompt_content = prompt_file.read_text(encoding="utf-8")
+
+    if no_split:
+        chunks = [prompt_content]
+    else:
+        chunks = split_by_session(prompt_content)
+
+    if len(chunks) == 1:
+        result = _submit_single_content(api_key, chunks[0], short_name, output_dir)
+        return {
+            "file": str(prompt_file.name),
+            "task_id": result.get("task_id"),
+            "status": result["status"],
+            "chunks": 1,
+            "downloaded": result.get("downloaded", []),
+            "shareable_link": result.get("shareable_link", ""),
+            "reason": result.get("reason", ""),
+            "error": result.get("error", ""),
+        }
+
+    print(f"  [{short_name}] {len(chunks)}개 청크 순차 제출", flush=True)
+    chunk_results = []
+    chunk_pptx_paths = []
+    chunk_dir = output_dir / f".chunks_{short_name}"
+    chunk_dir.mkdir(exist_ok=True)
+
+    for i, chunk_content in enumerate(chunks):
+        chunk_label = f"{short_name}_chunk{i+1}"
+        print(f"\n  --- 청크 {i+1}/{len(chunks)} ---", flush=True)
+        cr = _submit_single_content(api_key, chunk_content, chunk_label, chunk_dir)
+        chunk_results.append(cr)
+        for dl in cr.get("downloaded", []):
+            if dl.get("path", "").endswith(".pptx"):
+                chunk_pptx_paths.append(dl["path"])
+
+    all_completed = all(cr["status"] == "completed" for cr in chunk_results)
+
+    if chunk_pptx_paths and len(chunk_pptx_paths) > 1:
+        merged_path = output_dir / f"{short_name}.pptx"
+        total_slides = merge_pptx(chunk_pptx_paths, str(merged_path))
+        if total_slides > 0:
+            strip_headers_footers(merged_path)
+            merged_size = merged_path.stat().st_size
+            downloaded = [{"path": str(merged_path), "size": merged_size}]
+        else:
+            downloaded = [{"path": p, "size": Path(p).stat().st_size}
+                         for p in chunk_pptx_paths if Path(p).exists()]
+    elif chunk_pptx_paths:
+        import shutil
+        single_path = output_dir / f"{short_name}.pptx"
+        shutil.copy2(chunk_pptx_paths[0], single_path)
+        downloaded = [{"path": str(single_path), "size": single_path.stat().st_size}]
+    else:
+        downloaded = []
+
+    return {
         "file": str(prompt_file.name),
-        "task_id": task_id,
-        "status": "completed",
+        "task_id": ",".join(cr.get("task_id", "") or "" for cr in chunk_results),
+        "status": "completed" if all_completed else "partial",
+        "chunks": len(chunks),
+        "chunk_results": chunk_results,
         "downloaded": downloaded,
     }
 
@@ -491,6 +728,7 @@ def main():
     parser.add_argument("--resume", help="중단된 작업 로그 파일로 재개")
     parser.add_argument("--max-concurrent", type=int, default=MAX_CONCURRENT, help="동시 처리 수")
     parser.add_argument("--dry-run", action="store_true", help="실제 API 호출 없이 테스트")
+    parser.add_argument("--no-split", action="store_true", help="세션 단위 분할 비활성화 (원본 전체 제출)")
     args = parser.parse_args()
 
     # API Key 확인
@@ -549,7 +787,7 @@ def main():
 
     # 순차 처리 (Manus API 제한 고려)
     for prompt_file in prompts:
-        result = process_single(api_key, prompt_file, output_dir)
+        result = process_single(api_key, prompt_file, output_dir, no_split=args.no_split)
         results.append(result)
 
         # 중간 로그 저장 (중단 복구용)
