@@ -172,7 +172,7 @@ YYYY-MM-DD_강의제목/
 | | | A8 Copy Tone Editor | `writing` |
 | | | A9 QA Auditor | `ultrabrain` |
 | **P04** PPTX Converter | `quick` | (없음 — 전원 기본) | — |
-| **P05** NanoBanana | `quick` | C2 Prompt Engineer | `writing` |
+| **P05** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
 | **P06** Prompt Generator | `writing` | P1 Education Structurer | `deep` |
 | | | P3 Visual Spec Curator | `visual-engineering` |
 | | | P4 QA Auditor | `ultrabrain` |

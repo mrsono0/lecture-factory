@@ -1,7 +1,7 @@
 {
     "name": "05_nanopptx",
     "description": "Nano Banana Pro 이미지 생성 기반 PPTX 변환 에이전트 팀",
-    "default_category": "quick",
+    "default_category": "visual-engineering",
     "skill_dependencies": ["nanobanana-ppt-skills", "imagen", "gemini-api-dev", "pptx-official", "last30days"],
     "required_env": ["GEMINI_API_KEY"],
     "optional_env": ["KLING_ACCESS_KEY", "KLING_SECRET_KEY"],
