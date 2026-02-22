@@ -1,0 +1,12 @@
+{
+    "name": "08_log_analyzer",
+    "description": "파이프라인 실행 로그를 분석하여 보틀넥, 비용, 실패 패턴을 진단하고 최적화를 제안하는 분석 에이전트 팀",
+    "default_category": "deep",
+    "tools_reference": ["analyze_logs.sh"],
+    "agent_models": {
+        "L0_Orchestrator":   { "category": "unspecified-low", "note": "분석 범위 결정·스크립트 실행 지시·최종 승인 — Sonnet 수준" },
+        "L1_Data_Collector": { "category": "quick",           "note": "스크립트 실행·데이터 수집·스키마 검증 — 기계적 작업" },
+        "L3_Optimizer":      { "category": "ultrabrain",      "note": "비용/성능 최적화 전략 — 복잡한 트레이드오프 분석" },
+        "L5_QA_Auditor":     { "category": "ultrabrain",      "note": "리포트 정합성·데이터 정확성 최종 검증 — 방어선" }
+    }
+}

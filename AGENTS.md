@@ -19,7 +19,7 @@ All agents MUST follow these instructions when executing tasks.
 
 ## Workflow Overview
 
-The Lecture Factory system consists of **seven** main pipelines과 **1개의 E2E 통합 실행** 명령을 제공합니다:
+The Lecture Factory system consists of **eight** main pipelines과 **1개의 E2E 통합 실행** 명령을 제공합니다:
 
 | # | Pipeline | Workflow File | Goal | Output |
 |---|---|---|---|---|
@@ -30,6 +30,7 @@ The Lecture Factory system consists of **seven** main pipelines과 **1개의 E2E
 | 5 | **PPTX Conversion** | `05_PPTX_Conversion.yaml` | Convert slide storyboard to PowerPoint file | `05_PPTX/최종_프레젠테이션.pptx` |
 | 6 | **NanoBanana PPTX** | `06_NanoBanana_PPTX.yaml` | AI image-based high-quality slide generation | `06_NanoPPTX/최종_프레젠테이션.pptx` |
 | 7 | **Manus Slide Generation** | `07_Manus_Slide.yaml` | Send slide prompts to Manus AI (Nano Banana Pro) with session-based chunking and download PPTX | `07_ManusSlides/{세션ID}_{세션제목}.pptx` (×N개) |
+| 8 | **Log Analysis** | `08_Log_Analysis.yaml` | Analyze pipeline execution logs for bottlenecks, cost, and optimization | `.agent/dashboard/log_analysis_{date}.md` |
 | E2E | **End-to-End** | — (마스터 오케스트레이터) | 1, 2, 3, 4단계 순차 자동 실행 | 기획안→교안→슬라이드→프롬프트 |
 
 > **Note**: Pipelines 5, 6, 7 are alternative PPTX generation methods:
@@ -141,6 +142,15 @@ YYYY-MM-DD_강의제목/
 - D3(Submission Manager): 청크별 순차 제출 → PPTX 다운로드
 - D4(Post Processor): 청크 PPTX 병합 (python-pptx, 슬라이드 노트 보존)
 
+### Team 8: Log Analyzer (08_log_analyzer) — 6 agents
+**팀 공통 원칙**: 모든 인사이트에 정량적 근거를 포함하고, 최적화 제안은 실행 가능한 구체적 내용이어야 합니다.
+**도구**: `.agent/scripts/analyze_logs.sh` (jq 기반 11개 서브커맨드)
+**Flow**:
+ Phase 1: L0 → L1 (범위 결정 → 데이터 수집 + 스키마 검증)
+ Phase 2: L2(인사이트 분석) ∥ L3(최적화 제안) [병렬]
+ Phase 3: L4 (리포트 작성) → L5 (QA 검증)
+ Phase 4: L0 (최종 승인/반려)
+
 ---
 
 ## Per-Agent Model Routing
@@ -195,6 +205,9 @@ YYYY-MM-DD_강의제목/
 | **P07** Manus Slide | `quick` | D0 Orchestrator | `unspecified-low` |
 | | | D2 Chunk Splitter | `writing` |
 | | | D5 Visual QA | `ultrabrain` |
+| **P08** Log Analyzer | `deep` | L0 Orchestrator | `unspecified-low` |
+| | | L1 Data Collector | `quick` |
+| | | L3 Optimizer, L5 QA Auditor | `ultrabrain` |
 
 ---
 
