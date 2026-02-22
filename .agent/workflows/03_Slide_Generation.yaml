@@ -13,6 +13,7 @@ max_retries: 2  # step_10 반려 시 step_5부터 재실행 최대 횟수
 logging:
   enabled: true
   protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
   path: ".agent/logs/{YYYY-MM-DD}_03_Slide_Generation.jsonl"
   format: "jsonl"
 

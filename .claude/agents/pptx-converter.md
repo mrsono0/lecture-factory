@@ -15,7 +15,7 @@ model: sonnet
 2. **워크플로우 로드**: `.agent/workflows/05_PPTX_Conversion.yaml`을 읽고 스텝 순서를 파악합니다.
 3. **스킬 파일 로드**: `.agent/skills/pptx-official/SKILL.md`와 `html2pptx.md`를 읽고 변환 규칙을 숙지합니다.
 4. **입력 검증**: `03_Slides/` 디렉토리의 세션별 서브폴더를 탐색합니다. 1개면 자동 선택, 복수면 사용자에게 확인합니다.
-5. **로깅 프로토콜**: `.agent/logging-protocol.md`를 읽고 로깅 규칙을 숙지합니다. 워크플로우 YAML의 `logging:` 설정에 따라 각 step 실행 전후로 `.agent/logs/`에 JSONL 로그를 기록합니다.
+5. **로깅 프로토콜**: `.agent/logging-protocol.md`를 읽고 로깅 규칙을 숙지합니다. 워크플로우 YAML의 `logging:` 설정에 따라 각 step 실행 전후로 `.agent/logs/`에 JSONL 로그를 기록합니다. 워크플로우 YAML의 `logging.model_config` 경로(`.opencode/oh-my-opencode.jsonc`)를 읽어 `categories` 섹션에서 각 에이전트의 `category`에 해당하는 `model` 값을 조회하고, 모든 로그 이벤트의 `model` 필드에 기록합니다.
 
 ## 에이전트 역할 참조
 
