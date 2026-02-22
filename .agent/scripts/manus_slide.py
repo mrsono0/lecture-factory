@@ -9,33 +9,87 @@ Nano Banana Pro로 슬라이드를 생성하고 PPTX를 다운로드합니다.
   python .agent/scripts/manus_slide.py [프로젝트폴더]
   python .agent/scripts/manus_slide.py                           # 자동 탐색
   python .agent/scripts/manus_slide.py /path/to/project          # 명시적 지정
-  python .agent/scripts/manus_slide.py --resume task_log.json    # 중단된 작업 재개
+  python .agent/scripts/manus_slide.py --resume                  # 이전 완료 파일 자동 스킵
+  python .agent/scripts/manus_slide.py --quiet                   # 사일런스 모드
+  python .agent/scripts/manus_slide.py --verbose                 # 디버그 출력
 """
 
 import argparse
+import atexit
 import json
+import logging
 import os
+import shutil
+import signal
 import sys
+import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
     import requests
+    from requests.adapters import HTTPAdapter
 except ImportError:
     print("[ERROR] requests 패키지가 필요합니다: pip install requests")
     sys.exit(1)
 
+try:
+    from urllib3.util.retry import Retry
+except ImportError:
+    Retry = None
+
+
+# ─── 로거 ────────────────────────────────────────────────────
+log = logging.getLogger("manus_slide")
+
 
 # ─── 설정 ───────────────────────────────────────────────────
 MANUS_API_BASE = "https://api.manus.ai/v1"
-POLL_INTERVAL = 30        # 폴링 간격 (초)
-MAX_WAIT_TIME = 1800      # 최대 대기 시간 (30분)
-MAX_CONCURRENT = 5        # 동시 제출 최대 수
+POLL_INTERVAL = 30  # 폴링 간격 (초)
+MAX_WAIT_TIME = 1800  # 최대 대기 시간 (30분)
+MAX_CONCURRENT = 5  # 동시 제출 최대 수
 PROMPT_GLOB = "*슬라이드 생성 프롬프트.md"
-CHUNK_THRESHOLD = 1000    # 이 줄 수 이상이면 세션 단위 분할
-CHUNK_MAX_SLIDES = 35     # 이 슬라이드 수 이상이면 분할
+CHUNK_THRESHOLD = 1000  # 이 줄 수 이상이면 세션 단위 분할
+CHUNK_MAX_SLIDES = 35  # 이 슬라이드 수 이상이면 분할
+
+# ─── 안정성 설정 ─────────────────────────────────────────────
+RETRY_TOTAL = 3  # 최대 재시도 횟수
+RETRY_BACKOFF = 1  # 재시도 대기 (1s, 2s, 4s)
+RETRY_STATUS_CODES = [429, 500, 502, 503, 504]
+MIN_PPTX_SIZE = 10240  # 최소 유효 PPTX 크기 (10KB)
+MIN_DISK_MB = 500  # 최소 디스크 여유 공간 (MB)
+LOCK_FILENAME = ".manus_slide.lock"
+
+# ─── Graceful Shutdown ───────────────────────────────────────
+_shutdown_requested = False
+_current_task_log = []
+_current_output_dir = None
+
+
+def _handle_signal(signum, frame):
+    """SIGINT/SIGTERM 시 현재 작업 완료 후 종료"""
+    global _shutdown_requested
+    _shutdown_requested = True
+    sig_name = "SIGINT" if signum == signal.SIGINT else "SIGTERM"
+    log.warning("시그널 %s 수신 — 현재 작업 완료 후 안전 종료합니다", sig_name)
+
+
+def _save_checkpoint():
+    """중단 시 현재까지의 task_log를 저장"""
+    if _current_output_dir and _current_task_log:
+        log_path = Path(_current_output_dir) / "manus_task_log.json"
+        try:
+            log_path.write_text(
+                json.dumps(_current_task_log, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            log.info(
+                "체크포인트 저장: %s (%d건)", log_path.name, len(_current_task_log)
+            )
+        except OSError as e:
+            log.error("체크포인트 저장 실패: %s", e)
+
 
 # ─── 헤더/풋터 금지 프리픽스 ─────────────────────────────────
 # Manus AI에 프롬프트 전송 시 최상단에 삽입하여 디자인 규칙을 강제합니다.
@@ -78,6 +132,169 @@ PPTX 파일 출력을 절대 생략하지 마세요.
 ---
 
 """
+
+
+# ═══════════════════════════════════════════════════════════════
+# 유틸리티 함수
+# ═══════════════════════════════════════════════════════════════
+
+
+def _setup_logging(quiet=False, verbose=False):
+    """로깅 설정 (M1+M2: logging 모듈 + --quiet/--verbose)"""
+    if verbose:
+        level = logging.DEBUG
+    elif quiet:
+        level = logging.WARNING
+    else:
+        level = logging.INFO
+
+    fmt = "%(asctime)s [%(levelname)s] %(message)s"
+    datefmt = "%H:%M:%S"
+    logging.basicConfig(level=level, format=fmt, datefmt=datefmt, stream=sys.stdout)
+    log.setLevel(level)
+
+
+def _create_session(api_key):
+    """requests.Session 생성 + 자동 재시도 설정 (C7+C1+C5)"""
+    session = requests.Session()
+    session.headers.update(
+        {
+            "API_KEY": api_key,
+            "Content-Type": "application/json",
+        }
+    )
+
+    if Retry is not None:
+        retry = Retry(
+            total=RETRY_TOTAL,
+            backoff_factor=RETRY_BACKOFF,
+            status_forcelist=RETRY_STATUS_CODES,
+            allowed_methods=["GET", "POST"],
+            respect_retry_after_header=True,
+            raise_on_status=False,
+        )
+        adapter = HTTPAdapter(max_retries=retry, pool_maxsize=10)
+        session.mount("https://", adapter)
+        log.debug(
+            "requests.Session 생성 (retry=%d, backoff=%ds, status=%s)",
+            RETRY_TOTAL,
+            RETRY_BACKOFF,
+            RETRY_STATUS_CODES,
+        )
+    else:
+        log.warning("urllib3.Retry 사용 불가 — 재시도 없이 실행됩니다")
+
+    return session
+
+
+def _preflight_check(session):
+    """배치 시작 전 API 연결 + 인증 확인 (M3)"""
+    try:
+        resp = session.get(
+            f"{MANUS_API_BASE}/tasks",
+            params={"limit": 1},
+            timeout=(10, 30),
+        )
+        if resp.status_code == 401:
+            log.error("API 인증 실패 — MANUS_API_KEY를 확인하세요")
+            return False
+        if resp.status_code == 403:
+            log.error("API 접근 거부 — Manus Pro/Team 플랜이 필요합니다")
+            return False
+        if resp.status_code >= 500:
+            log.warning(
+                "Manus API 서버 오류 (%d) — 서비스 상태를 확인하세요", resp.status_code
+            )
+            return False
+        log.info("Manus API 연결 확인됨 (status=%d)", resp.status_code)
+        return True
+    except requests.RequestException as e:
+        log.error("Manus API 연결 실패: %s", e)
+        return False
+
+
+def _check_disk_space(output_dir, min_mb=MIN_DISK_MB):
+    """디스크 여유 공간 확인 (M6)"""
+    try:
+        usage = shutil.disk_usage(str(output_dir))
+        free_mb = usage.free // (1024 * 1024)
+        if free_mb < min_mb:
+            log.error("디스크 공간 부족: %dMB 남음 (최소 %dMB 필요)", free_mb, min_mb)
+            return False
+        log.debug("디스크 여유 공간: %dMB", free_mb)
+        return True
+    except OSError as e:
+        log.warning("디스크 공간 확인 실패: %s", e)
+        return True  # 확인 실패 시 진행 허용
+
+
+def _acquire_lock(output_dir):
+    """중복 실행 방지 Lock File (M8)"""
+    lock_path = Path(output_dir) / LOCK_FILENAME
+    if lock_path.exists():
+        try:
+            lock_data = json.loads(lock_path.read_text(encoding="utf-8"))
+            pid = lock_data.get("pid", 0)
+            # 프로세스가 실제로 살아있는지 확인
+            try:
+                os.kill(pid, 0)
+                log.error(
+                    "다른 프로세스(PID %d)가 이미 실행 중입니다. 강제 해제: %s 삭제",
+                    pid,
+                    lock_path,
+                )
+                return False
+            except OSError:
+                log.warning("이전 실행의 잔여 Lock File 제거 (PID %d 종료됨)", pid)
+                lock_path.unlink(missing_ok=True)
+        except (json.JSONDecodeError, KeyError):
+            lock_path.unlink(missing_ok=True)
+
+    lock_data = {
+        "pid": os.getpid(),
+        "started_at": datetime.now().isoformat(),
+    }
+    lock_path.write_text(json.dumps(lock_data), encoding="utf-8")
+    log.debug("Lock 획득: PID %d", os.getpid())
+    return True
+
+
+def _release_lock(output_dir):
+    """Lock File 해제"""
+    lock_path = Path(output_dir) / LOCK_FILENAME
+    lock_path.unlink(missing_ok=True)
+    log.debug("Lock 해제")
+
+
+def _load_completed_files(output_dir):
+    """이전 실행에서 완료된 파일 목록 로드 (C2: --resume)"""
+    log_path = Path(output_dir) / "manus_task_log.json"
+    if not log_path.exists():
+        return set()
+    try:
+        log_data = json.loads(log_path.read_text(encoding="utf-8"))
+        completed = {
+            r["file"]
+            for r in log_data
+            if r.get("status") in ("completed", "completed_no_file")
+        }
+        if completed:
+            log.info("이전 완료 파일 %d개 발견 — 자동 스킵합니다", len(completed))
+        return completed
+    except (json.JSONDecodeError, KeyError, OSError) as e:
+        log.warning("이전 로그 파일 읽기 실패: %s", e)
+        return set()
+
+
+def _cleanup_chunk_dirs(output_dir):
+    """임시 청크 디렉토리 정리 (M7)"""
+    for d in Path(output_dir).glob(".chunks_*"):
+        if d.is_dir():
+            try:
+                shutil.rmtree(d)
+                log.debug("임시 청크 디렉토리 삭제: %s", d.name)
+            except OSError as e:
+                log.warning("임시 디렉토리 삭제 실패 (%s): %s", d.name, e)
 
 
 def get_api_key():
@@ -131,28 +348,41 @@ def discover_prompts(project_dir):
     return files
 
 
-def create_task(api_key, prompt_content, filename):
+# ═══════════════════════════════════════════════════════════════
+# API 호출 함수 (session 기반)
+# ═══════════════════════════════════════════════════════════════
+
+
+def create_task(session, prompt_content, filename):
     """Manus AI에 슬라이드 생성 Task 생성 (헤더/풋터 금지 프리픽스 자동 삽입)"""
     # 프롬프트 최상단에 규칙 프리픽스, 최하단에 export 지시 삽입
     export_suffix = "\n\n---\n\n[최종 출력 지시]\n위 교안의 모든 슬라이드를 Nano Banana Pro 이미지로 생성한 후, 반드시 하나의 PPTX 파일로 조립하여 다운로드 가능한 파일로 출력하세요. 발표자 노트도 PPTX 안에 포함하고, 별도 slide_notes.md 파일로도 저장하세요. PPTX 파일 출력은 절대 생략하지 마세요.\n"
     prefixed_content = SLIDE_GENERATION_PREFIX + prompt_content + export_suffix
-    headers = {
-        "API_KEY": api_key,
-        "Content-Type": "application/json",
-    }
     payload = {
         "prompt": prefixed_content,
         "agentProfile": "manus-1.6-max",
         "taskMode": "agent",
         "interactiveMode": False,
         "createShareableLink": True,
+        "hide_in_task_list": True,  # M9: Manus UI 오염 방지
     }
-    resp = requests.post(
+    resp = session.post(
         f"{MANUS_API_BASE}/tasks",
-        headers=headers,
         json=payload,
-        timeout=60,
+        timeout=(10, 60),  # M4: connect/read 분리
     )
+
+    # C5+C6: HTTP 상태 코드별 처리
+    if resp.status_code == 429:
+        retry_after = int(resp.headers.get("Retry-After", 60))
+        log.warning("[%s] 429 Rate Limit — %d초 후 재시도", filename, retry_after)
+        time.sleep(retry_after)
+        resp = session.post(
+            f"{MANUS_API_BASE}/tasks",
+            json=payload,
+            timeout=(10, 60),
+        )
+
     if resp.status_code != 200:
         error_detail = resp.text[:300] if resp.text else "No response body"
         raise requests.RequestException(
@@ -162,45 +392,84 @@ def create_task(api_key, prompt_content, filename):
     task_id = data.get("id") or data.get("task_id") or data.get("taskId")
     share_url = data.get("share_url") or data.get("task_url", "")
     if share_url:
-        print(f"  share_url: {share_url}", flush=True)
+        log.debug("share_url: %s", share_url)
     return task_id, data
 
 
-def poll_task(api_key, task_id, filename, max_wait=MAX_WAIT_TIME):
-    """Task 완료까지 폴링"""
-    headers = {"API_KEY": api_key}
+def poll_task(session, task_id, filename, max_wait=MAX_WAIT_TIME):
+    """Task 완료까지 폴링 (C6: Error 10091 감지 포함)"""
     start = time.time()
     last_status = None
+    consecutive_errors = 0
 
     while time.time() - start < max_wait:
+        # C3: Graceful shutdown 체크
+        if _shutdown_requested:
+            log.warning("[%s] 종료 요청 — 폴링 중단", filename)
+            return {"status": "interrupted", "reason": "shutdown_requested"}
+
         try:
-            resp = requests.get(
+            resp = session.get(
                 f"{MANUS_API_BASE}/tasks/{task_id}",
-                headers=headers,
                 params={"convert": "true"},
-                timeout=30,
+                timeout=(10, 30),  # M4: connect/read 분리
             )
             resp.raise_for_status()
             data = resp.json()
             status = data.get("status", "unknown")
+            consecutive_errors = 0  # 성공 시 카운터 리셋
 
             if status != last_status:
                 elapsed = int(time.time() - start)
-                print(f"  [{filename}] status={status} ({elapsed}s)", flush=True)
+                log.info("[%s] status=%s (%ds)", filename, status, elapsed)
                 last_status = status
 
             if status in ("completed", "stopped", "done"):
                 stop_reason = data.get("stop_reason") or data.get("stopReason", "")
                 if status == "stopped" and stop_reason not in ("finish", "completed"):
-                    return {"status": "failed", "reason": stop_reason, "data": data}
+                    # C6: Error 10091 (High Load) 감지
+                    error_code = data.get("error_code") or data.get("errorCode", "")
+                    if str(error_code) == "10091" or "high load" in stop_reason.lower():
+                        log.warning(
+                            "[%s] Error 10091 (High Load Termination) — 재시도 가능",
+                            filename,
+                        )
+                    return {
+                        "status": "failed",
+                        "reason": stop_reason,
+                        "data": data,
+                        "error_code": str(error_code),
+                    }
                 return {"status": "completed", "data": data}
 
             if status in ("failed", "error", "cancelled"):
-                return {"status": "failed", "reason": status, "data": data}
+                error_code = data.get("error_code") or data.get("errorCode", "")
+                return {
+                    "status": "failed",
+                    "reason": status,
+                    "data": data,
+                    "error_code": str(error_code),
+                }
 
         except requests.RequestException as e:
+            consecutive_errors += 1
             elapsed = int(time.time() - start)
-            print(f"  [{filename}] 폴링 오류 ({elapsed}s): {e}", flush=True)
+            log.warning(
+                "[%s] 폴링 오류 (%ds, 연속 %d회): %s",
+                filename,
+                elapsed,
+                consecutive_errors,
+                e,
+            )
+            # 연속 10회 이상 오류 시 중단
+            if consecutive_errors >= 10:
+                log.error(
+                    "[%s] 연속 폴링 오류 %d회 — 중단", filename, consecutive_errors
+                )
+                return {
+                    "status": "failed",
+                    "reason": f"연속 폴링 오류 {consecutive_errors}회",
+                }
 
         time.sleep(POLL_INTERVAL)
 
@@ -208,17 +477,7 @@ def poll_task(api_key, task_id, filename, max_wait=MAX_WAIT_TIME):
 
 
 def extract_file_urls(task_data):
-    """Task 응답에서 다운로드 가능한 파일 URL 추출
-
-    Manus API 응답 구조:
-      output: [
-        { type: "message", content: [
-            { type: "output_text", text: "..." },
-            { type: "output_file", fileUrl: "...", fileName: "..." },
-        ]},
-        ...
-      ]
-    """
+    """Task 응답에서 다운로드 가능한 파일 URL 추출"""
     urls = []
     seen_urls = set()
 
@@ -233,36 +492,38 @@ def extract_file_urls(task_data):
         for item in output:
             if not isinstance(item, dict):
                 continue
-
-            # 최상위 레벨 파일 URL (구형 응답 호환)
             file_url = item.get("fileUrl") or item.get("file_url") or item.get("url")
-            file_name = item.get("fileName") or item.get("file_name") or item.get("name", "")
+            file_name = (
+                item.get("fileName") or item.get("file_name") or item.get("name", "")
+            )
             mime = item.get("mimeType") or item.get("mime_type", "")
             if file_url:
                 _add(file_url, file_name, mime)
-
-            # content 배열 내부의 output_file 항목 (현행 Manus 응답 형식)
             content_list = item.get("content") or []
             if isinstance(content_list, list):
                 for c in content_list:
                     if not isinstance(c, dict):
                         continue
                     if c.get("type") == "output_file":
-                        c_url = c.get("fileUrl") or c.get("file_url") or c.get("url", "")
-                        c_name = c.get("fileName") or c.get("file_name") or c.get("name", "")
+                        c_url = (
+                            c.get("fileUrl") or c.get("file_url") or c.get("url", "")
+                        )
+                        c_name = (
+                            c.get("fileName") or c.get("file_name") or c.get("name", "")
+                        )
                         c_mime = c.get("mimeType") or c.get("mime_type", "")
                         _add(c_url, c_name, c_mime)
 
-    # attachments 필드도 확인
     attachments = task_data.get("attachments") or []
     if isinstance(attachments, list):
         for att in attachments:
             if isinstance(att, dict):
                 url = att.get("url") or att.get("fileUrl")
-                name = att.get("file_name") or att.get("fileName") or att.get("name", "")
+                name = (
+                    att.get("file_name") or att.get("fileName") or att.get("name", "")
+                )
                 _add(url, name, att.get("mimeType", ""))
 
-    # artifacts 필드도 확인
     artifacts = task_data.get("artifacts") or []
     if isinstance(artifacts, list):
         for art in artifacts:
@@ -274,15 +535,43 @@ def extract_file_urls(task_data):
     return urls
 
 
-def download_file(url, save_path):
-    """URL에서 파일 다운로드"""
-    resp = requests.get(url, stream=True, timeout=120)
+def download_file(session, url, save_path):
+    """URL에서 파일 다운로드 (C8: 원자적 쓰기 + M5: 최소 크기 검증)"""
+    resp = session.get(url, stream=True, timeout=(10, 120))
     resp.raise_for_status()
     save_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(save_path, "wb") as f:
-        for chunk in resp.iter_content(chunk_size=8192):
-            f.write(chunk)
-    return save_path.stat().st_size
+
+    # C8: 임시 파일에 먼저 쓰고, 완료 후 rename (원자적 쓰기)
+    fd, tmp_path = tempfile.mkstemp(
+        dir=str(save_path.parent),
+        suffix=".tmp",
+    )
+    try:
+        with os.fdopen(fd, "wb") as f:
+            for chunk in resp.iter_content(chunk_size=8192):
+                f.write(chunk)
+        # rename (원자적 — 실패 시 깨진 파일 방지)
+        os.replace(tmp_path, str(save_path))
+    except Exception:
+        # 실패 시 임시 파일 정리
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+
+    file_size = save_path.stat().st_size
+
+    # M5: 최소 파일 크기 검증
+    if save_path.suffix.lower() == ".pptx" and file_size < MIN_PPTX_SIZE:
+        log.warning(
+            "PPTX 파일 크기 의심: %s (%d bytes < %d bytes)",
+            save_path.name,
+            file_size,
+            MIN_PPTX_SIZE,
+        )
+
+    return file_size
 
 
 def strip_headers_footers(pptx_path):
@@ -292,63 +581,64 @@ def strip_headers_footers(pptx_path):
         from pptx.util import Emu
         import copy
     except ImportError:
-        print("  [WARN] python-pptx 미설치 — 후처리 건너뜀 (pip install python-pptx)", flush=True)
+        log.warning("python-pptx 미설치 — 후처리 건너뜀 (pip install python-pptx)")
         return False
 
     prs = Presentation(str(pptx_path))
     modified = False
 
-    # 슬라이드 크기 (기준값)
     slide_w = prs.slide_width
     slide_h = prs.slide_height
-    # 상단 15% / 하단 15% 영역을 헤더/풋터 판정 기준으로 사용
     header_zone = int(slide_h * 0.12)
     footer_zone = int(slide_h * 0.88)
 
     for slide in prs.slides:
         shapes_to_remove = []
         for shape in slide.shapes:
-            # 1) 명시적 placeholder: 슬라이드 번호, 날짜, 풋터
             if shape.is_placeholder:
                 ph_idx = shape.placeholder_format.idx
-                # idx 10 = slide_number, 11 = date, 12 = footer
                 if ph_idx in (10, 11, 12):
                     shapes_to_remove.append(shape)
                     continue
 
-            # 2) 위치 기반 판정: 상단 12% 또는 하단 12%에 있는 작은 텍스트 박스
-            if hasattr(shape, "top") and hasattr(shape, "height") and hasattr(shape, "text"):
+            if (
+                hasattr(shape, "top")
+                and hasattr(shape, "height")
+                and hasattr(shape, "text")
+            ):
                 top = shape.top or 0
                 height = shape.height or 0
                 bottom = top + height
                 text = (shape.text or "").strip()
-
-                # 빈 텍스트는 장식 요소일 가능성
-                # 상단 영역의 얇은 도형 (높이 < 슬라이드 10%)
                 is_thin = height < int(slide_h * 0.10)
                 in_header = top < header_zone and is_thin
                 in_footer = bottom > footer_zone and is_thin
-
                 if in_header or in_footer:
-                    # 텍스트가 짧거나 (페이지번호, 날짜, 제목 반복) 비어있으면 제거
                     if len(text) < 80 or not text:
                         shapes_to_remove.append(shape)
                         continue
 
-            # 3) 도형 이름 기반: "Footer", "Header", "Slide Number", "Date" 등
             name = (shape.name or "").lower()
-            if any(kw in name for kw in ("footer", "header", "slide number",
-                                          "date placeholder", "page number",
-                                          "ftr", "hdr", "sldnum")):
+            if any(
+                kw in name
+                for kw in (
+                    "footer",
+                    "header",
+                    "slide number",
+                    "date placeholder",
+                    "page number",
+                    "ftr",
+                    "hdr",
+                    "sldnum",
+                )
+            ):
                 shapes_to_remove.append(shape)
 
-        # 제거 실행
         for shape in shapes_to_remove:
             sp = shape._element
             sp.getparent().remove(sp)
             modified = True
 
-    # 슬라이드 마스터 / 레이아웃에서도 제거
     for master in prs.slide_masters:
         for layout in master.slide_layouts:
             for ph in list(layout.placeholders):
@@ -359,26 +649,35 @@ def strip_headers_footers(pptx_path):
 
     if modified:
         prs.save(str(pptx_path))
-        print(f"  [후처리] 헤더/풋터/페이지번호 제거 완료", flush=True)
+        log.debug("[후처리] 헤더/풋터/페이지번호 제거 완료")
     else:
-        print(f"  [후처리] 제거할 헤더/풋터 없음 (깨끗한 상태)", flush=True)
+        log.debug("[후처리] 제거할 헤더/풋터 없음 (깨끗한 상태)")
 
     return modified
 
 
+# ═══════════════════════════════════════════════════════════════
+# 분할/병합 함수
+# ═══════════════════════════════════════════════════════════════
+
+
 def _count_slides(content):
     import re
-    return len(re.findall(r'^#{2,4}\s*(?:슬라이드|Slide)\s*\d+', content, re.MULTILINE))
+
+    return len(re.findall(r"^#{2,4}\s*(?:슬라이드|Slide)\s*\d+", content, re.MULTILINE))
 
 
 def _extract_section(content, section_marker):
     import re
-    pattern = rf'^(#{1,3}\s*{re.escape(section_marker)}.*)$'
+
+    pattern = rf"^(#{1, 3}\s*{re.escape(section_marker)}.*)$"
     match = re.search(pattern, content, re.MULTILINE)
     if not match:
         return ""
     start = match.start()
-    next_section = re.search(r'^#{1,3}\s*[①②③④⑤⑥§]', content[match.end():], re.MULTILINE)
+    next_section = re.search(
+        r"^#{1,3}\s*[①②③④⑤⑥§]", content[match.end() :], re.MULTILINE
+    )
     if next_section:
         end = match.end() + next_section.start()
     else:
@@ -388,6 +687,7 @@ def _extract_section(content, section_marker):
 
 def _find_session_boundaries(section_text, pattern):
     import re
+
     boundaries = []
     for m in re.finditer(pattern, section_text, re.MULTILINE):
         boundaries.append((m.start(), m.group(0).strip()))
@@ -400,18 +700,10 @@ def _find_session_boundaries(section_text, pattern):
     return result
 
 
-def split_by_session(prompt_content, threshold_lines=CHUNK_THRESHOLD,
-                     threshold_slides=CHUNK_MAX_SLIDES):
-    """
-    대형 프롬프트를 교시(세션) 경계에서 분할.
-
-    분할 조건: 줄 수 >= threshold_lines OR 슬라이드 수 >= threshold_slides
-    분할 단위: ③ 슬라이드 명세의 '#### N. 세션' 경계 + ⑥ 교안 원문의 '## 세션' 경계
-    각 청크 = ①②④⑤ 공통 헤더 + ③-N + ⑥-N
-
-    Returns:
-        list[str]: 분할된 프롬프트 리스트 (분할 불필요 시 원본 1개 리스트)
-    """
+def split_by_session(
+    prompt_content, threshold_lines=CHUNK_THRESHOLD, threshold_slides=CHUNK_MAX_SLIDES
+):
+    """대형 프롬프트를 교시(세션) 경계에서 분할."""
     import re
 
     lines = prompt_content.splitlines()
@@ -421,26 +713,28 @@ def split_by_session(prompt_content, threshold_lines=CHUNK_THRESHOLD,
     if line_count < threshold_lines and slide_count < threshold_slides:
         return [prompt_content]
 
-    print(f"  [분할] {line_count}줄, ~{slide_count}슬라이드 → 세션 단위 분할 시작", flush=True)
+    log.info("[분할] %d줄, ~%d슬라이드 → 세션 단위 분할 시작", line_count, slide_count)
 
     section_3 = _extract_section(prompt_content, "③")
     section_6 = _extract_section(prompt_content, "⑥")
 
     if not section_3 and not section_6:
-        print("  [분할] ③/⑥ 섹션을 찾을 수 없음 — 분할 건너뜀", flush=True)
+        log.info("[분할] ③/⑥ 섹션을 찾을 수 없음 — 분할 건너뜀")
         return [prompt_content]
 
-    s3_boundaries = _find_session_boundaries(
-        section_3, r'^####\s*\d+\.\s*세션'
-    ) if section_3 else []
+    s3_boundaries = (
+        _find_session_boundaries(section_3, r"^####\s*\d+\.\s*세션")
+        if section_3
+        else []
+    )
 
-    s6_boundaries = _find_session_boundaries(
-        section_6, r'^##\s*세션'
-    ) if section_6 else []
+    s6_boundaries = (
+        _find_session_boundaries(section_6, r"^##\s*세션") if section_6 else []
+    )
 
     split_count = max(len(s3_boundaries), len(s6_boundaries))
     if split_count <= 1:
-        print("  [분할] 세션 경계가 1개 이하 — 분할 건너뜀", flush=True)
+        log.info("[분할] 세션 경계가 1개 이하 — 분할 건너뜀")
         return [prompt_content]
 
     common_header_parts = []
@@ -452,20 +746,19 @@ def split_by_session(prompt_content, threshold_lines=CHUNK_THRESHOLD,
 
     section_3_header = ""
     if section_3:
-        first_boundary = re.search(r'^####\s*\d+\.\s*세션', section_3, re.MULTILINE)
+        first_boundary = re.search(r"^####\s*\d+\.\s*세션", section_3, re.MULTILINE)
         if first_boundary and first_boundary.start() > 0:
-            section_3_header = section_3[:first_boundary.start()].rstrip()
+            section_3_header = section_3[: first_boundary.start()].rstrip()
 
     section_6_header = ""
     if section_6:
-        first_boundary = re.search(r'^##\s*세션', section_6, re.MULTILINE)
+        first_boundary = re.search(r"^##\s*세션", section_6, re.MULTILINE)
         if first_boundary and first_boundary.start() > 0:
-            section_6_header = section_6[:first_boundary.start()].rstrip()
+            section_6_header = section_6[: first_boundary.start()].rstrip()
 
     chunks = []
     for i in range(split_count):
         parts = [common_header]
-
         if i < len(s3_boundaries):
             start, end, label = s3_boundaries[i]
             s3_chunk = section_3[start:end].rstrip()
@@ -473,7 +766,6 @@ def split_by_session(prompt_content, threshold_lines=CHUNK_THRESHOLD,
                 parts.append(section_3_header + "\n\n" + s3_chunk)
             else:
                 parts.append(s3_chunk)
-
         if i < len(s6_boundaries):
             start, end, label = s6_boundaries[i]
             s6_chunk = section_6[start:end].rstrip()
@@ -481,45 +773,31 @@ def split_by_session(prompt_content, threshold_lines=CHUNK_THRESHOLD,
                 parts.append(section_6_header + "\n\n" + s6_chunk)
             else:
                 parts.append(s6_chunk)
-
         chunk_text = "\n\n".join(parts)
         chunks.append(chunk_text)
 
-    print(f"  [분할] {split_count}개 청크로 분할 완료", flush=True)
+    log.info("[분할] %d개 청크로 분할 완료", split_count)
     for i, c in enumerate(chunks):
-        print(f"    청크 {i+1}: {len(c.splitlines())}줄", flush=True)
+        log.debug("  청크 %d: %d줄", i + 1, len(c.splitlines()))
 
     return chunks
 
 
 def merge_pptx(chunk_pptx_paths, output_path):
-    """
-    분할 제출된 청크 PPTX들을 하나의 파일로 병합.
-
-    python-pptx Presentation 객체를 사용하여 첫 PPTX를 base로 하고
-    나머지 청크의 슬라이드를 순서대로 추가합니다.
-
-    Args:
-        chunk_pptx_paths: 병합할 PPTX 파일 경로 리스트 (순서대로)
-        output_path: 병합 결과 저장 경로
-
-    Returns:
-        int: 병합된 총 슬라이드 수
-    """
+    """분할 제출된 청크 PPTX들을 하나의 파일로 병합."""
     try:
         from pptx import Presentation
         import copy
     except ImportError:
-        print("  [WARN] python-pptx 미설치 — 병합 건너뜀", flush=True)
+        log.warning("python-pptx 미설치 — 병합 건너뜀")
         return 0
 
     valid_paths = [p for p in chunk_pptx_paths if Path(p).exists()]
     if not valid_paths:
-        print("  [WARN] 병합할 PPTX 파일 없음", flush=True)
+        log.warning("병합할 PPTX 파일 없음")
         return 0
 
     if len(valid_paths) == 1:
-        import shutil
         shutil.copy2(valid_paths[0], output_path)
         prs = Presentation(str(valid_paths[0]))
         return len(prs.slides)
@@ -539,7 +817,7 @@ def merge_pptx(chunk_pptx_paths, output_path):
             new_slide = base_prs.slides.add_slide(slide_layout)
 
             for elem in list(new_slide.shapes._spTree):
-                if elem.tag.endswith('}sp') or elem.tag.endswith('}pic'):
+                if elem.tag.endswith("}sp") or elem.tag.endswith("}pic"):
                     new_slide.shapes._spTree.remove(elem)
 
             for shape in slide.shapes:
@@ -557,77 +835,112 @@ def merge_pptx(chunk_pptx_paths, output_path):
 
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     base_prs.save(str(output_path))
-    print(f"  [병합] {len(valid_paths)}개 PPTX → {total_slides}슬라이드 병합 완료", flush=True)
+    log.info("[병합] %d개 PPTX → %d슬라이드 병합 완료", len(valid_paths), total_slides)
     return total_slides
 
 
-def _submit_single_content(api_key, prompt_content, label, output_dir):
-    """단일 콘텐츠 제출→폴링→다운로드 (분할/비분할 공용)"""
-    try:
-        task_id, create_data = create_task(api_key, prompt_content, label)
-        print(f"  task_id: {task_id}", flush=True)
-    except requests.RequestException as e:
-        print(f"  [ERROR] Task 생성 실패: {e}", flush=True)
-        return {"label": label, "status": "submit_failed", "error": str(e)}
+# ═══════════════════════════════════════════════════════════════
+# 처리 함수
+# ═══════════════════════════════════════════════════════════════
 
-    result = poll_task(api_key, task_id, label)
 
-    if result["status"] != "completed":
-        print(f"  [FAIL] {result.get('reason', 'unknown')}", flush=True)
-        return {
-            "label": label, "task_id": task_id,
-            "status": result["status"], "reason": result.get("reason", ""),
-        }
+def _submit_single_content(session, prompt_content, label, output_dir):
+    """단일 콘텐츠 제출→폴링→다운로드 (C6: 10091 자동 재제출 포함)"""
+    max_submit_attempts = 2  # 10091 시 1회 재제출
 
-    task_data = result["data"]
-    file_urls = extract_file_urls(task_data)
-
-    if not file_urls:
-        print(f"  [WARN] 다운로드 가능한 파일 없음", flush=True)
-        share_link = task_data.get("shareableLink") or task_data.get("shareable_link", "")
-        return {
-            "label": label, "task_id": task_id,
-            "status": "completed_no_file", "shareable_link": share_link,
-        }
-
-    downloaded = []
-    for finfo in file_urls:
-        raw_name = finfo.get("name", "")
-        ext = Path(raw_name).suffix if raw_name else ""
-        if not ext:
-            url_path = finfo["url"].split("?")[0]
-            ext = Path(url_path).suffix if "." in Path(url_path).name else ".pptx"
-
-        if ext.lower() == ".pptx":
-            save_name = f"{label}.pptx"
-        else:
-            base = Path(raw_name).stem if raw_name else f"{label}_notes"
-            save_name = f"{label}_{base}{ext}" if raw_name else f"{label}{ext}"
-
-        save_path = output_dir / save_name
+    for attempt in range(1, max_submit_attempts + 1):
         try:
-            size = download_file(finfo["url"], save_path)
-            print(f"  [OK] 다운로드: {save_name} ({size:,} bytes)", flush=True)
+            task_id, create_data = create_task(session, prompt_content, label)
+            log.info("task_id: %s (시도 %d/%d)", task_id, attempt, max_submit_attempts)
+        except requests.RequestException as e:
+            log.error("[%s] Task 생성 실패 (시도 %d): %s", label, attempt, e)
+            if attempt < max_submit_attempts:
+                wait = RETRY_BACKOFF * (2 ** (attempt - 1))
+                log.info("[%s] %d초 후 재시도...", label, wait)
+                time.sleep(wait)
+                continue
+            return {"label": label, "status": "submit_failed", "error": str(e)}
+
+        result = poll_task(session, task_id, label)
+
+        # C6: Error 10091 감지 → 대기 후 재제출
+        if (
+            result["status"] == "failed"
+            and result.get("error_code") == "10091"
+            and attempt < max_submit_attempts
+        ):
+            log.warning("[%s] Error 10091 — 60초 대기 후 재제출", label)
+            time.sleep(60)
+            continue
+
+        if result["status"] != "completed":
+            log.error("[%s] %s", label, result.get("reason", "unknown"))
+            return {
+                "label": label,
+                "task_id": task_id,
+                "status": result["status"],
+                "reason": result.get("reason", ""),
+            }
+
+        # 성공 — 파일 다운로드
+        task_data = result["data"]
+        file_urls = extract_file_urls(task_data)
+
+        if not file_urls:
+            log.warning("[%s] 다운로드 가능한 파일 없음", label)
+            share_link = task_data.get("shareableLink") or task_data.get(
+                "shareable_link", ""
+            )
+            return {
+                "label": label,
+                "task_id": task_id,
+                "status": "completed_no_file",
+                "shareable_link": share_link,
+            }
+
+        downloaded = []
+        for finfo in file_urls:
+            raw_name = finfo.get("name", "")
+            ext = Path(raw_name).suffix if raw_name else ""
+            if not ext:
+                url_path = finfo["url"].split("?")[0]
+                ext = Path(url_path).suffix if "." in Path(url_path).name else ".pptx"
+
             if ext.lower() == ".pptx":
-                strip_headers_footers(save_path)
-                size = save_path.stat().st_size
-            downloaded.append({"path": str(save_path), "size": size})
-        except (requests.RequestException, Exception) as e:
-            print(f"  [ERROR] 다운로드 실패 ({save_name}): {e}", flush=True)
-            downloaded.append({"url": finfo["url"], "error": str(e)})
+                save_name = f"{label}.pptx"
+            else:
+                base = Path(raw_name).stem if raw_name else f"{label}_notes"
+                save_name = f"{label}_{base}{ext}" if raw_name else f"{label}{ext}"
 
-    return {
-        "label": label, "task_id": task_id,
-        "status": "completed", "downloaded": downloaded,
-    }
+            save_path = output_dir / save_name
+            try:
+                size = download_file(session, finfo["url"], save_path)
+                log.info("[OK] 다운로드: %s (%s bytes)", save_name, f"{size:,}")
+                if ext.lower() == ".pptx":
+                    strip_headers_footers(save_path)
+                    size = save_path.stat().st_size
+                downloaded.append({"path": str(save_path), "size": size})
+            except (requests.RequestException, OSError) as e:
+                log.error("다운로드 실패 (%s): %s", save_name, e)
+                downloaded.append({"url": finfo["url"], "error": str(e)})
+
+        return {
+            "label": label,
+            "task_id": task_id,
+            "status": "completed",
+            "downloaded": downloaded,
+        }
+
+    # 모든 시도 실패
+    return {"label": label, "status": "submit_failed", "error": "최대 재시도 초과"}
 
 
-def process_single(api_key, prompt_file, output_dir, no_split=False):
+def process_single(session, prompt_file, output_dir, no_split=False):
     """단일 프롬프트 파일 처리: (분할 판단→) 제출 → 폴링 → 다운로드 (→ 병합)"""
     filename = prompt_file.stem
     short_name = filename.replace("_슬라이드 생성 프롬프트", "")
-    print(f"\n{'='*60}", flush=True)
-    print(f"[제출] {short_name}", flush=True)
+    log.info("%s", "=" * 60)
+    log.info("[제출] %s", short_name)
 
     prompt_content = prompt_file.read_text(encoding="utf-8")
 
@@ -637,7 +950,7 @@ def process_single(api_key, prompt_file, output_dir, no_split=False):
         chunks = split_by_session(prompt_content)
 
     if len(chunks) == 1:
-        result = _submit_single_content(api_key, chunks[0], short_name, output_dir)
+        result = _submit_single_content(session, chunks[0], short_name, output_dir)
         return {
             "file": str(prompt_file.name),
             "task_id": result.get("task_id"),
@@ -649,17 +962,34 @@ def process_single(api_key, prompt_file, output_dir, no_split=False):
             "error": result.get("error", ""),
         }
 
-    print(f"  [{short_name}] {len(chunks)}개 청크 순차 제출", flush=True)
+    log.info("[%s] %d개 청크 순차 제출", short_name, len(chunks))
     chunk_results = []
     chunk_pptx_paths = []
     chunk_dir = output_dir / f".chunks_{short_name}"
     chunk_dir.mkdir(exist_ok=True)
 
+    # C4: 청크 단위 중간 상태 저장
+    chunk_log_path = chunk_dir / "chunk_progress.json"
+
     for i, chunk_content in enumerate(chunks):
-        chunk_label = f"{short_name}_chunk{i+1}"
-        print(f"\n  --- 청크 {i+1}/{len(chunks)} ---", flush=True)
-        cr = _submit_single_content(api_key, chunk_content, chunk_label, chunk_dir)
+        # C3: 종료 요청 체크
+        if _shutdown_requested:
+            log.warning(
+                "[%s] 종료 요청 — 청크 %d/%d 에서 중단", short_name, i + 1, len(chunks)
+            )
+            break
+
+        chunk_label = f"{short_name}_chunk{i + 1}"
+        log.info("--- 청크 %d/%d ---", i + 1, len(chunks))
+        cr = _submit_single_content(session, chunk_content, chunk_label, chunk_dir)
         chunk_results.append(cr)
+
+        # C4: 청크 진행 상태 즉시 저장
+        chunk_log_path.write_text(
+            json.dumps(chunk_results, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
         for dl in cr.get("downloaded", []):
             if dl.get("path", "").endswith(".pptx"):
                 chunk_pptx_paths.append(dl["path"])
@@ -674,10 +1004,12 @@ def process_single(api_key, prompt_file, output_dir, no_split=False):
             merged_size = merged_path.stat().st_size
             downloaded = [{"path": str(merged_path), "size": merged_size}]
         else:
-            downloaded = [{"path": p, "size": Path(p).stat().st_size}
-                         for p in chunk_pptx_paths if Path(p).exists()]
+            downloaded = [
+                {"path": p, "size": Path(p).stat().st_size}
+                for p in chunk_pptx_paths
+                if Path(p).exists()
+            ]
     elif chunk_pptx_paths:
-        import shutil
         single_path = output_dir / f"{short_name}.pptx"
         shutil.copy2(chunk_pptx_paths[0], single_path)
         downloaded = [{"path": str(single_path), "size": single_path.stat().st_size}]
@@ -705,136 +1037,210 @@ def filter_prompts(prompts, file_filter):
         for p in prompts:
             name_lower = p.name.lower()
             stem_lower = p.stem.lower()
-            # 파일명 완전 일치, 부분 일치, 세션ID 일치 모두 지원
-            if (kw_lower == name_lower
-                    or kw_lower == stem_lower
-                    or kw_lower in name_lower
-                    or kw_lower in stem_lower):
+            if (
+                kw_lower == name_lower
+                or kw_lower == stem_lower
+                or kw_lower in name_lower
+                or kw_lower in stem_lower
+            ):
                 if p not in matched:
                     matched.append(p)
 
     return matched
 
 
+# ═══════════════════════════════════════════════════════════════
+# 메인
+# ═══════════════════════════════════════════════════════════════
+
+
 def main():
+    global _current_task_log, _current_output_dir
+
     parser = argparse.ArgumentParser(
         description="Manus AI 슬라이드 생성",
         epilog="예시: python .agent/scripts/manus_slide.py project/ --file Day1_AM",
     )
     parser.add_argument("project_dir", nargs="?", help="프로젝트 폴더 경로")
-    parser.add_argument("--file", "-f", nargs="+", dest="file_filter",
-                        help="처리할 파일 필터 (부분 매칭 지원, 복수 지정 가능). "
-                             "예: --file Day1_AM  /  -f Day1_AM Day2_PM  /  -f 환경구축")
-    parser.add_argument("--resume", help="중단된 작업 로그 파일로 재개")
-    parser.add_argument("--max-concurrent", type=int, default=MAX_CONCURRENT, help="동시 처리 수")
-    parser.add_argument("--dry-run", action="store_true", help="실제 API 호출 없이 테스트")
-    parser.add_argument("--no-split", action="store_true", help="세션 단위 분할 비활성화 (원본 전체 제출)")
+    parser.add_argument(
+        "--file",
+        "-f",
+        nargs="+",
+        dest="file_filter",
+        help="처리할 파일 필터 (부분 매칭 지원, 복수 지정 가능)",
+    )
+    parser.add_argument(
+        "--resume", action="store_true", help="이전 완료 파일을 자동 스킵하여 이어하기"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="실제 API 호출 없이 테스트"
+    )
+    parser.add_argument(
+        "--no-split",
+        action="store_true",
+        help="세션 단위 분할 비활성화 (원본 전체 제출)",
+    )
+    parser.add_argument(
+        "--quiet", "-q", action="store_true", help="사일런스 모드 (경고/에러만 출력)"
+    )
+    parser.add_argument(
+        "--verbose", "-v", action="store_true", help="디버그 모드 (상세 출력)"
+    )
     args = parser.parse_args()
+
+    # M1+M2: 로깅 설정
+    _setup_logging(quiet=args.quiet, verbose=args.verbose)
+
+    # C3: 시그널 핸들러 등록
+    signal.signal(signal.SIGINT, _handle_signal)
+    signal.signal(signal.SIGTERM, _handle_signal)
+    atexit.register(_save_checkpoint)
 
     # API Key 확인
     api_key = get_api_key()
     if not api_key:
-        print("[ERROR] MANUS_API_KEY를 찾을 수 없습니다.")
-        print("  .agent/.env 파일에 MANUS_API_KEY를 설정하세요.")
+        log.error("MANUS_API_KEY를 찾을 수 없습니다. .agent/.env 파일에 설정하세요.")
         sys.exit(1)
-    print(f"[OK] API Key 확인됨: {api_key[:10]}...{api_key[-4:]}")
+    log.info("API Key 확인됨: %s...%s", api_key[:10], api_key[-4:])
+
+    # C7: requests.Session 생성
+    session = _create_session(api_key)
 
     # 프로젝트 폴더 탐색
     project = find_project_folder(args.project_dir)
     if not project:
-        print("[ERROR] 06_SlidePrompt/ 폴더를 찾을 수 없습니다.")
-        print("  프로젝트 폴더 경로를 인자로 지정하세요.")
+        log.error("06_SlidePrompt/ 폴더를 찾을 수 없습니다. 경로를 인자로 지정하세요.")
         sys.exit(1)
-    print(f"[OK] 프로젝트: {project.name}")
+    log.info("프로젝트: %s", project.name)
 
     # 프롬프트 파일 탐색
     prompts = discover_prompts(project)
     if not prompts:
-        print(f"[ERROR] {project / '06_SlidePrompt'} 에 프롬프트 파일이 없습니다.")
+        log.error("%s 에 프롬프트 파일이 없습니다.", project / "06_SlidePrompt")
         sys.exit(1)
 
     # --file 필터 적용
     if args.file_filter:
         prompts = filter_prompts(prompts, args.file_filter)
         if not prompts:
-            print(f"[ERROR] --file 필터 '{' '.join(args.file_filter)}'에 매칭되는 파일이 없습니다.")
-            print(f"  사용 가능한 파일:")
-            for p in discover_prompts(project):
-                print(f"    {p.name}")
+            log.error(
+                "--file 필터 '%s'에 매칭되는 파일이 없습니다.",
+                " ".join(args.file_filter),
+            )
             sys.exit(1)
-        print(f"[OK] --file 필터 적용: {len(prompts)}개 선택")
-    print(f"[OK] 프롬프트 파일 {len(prompts)}개 발견:")
+        log.info("--file 필터 적용: %d개 선택", len(prompts))
+    log.info("프롬프트 파일 %d개 발견", len(prompts))
     for p in prompts:
-        print(f"     {p.name}")
+        log.info("  %s", p.name)
 
     # 출력 디렉토리
     output_dir = project / "07_ManusSlides"
     output_dir.mkdir(exist_ok=True)
-    print(f"[OK] 출력 폴더: {output_dir}")
+    _current_output_dir = output_dir
+    log.info("출력 폴더: %s", output_dir)
+
+    # M8: Lock File — 중복 실행 방지
+    if not _acquire_lock(output_dir):
+        sys.exit(1)
+    atexit.register(_release_lock, output_dir)
+
+    # M6: 디스크 공간 확인
+    if not _check_disk_space(output_dir):
+        _release_lock(output_dir)
+        sys.exit(1)
 
     if args.dry_run:
-        print("\n[DRY-RUN] 실제 API 호출을 건너뜁니다.")
+        log.info("[DRY-RUN] 실제 API 호출을 건너뜁니다.")
+        _release_lock(output_dir)
         return
+
+    # M3: Preflight 연결 테스트
+    if not _preflight_check(session):
+        log.error("Manus API 연결 실패 — 실행을 중단합니다.")
+        _release_lock(output_dir)
+        sys.exit(1)
+
+    # C2: --resume — 이전 완료 파일 스킵
+    completed_files = set()
+    if args.resume:
+        completed_files = _load_completed_files(output_dir)
 
     # 실행 시작
     start_time = time.time()
-    print(f"\n{'='*60}")
-    print(f"슬라이드 생성 시작 — {datetime.now().strftime('%H:%M:%S')}")
-    print(f"{'='*60}")
+    log.info("%s", "=" * 60)
+    log.info("슬라이드 생성 시작 — %s", datetime.now().strftime("%H:%M:%S"))
+    log.info("%s", "=" * 60)
 
     results = []
-    task_log = []
+    _current_task_log = []
 
     # 순차 처리 (Manus API 제한 고려)
     for prompt_file in prompts:
-        result = process_single(api_key, prompt_file, output_dir, no_split=args.no_split)
+        # C3: Graceful shutdown 체크
+        if _shutdown_requested:
+            log.warning("종료 요청 — 남은 파일 %d개 스킵", len(prompts) - len(results))
+            break
+
+        # C2: 이전 완료 파일 스킵
+        if prompt_file.name in completed_files:
+            log.info("[SKIP] %s (이전 완료)", prompt_file.name)
+            continue
+
+        result = process_single(
+            session, prompt_file, output_dir, no_split=args.no_split
+        )
         results.append(result)
 
         # 중간 로그 저장 (중단 복구용)
-        task_log.append(result)
-        log_path = output_dir / "manus_task_log.json"
-        log_path.write_text(
-            json.dumps(task_log, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        _current_task_log.append(result)
+        _save_checkpoint()
+
+    # M7: 임시 청크 디렉토리 정리
+    _cleanup_chunk_dirs(output_dir)
 
     # 최종 리포트
     elapsed = int(time.time() - start_time)
-    print(f"\n{'='*60}")
-    print(f"슬라이드 생성 완료 — 총 {elapsed}초 소요")
-    print(f"{'='*60}")
+    log.info("%s", "=" * 60)
+    log.info("슬라이드 생성 완료 — 총 %d초 소요", elapsed)
+    log.info("%s", "=" * 60)
 
     success = [r for r in results if r["status"] == "completed"]
     no_file = [r for r in results if r["status"] == "completed_no_file"]
-    failed = [r for r in results if r["status"] not in ("completed", "completed_no_file")]
+    failed = [
+        r for r in results if r["status"] not in ("completed", "completed_no_file")
+    ]
 
-    print(f"\n  성공 (PPTX 다운로드): {len(success)}개")
+    log.info("성공 (PPTX 다운로드): %d개", len(success))
     for r in success:
         for d in r.get("downloaded", []):
             if "path" in d:
-                print(f"    {Path(d['path']).name} ({d['size']:,} bytes)")
+                log.info("  %s (%s bytes)", Path(d["path"]).name, f"{d['size']:,}")
 
     if no_file:
-        print(f"\n  완료 (수동 다운로드 필요): {len(no_file)}개")
+        log.info("완료 (수동 다운로드 필요): %d개", len(no_file))
         for r in no_file:
             link = r.get("shareable_link", "N/A")
-            print(f"    {r['file']} → {link}")
+            log.info("  %s → %s", r["file"], link)
 
     if failed:
-        print(f"\n  실패: {len(failed)}개")
+        log.warning("실패: %d개", len(failed))
         for r in failed:
-            print(f"    {r['file']}: {r.get('reason', r.get('error', 'unknown'))}")
+            log.warning(
+                "  %s: %s", r["file"], r.get("reason", r.get("error", "unknown"))
+            )
 
-    print(f"\n  로그: {output_dir / 'manus_task_log.json'}")
+    log.info("로그: %s", output_dir / "manus_task_log.json")
 
     # 최종 리포트 저장
     report = {
         "generated_at": datetime.now().isoformat(),
         "project": str(project),
         "total_files": len(prompts),
+        "skipped_resume": len(completed_files),
         "success": len(success),
         "no_file": len(no_file),
         "failed": len(failed),
+        "interrupted": _shutdown_requested,
         "elapsed_seconds": elapsed,
         "results": results,
     }
@@ -843,7 +1249,7 @@ def main():
         json.dumps(report, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    print(f"  리포트: {report_path}")
+    log.info("리포트: %s", report_path)
 
 
 if __name__ == "__main__":
