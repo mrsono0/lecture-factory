@@ -122,10 +122,10 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ## 산출물
 - **프로젝트 폴더**: `YYYY-MM-DD_강의제목/` (기존 폴더 사용)
-- **강의 교안**: `YYYY-MM-DD_강의제목/02_Material/강의교안.md`
+- **강의 교안**: `YYYY-MM-DD_강의제목/02_Material/강의교안_v1.0.md`
 - 교안 작성 작업지시서
 - 품질 검토 리포트 승인
-- 최종 통합 교안 (`최종_강의교안.md`)
+- 최종 통합 교안 (`강의교안_v1.0.md`)
 
 ## 시작 가이드 (Startup)
 1. **입력 파일 확인**:
