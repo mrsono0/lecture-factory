@@ -415,7 +415,9 @@ cmd_validate() {
 cmd_report() {
   local report_date
   report_date=$(date '+%Y-%m-%d')
-  local report_file="$LOG_DIR/analysis_report_${report_date}.md"
+  local dashboard_dir="$PROJECT_ROOT/.agent/dashboard"
+  mkdir -p "$dashboard_dir"
+  local report_file="$dashboard_dir/analysis_report_${report_date}.md"
 
   {
     echo "# Agent Execution Log Analysis Report"
