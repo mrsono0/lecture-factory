@@ -1,8 +1,12 @@
 name: "Lecture Planning Pipeline"
 description: "강의 주제 선정부터 커리큘럼 확정까지의 기획 단계 워크플로우 (Planner Team) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
-version: "2.0"
+version: "2.1"
+
+output_path: "{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md"
+max_retries: 2  # step_7 반려 시 step_3부터 재실행 최대 횟수
 
 steps:
+  # Phase 1: 순차 실행 — 스코프 정의 → 트렌드 리서치 → 학습자 분석 → 커리큘럼 설계
   - id: step_0_scope
     agent: "01_planner/A0_Orchestrator"
     action: "analyze_request"
@@ -12,44 +16,67 @@ steps:
   - id: step_1_trend_analysis
     agent: "01_planner/A1_Trend_Researcher"
     action: "research_trend"
+    depends_on: "step_0_scope"
     input: "Scope Definition, Output Language: Korean"
-    output: "Trend Report & Fact Packet (Preliminary)"
+    output: "Trend Report & Fact Packet (01_Planning/Trend_Report.md)"
     # Note: A1 uses Deep Research / NotebookLM skills here
 
   - id: step_2_learner_analysis
     agent: "01_planner/A5B_Learner_Analyst"
     action: "analyze_learner"
+    depends_on: "step_1_trend_analysis"
     input: "Scope Definition, Trend Report, Output Language: Korean"
-    output: "Learner Persona & Pain Points"
+    output: "Learner Persona & Pain Points (01_Planning/강의구성안.md 내 학습자 분석 섹션)"
 
   - id: step_3_curriculum_design
     agent: "01_planner/A3_Curriculum_Architect"
     action: "design_structure"
+    depends_on: "step_2_learner_analysis"
     input: "Learner Persona, Scope Definition, Trend Report, Output Language: Korean"
     output: "Curriculum Structure (Skeleton)"
 
+  # Phase 2: 병렬 실행 — A2와 A7은 서로 의존성 없이 동시 실행 가능
+  # Note: lecture-planner.md에서 Task 도구로 run_in_background: true 설정
   - id: step_4_instructional_design
     agent: "01_planner/A2_Instructional_Designer"
     action: "design_activities"
+    parallel: true  # ← A7과 병렬 실행
+    depends_on: "step_3_curriculum_design"
     input: "Curriculum Structure, Learner Persona, Output Language: Korean"
     output: "Learning Activities & Assessment Plan"
 
   - id: step_5_differentiation
     agent: "01_planner/A7_Differentiation_Advisor"
     action: "identify_usp"
+    parallel: true  # ← A2와 병렬 실행
+    depends_on: "step_3_curriculum_design"
     input: "Curriculum Structure, Trend Report, Output Language: Korean"
     output: "Differentiation Strategy (USP)"
 
+  # Phase 2.5: 통합 — A3가 A2+A7 산출물을 커리큘럼에 병합
+  - id: step_5b_integration
+    agent: "01_planner/A3_Curriculum_Architect"
+    action: "integrate_outputs"
+    depends_on:
+      - "step_4_instructional_design"
+      - "step_5_differentiation"
+    input: "Curriculum Structure (Skeleton), Learning Activities (A2), Differentiation Strategy (A7), Output Language: Korean"
+    output: "Integrated Curriculum Plan (A2 Learning Activities + A7 USP 반영 완결본)"
+
+  # Phase 3: QA — 통합된 커리큘럼을 검증
   - id: step_6_qa_review
     agent: "01_planner/A5A_QA_Manager"
     action: "verify_plan"
-    input: "Curriculum Structure, Learning Activities, Differentiation Strategy, Output Language: Korean"
+    depends_on: "step_5b_integration"
+    input: "Integrated Curriculum Plan, Output Language: Korean"
     output: "QA Report & Final Curriculum Plan"
 
+  # Phase 4: 최종 승인/반려
   - id: step_7_final_approval
     agent: "01_planner/A0_Orchestrator"
     action: "approve_deliverable"
-    input: "Final Curriculum Plan, Output Language: Korean"
+    depends_on: "step_6_qa_review"
+    input: "Final Curriculum Plan, QA Report, Output Language: Korean"
     decision:
-      - if: "Approved" -> Finish
-      - if: "Rejected" -> Go to step_3_curriculum_design
+      approved: "Finish"
+      rejected: "Go to step_3_curriculum_design"

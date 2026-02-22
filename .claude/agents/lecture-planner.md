@@ -35,15 +35,16 @@ model: opus
 Step 0: A0 — 요청 분석, 범위 정의
 Step 1: A1 — 트렌드 조사 (NotebookLM/Web)
 Step 2: A5B — 학습자 페르소나 분석
-Step 3: A3 — 커리큘럼 구조 설계
-Step 4 ∥ Step 5: A2 + A7 — 학습 활동 설계 + 차별화 전략 (병렬 가능)
+Step 3: A3 — 커리큐럼 구조 설계
+Step 4 ∥ Step 5: A2 + A7 — 학습 활동 설계 + 차별화 전략 (병렬)
+Step 5b: A3 — A2+A7 산출물 통합 (Integration Hub)
 Step 6: A5A — QA 검증
 Step 7: A0 — 최종 승인/반려
 ```
 
 ## 병렬 실행 (Step 4 & 5)
 
-Step 4(A2)와 Step 5(A7)는 독립적이므로, Task 도구로 `run_in_background: true`를 사용하여 병렬 실행합니다. 두 결과를 모두 수집한 후 Step 6으로 진행합니다.
+Step 4(A2)와 Step 5(A7)는 독립적이므로, Task 도구로 `run_in_background: true`를 사용하여 병렬 실행합니다. 두 결과를 모두 수집한 후 Step 5b(A3 통합)로 진행합니다.
 
 ## 승인/반려 루프
 
