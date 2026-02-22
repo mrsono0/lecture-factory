@@ -1,8 +1,22 @@
 name: "Material Writing Pipeline"
 description: "확정된 커리큘럼을 바탕으로 교안 본문과 코드를 작성하는 개발 단계 워크플로우 (Writer Team - 11 Agents) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
-version: "2.1"
+version: "2.2"
 output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
 max_retries: 2
+# ── AM/PM 분할 출력 정책 ──────────────────────────────────────────
+# A3(Curriculum Architect)의 "오전/오후 분할 설계" 규칙(항목 7)과 연동.
+# 1일 강의 시간이 4시간을 초과하면 최종 산출물을 일자별 AM/PM 파일로 분할 출력한다.
+output_policy:
+  split_threshold: "1일 4시간 초과"
+  split_unit: "반일(AM/PM)"
+  file_naming: "Day{N}_{AM|PM}.md"
+  output_dir: "{YYYY-MM-DD_강의제목}/02_Material/"
+  rules:
+    - "A3 골격 패킷에 AM/PM 분할 플래그가 있으면 A4는 반일 단위로 독립 파일을 작성한다"
+    - "각 파일은 독립적으로 읽을 수 있는 완전한 교안이어야 한다 (헤더, 학습목표, 브릿지노트 포함)"
+    - "A8 QA는 파일별 독립성 + 파일간 교차 일관성을 모두 검증한다"
+    - "파일명 패턴은 다운스트림 03_visualizer의 Day{N}_{AM|PM} 입력 규칙과 일치시킨다"
+  fallback: "4시간 이하인 경우 기존 단일 파일(강의교안_v1.0.md) 출력"
 
 logging:
   enabled: true
