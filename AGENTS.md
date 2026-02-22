@@ -131,6 +131,54 @@ YYYY-MM-DD_강의제목/
 
 ---
 
+## Per-Agent Model Routing
+
+각 파이프라인의 `config.json`에서 에이전트별 LLM 카테고리를 지정합니다.
+
+### 해석 규칙
+
+1. 오케스트레이터가 파이프라인 실행 시 `.agent/agents/{team}/config.json`을 읽습니다.
+2. 에이전트가 `agent_models`에 **있으면** → 지정된 카테고리의 모델 사용
+3. 에이전트가 `agent_models`에 **없으면** → `default_category`의 모델 사용
+4. 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션 참조
+
+### config.json 스키마
+
+```jsonc
+{
+    "name": "팀명",
+    "default_category": "deep",           // 팀 기본 카테고리
+    "agent_models": {                      // 에이전트별 오버라이드 (선택)
+        "A5_Code_Validator": {
+            "category": "quick",           // 이 에이전트만 다른 카테고리 사용
+            "note": "코드 검증 — 정확성만 필요"
+        }
+    }
+}
+```
+
+### 파이프라인별 에이전트 모델 매핑
+
+| Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 오버라이드 카테고리 |
+|----------|:---:|---|:---:|
+| **P01** Planner | `deep` | A0 Orchestrator, A5A QA Manager | `quick` |
+| | | A3 Curriculum Architect | `ultrabrain` |
+| | | A7 Differentiation Advisor | `artistry` |
+| **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
+| | | A6 Visualization Designer | `visual-engineering` |
+| | | A8 QA Editor | `ultrabrain` |
+| | | A10 Differentiation Strategist | `artistry` |
+| **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |
+| | | A8 Copy Tone Editor | `writing` |
+| | | A9 QA Auditor | `ultrabrain` |
+| **P04** PPTX Converter | `quick` | (없음 — 전원 기본) | — |
+| **P05** NanoBanana | `quick` | C2 Prompt Engineer | `writing` |
+| **P06** Prompt Generator | `writing` | P1 Education Structurer | `deep` |
+| | | P3 Visual Spec Curator | `visual-engineering` |
+| | | P4 QA Auditor | `ultrabrain` |
+
+---
+
 ## Integrated Quality Perspective
 
 All review and decision-making applies these **3 expert perspectives simultaneously**:

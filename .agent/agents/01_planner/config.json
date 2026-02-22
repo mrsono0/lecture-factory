@@ -1,8 +1,12 @@
 {
-    "name": "A1_Trend_Researcher",
-    "tools": [
-        "notebooklm",
-        "deep-research",
-        "tavily-web"
-    ]
+    "name": "01_planner",
+    "description": "강의 주제 선정부터 커리큘럼 확정까지의 기획 에이전트 팀",
+    "default_category": "deep",
+    "tools": ["notebooklm", "deep-research", "tavily-web"],
+    "agent_models": {
+        "A0_Orchestrator":           { "category": "quick",      "note": "스코프 정의·승인 — 경량 판단" },
+        "A3_Curriculum_Architect":   { "category": "ultrabrain", "note": "커리큘럼 구조 설계 — 복잡한 의존성 매핑" },
+        "A7_Differentiation_Advisor":{ "category": "artistry",   "note": "USP·차별화 전략 — 창의적 접근" },
+        "A5A_QA_Manager":           { "category": "quick",      "note": "기획안 검증 — 체크리스트 기반" }
+    }
 }

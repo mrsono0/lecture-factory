@@ -2,13 +2,8 @@
     "name": "06_prompt_generator",
     "description": "교안을 분석하여 AI 이미지 생성 도구용 슬라이드 생성 프롬프트를 교안별 개별 파일로 생성하는 5인 에이전트 팀",
     "version": "1.1",
-    "agents": [
-        "P0_Orchestrator",
-        "P1_Education_Structurer",
-        "P2_Slide_Prompt_Architect",
-        "P3_Visual_Spec_Curator",
-        "P4_QA_Auditor"
-    ],
+    "default_category": "writing",
+    "agents": ["P0_Orchestrator", "P1_Education_Structurer", "P2_Slide_Prompt_Architect", "P3_Visual_Spec_Curator", "P4_QA_Auditor"],
     "input_policy": {
         "required": "02_Material/*.md (N개, 파일 수 가변)",
         "optional": "03_Slides/ (IR, Glossary, DesignTokens, SequenceMap)"
@@ -18,5 +13,10 @@
         "path": "06_SlidePrompt/",
         "filename_pattern": "{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md",
         "count": "N개 (교안 파일당 1개)"
+    },
+    "agent_models": {
+        "P1_Education_Structurer": { "category": "deep",              "note": "교육 구조 추출 — 깊은 분석력" },
+        "P3_Visual_Spec_Curator":  { "category": "visual-engineering", "note": "비주얼 스펙 — 시각 전문" },
+        "P4_QA_Auditor":           { "category": "ultrabrain",         "note": "6-섹션 완결성 QA — 다관점 검증" }
     }
 }
