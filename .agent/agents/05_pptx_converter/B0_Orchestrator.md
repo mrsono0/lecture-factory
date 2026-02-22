@@ -54,15 +54,15 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **파일 무결성**: PPTX 파일이 정상적으로 열리고 모든 슬라이드가 렌더링되는가?
 
 ## 산출물
-- **프로젝트 폴더**: `YYYY-MM-DD_강의제목/04_PPTX/` (기존 프로젝트 폴더 하위)
-- **최종 PPTX 파일**: `YYYY-MM-DD_강의제목/04_PPTX/최종_프레젠테이션.pptx`
-- **변환 리포트**: `YYYY-MM-DD_강의제목/04_PPTX/변환리포트.md`
-- **썸네일 그리드**: `YYYY-MM-DD_강의제목/04_PPTX/thumbnails/`
+- **프로젝트 폴더**: `YYYY-MM-DD_강의제목/05_PPTX/` (기존 프로젝트 폴더 하위)
+- **최종 PPTX 파일**: `YYYY-MM-DD_강의제목/05_PPTX/최종_프레젠테이션.pptx`
+- **변환 리포트**: `YYYY-MM-DD_강의제목/05_PPTX/변환리포트.md`
+- **썸네일 그리드**: `YYYY-MM-DD_강의제목/05_PPTX/thumbnails/`
 
 ## 시작 가이드 (Startup)
 1. **입력 파일 확인**:
    - 사용자가 입력 파일을 지정하지 않은 경우, `YYYY-MM-DD_강의제목/03_Slides/` 디렉토리의 세션별 서브폴더(예: `Day1_AM/`, `Day2_PM/`)를 탐색합니다. 서브폴더가 1개면 자동 선택, 복수면 사용자에게 어떤 세션을 변환할지 확인합니다.
    - 필수 입력: 슬라이드 시퀀스 맵, 레이아웃 명세서, 디자인 토큰 (모두 `03_Slides/{session}/` 내 Phase 파일 또는 번들에서 추출)
 2. **스킬 파일 로드**: `.agent/skills/pptx-official/SKILL.md`와 `html2pptx.md`를 반드시 읽고 규칙을 숙지합니다.
-3. **작업 폴더 생성**: `04_PPTX/`, `04_PPTX/html/`, `04_PPTX/assets/`, `04_PPTX/thumbnails/` 폴더를 생성합니다.
+3. **작업 폴더 생성**: `05_PPTX/`, `05_PPTX/html/`, `05_PPTX/assets/`, `05_PPTX/thumbnails/` 폴더를 생성합니다.
 4. 각 에이전트에게 작업을 지시합니다.

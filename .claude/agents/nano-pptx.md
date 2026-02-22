@@ -80,11 +80,11 @@ Step 8에서 C0이 판단합니다:
 
 ## 산출물
 
-- `05_NanoPPTX/최종_프레젠테이션.pptx`
-- `05_NanoPPTX/변환리포트.md`
-- `05_NanoPPTX/images/slide-01.png ~ slide-NN.png`
-- `05_NanoPPTX/prompts/` (이미지 생성 프롬프트)
-- `05_NanoPPTX/index.html` (인터랙티브 뷰어)
+- `06_NanoPPTX/최종_프레젠테이션.pptx`
+- `06_NanoPPTX/변환리포트.md`
+- `06_NanoPPTX/images/slide-01.png ~ slide-NN.png`
+- `06_NanoPPTX/prompts/` (이미지 생성 프롬프트)
+- `06_NanoPPTX/index.html` (인터랙티브 뷰어)
 
 ## 출력 규칙
 

@@ -28,8 +28,8 @@ pptx.author = '강사명';
 pptx.title = '강의 제목';
 
 // slides_plan.json 로드
-const plan = require('./05_NanoPPTX/slides_plan.json');
-const notes = require('./05_NanoPPTX/speaker_notes.json');
+const plan = require('./06_NanoPPTX/slides_plan.json');
+const notes = require('./06_NanoPPTX/speaker_notes.json');
 
 for (const slideData of plan.slides) {
     const slide = pptx.addSlide();
@@ -37,7 +37,7 @@ for (const slideData of plan.slides) {
 
     // 이미지를 슬라이드 전체에 삽입 (16:9)
     slide.addImage({
-        path: `05_NanoPPTX/images/slide-${num}.png`,
+        path: `06_NanoPPTX/images/slide-${num}.png`,
         x: 0,
         y: 0,
         w: '100%',
@@ -50,7 +50,7 @@ for (const slideData of plan.slides) {
     }
 }
 
-await pptx.writeFile({ fileName: '05_NanoPPTX/최종_프레젠테이션.pptx' });
+await pptx.writeFile({ fileName: '06_NanoPPTX/최종_프레젠테이션.pptx' });
 ```
 
 ### 방법 2: python-pptx (Python)
@@ -63,10 +63,10 @@ prs = Presentation()
 prs.slide_width = Inches(13.333)   # 16:9
 prs.slide_height = Inches(7.5)
 
-with open('05_NanoPPTX/slides_plan.json') as f:
+with open('06_NanoPPTX/slides_plan.json') as f:
     plan = json.load(f)
 
-with open('05_NanoPPTX/speaker_notes.json') as f:
+with open('06_NanoPPTX/speaker_notes.json') as f:
     notes = json.load(f)
 
 blank_layout = prs.slide_layouts[6]  # Blank slide
@@ -77,7 +77,7 @@ for slide_data in plan['slides']:
 
     # 이미지를 슬라이드 전체에 삽입
     slide.shapes.add_picture(
-        f'05_NanoPPTX/images/slide-{num}.png',
+        f'06_NanoPPTX/images/slide-{num}.png',
         left=0, top=0,
         width=prs.slide_width,
         height=prs.slide_height
@@ -88,7 +88,7 @@ for slide_data in plan['slides']:
     if note_key in notes:
         slide.notes_slide.notes_text_frame.text = notes[note_key]
 
-prs.save('05_NanoPPTX/최종_프레젠테이션.pptx')
+prs.save('06_NanoPPTX/최종_프레젠테이션.pptx')
 ```
 
 ## 핵심 규칙
@@ -116,7 +116,7 @@ NanoBanana-PPT-Skills의 index.html 뷰어를 함께 생성합니다:
 - 슬라이드 이미지를 웹 브라우저에서 프레젠테이션처럼 볼 수 있는 HTML 뷰어
 
 ## 산출물
-- **최종 PPTX**: `05_NanoPPTX/최종_프레젠테이션.pptx`
-- **빌드 스크립트**: `05_NanoPPTX/build_pptx.js` 또는 `build_pptx.py` (재실행 가능)
-- **HTML 뷰어**: `05_NanoPPTX/index.html` (인터랙티브 프레젠테이션 뷰어)
+- **최종 PPTX**: `06_NanoPPTX/최종_프레젠테이션.pptx`
+- **빌드 스크립트**: `06_NanoPPTX/build_pptx.js` 또는 `build_pptx.py` (재실행 가능)
+- **HTML 뷰어**: `06_NanoPPTX/index.html` (인터랙티브 프레젠테이션 뷰어)
 - **빌드 로그**: 삽입된 슬라이드 수, 파일 크기, 생성 시간

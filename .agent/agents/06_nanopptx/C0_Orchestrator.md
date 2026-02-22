@@ -76,15 +76,15 @@ KLING_SECRET_KEY=<Keling AI Secret Key>
 - **완전성**: 모든 슬라이드가 빠짐없이 생성되었는가?
 
 ## 산출물
-- **프로젝트 폴더**: `YYYY-MM-DD_강의제목/05_NanoPPTX/`
-- **슬라이드 이미지**: `05_NanoPPTX/images/slide-01.png ~ slide-NN.png`
-- **최종 PPTX**: `05_NanoPPTX/최종_프레젠테이션.pptx`
-- **변환 리포트**: `05_NanoPPTX/변환리포트.md`
-- **인터랙티브 뷰어**: `05_NanoPPTX/index.html` (키보드 네비게이션 지원)
+- **프로젝트 폴더**: `YYYY-MM-DD_강의제목/06_NanoPPTX/`
+- **슬라이드 이미지**: `06_NanoPPTX/images/slide-01.png ~ slide-NN.png`
+- **최종 PPTX**: `06_NanoPPTX/최종_프레젠테이션.pptx`
+- **변환 리포트**: `06_NanoPPTX/변환리포트.md`
+- **인터랙티브 뷰어**: `06_NanoPPTX/index.html` (키보드 네비게이션 지원)
 
 ## 시작 가이드 (Startup)
 1. **입력 파일 확인**: `YYYY-MM-DD_강의제목/03_Slides/` 디렉토리의 세션별 서브폴더(예: `Day1_AM/`, `Day2_PM/`)를 탐색합니다. 서브폴더가 1개면 자동 선택, 복수면 사용자에게 어떤 세션을 처리할지 확인합니다.
 2. **스킬 파일 로드**: nanobanana-ppt-skills, imagen, gemini-api-dev, pptx-official SKILL.md 읽기
 3. **API 키 확인**: `GEMINI_API_KEY` 환경변수 존재 여부 확인
-4. **작업 폴더 생성**: `05_NanoPPTX/`, `05_NanoPPTX/images/`, `05_NanoPPTX/prompts/` 생성
+4. **작업 폴더 생성**: `06_NanoPPTX/`, `06_NanoPPTX/images/`, `06_NanoPPTX/prompts/` 생성
 5. 각 에이전트에게 작업 지시

@@ -13,7 +13,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ## 검증 도구 (Tools)
 - **thumbnail.py**: `.agent/skills/pptx-official/scripts/thumbnail.py` — PPTX 썸네일 그리드 생성
-- **개별 이미지 직접 검사**: `05_NanoPPTX/images/slide-*.png` 파일 확인
+- **개별 이미지 직접 검사**: `06_NanoPPTX/images/slide-*.png` 파일 확인
 - **LibreOffice → PDF → pdftoppm**: 고해상도 개별 슬라이드 검사
 
 ## 핵심 검증 항목
@@ -67,17 +67,17 @@ AI 이미지 생성 모델의 텍스트 렌더링은 완벽하지 않을 수 있
 ### Step 1: 썸네일 그리드 생성 및 전체 검사
 ```bash
 python .agent/skills/pptx-official/scripts/thumbnail.py \
-  05_NanoPPTX/최종_프레젠테이션.pptx \
-  05_NanoPPTX/thumbnails/grid --cols 5
+  06_NanoPPTX/최종_프레젠테이션.pptx \
+  06_NanoPPTX/thumbnails/grid --cols 5
 ```
 
 ### Step 2: 개별 이미지 상세 검사 (문제 의심 슬라이드)
 ```bash
 # 이미지 메타데이터 확인
-identify 05_NanoPPTX/images/slide-05.png
+identify 06_NanoPPTX/images/slide-05.png
 
 # 고해상도 확대 검사
-soffice --headless --convert-to pdf 05_NanoPPTX/최종_프레젠테이션.pptx
+soffice --headless --convert-to pdf 06_NanoPPTX/최종_프레젠테이션.pptx
 pdftoppm -jpeg -r 200 -f 5 -l 5 최종_프레젠테이션.pdf detail_slide
 ```
 
@@ -107,7 +107,7 @@ slides_plan.json의 텍스트와 실제 이미지 내 텍스트를 대조합니�
 ```
 
 ## 산출물
-- **썸네일 그리드**: `05_NanoPPTX/thumbnails/grid-*.jpg`
-- **QA 리포트**: `05_NanoPPTX/qa_report.md`
-- **텍스트 교차 검증 결과**: `05_NanoPPTX/text_verification.md`
+- **썸네일 그리드**: `06_NanoPPTX/thumbnails/grid-*.jpg`
+- **QA 리포트**: `06_NanoPPTX/qa_report.md`
+- **텍스트 교차 검증 결과**: `06_NanoPPTX/text_verification.md`
 - **최종 판정**: 승인 / 조건부 승인 / 부분 재생성 / 전체 반려

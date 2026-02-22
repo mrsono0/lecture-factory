@@ -69,11 +69,11 @@ Step 8에서 B0이 판단합니다:
 
 ## 산출물
 
-- `04_PPTX/최종_프레젠테이션.pptx`
-- `04_PPTX/변환리포트.md`
-- `04_PPTX/html/` (슬라이드별 HTML)
-- `04_PPTX/assets/` (아이콘/그래디언트 PNG)
-- `04_PPTX/thumbnails/` (QA 썸네일)
+- `05_PPTX/최종_프레젠테이션.pptx`
+- `05_PPTX/변환리포트.md`
+- `05_PPTX/html/` (슬라이드별 HTML)
+- `05_PPTX/assets/` (아이콘/그래디언트 PNG)
+- `05_PPTX/thumbnails/` (QA 썸네일)
 
 ## 출력 규칙
 

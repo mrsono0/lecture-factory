@@ -75,6 +75,6 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ```
 
 ## 산출물
-- **슬라이드 데이터 JSON**: `04_PPTX/slide_data.json` (전체 슬라이드 구조화 데이터)
-- **에셋 요청 목록**: `04_PPTX/asset_requests.json` (B3에 전달할 다이어그램/아이콘 목록)
+- **슬라이드 데이터 JSON**: `05_PPTX/slide_data.json` (전체 슬라이드 구조화 데이터)
+- **에셋 요청 목록**: `05_PPTX/asset_requests.json` (B3에 전달할 다이어그램/아이콘 목록)
 - **파싱 리포트**: 파싱 경고 및 특이사항 정리

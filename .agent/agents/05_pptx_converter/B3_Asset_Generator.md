@@ -69,7 +69,7 @@ async function createGradient(color1, color2, direction, filename) {
 
 ## 에셋 명명 규칙 (Naming Convention)
 ```
-04_PPTX/assets/
+05_PPTX/assets/
 ├── icons/
 │   ├── icon_python_256.png
 │   ├── icon_terminal_256.png
@@ -85,9 +85,9 @@ async function createGradient(color1, color2, direction, filename) {
 ```
 
 ## 입력
-- **에셋 요청 목록**: `04_PPTX/asset_requests.json` (B1이 생성)
+- **에셋 요청 목록**: `05_PPTX/asset_requests.json` (B1이 생성)
 - **디자인 토큰**: A7의 색상/스타일 정의
 
 ## 산출물
-- **에셋 PNG 파일**: `04_PPTX/assets/` 디렉토리에 모든 이미지 저장
-- **에셋 매니페스트**: `04_PPTX/asset_manifest.json` (파일명 → 슬라이드 번호 매핑)
+- **에셋 PNG 파일**: `05_PPTX/assets/` 디렉토리에 모든 이미지 저장
+- **에셋 매니페스트**: `05_PPTX/asset_manifest.json` (파일명 → 슬라이드 번호 매핑)

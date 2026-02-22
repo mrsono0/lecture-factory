@@ -20,7 +20,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ### 1. 썸네일 그리드 생성
 ```bash
-python .agent/skills/pptx-official/scripts/thumbnail.py 04_PPTX/최종_프레젠테이션.pptx 04_PPTX/thumbnails/grid --cols 4
+python .agent/skills/pptx-official/scripts/thumbnail.py 05_PPTX/최종_프레젠테이션.pptx 05_PPTX/thumbnails/grid --cols 4
 ```
 - 대규모 덱(30장 이상)은 여러 그리드 이미지로 분할됨 (grid-1.jpg, grid-2.jpg, ...)
 - 모든 그리드 이미지를 반드시 검사
@@ -66,13 +66,13 @@ python .agent/skills/pptx-official/scripts/thumbnail.py 04_PPTX/최종_프레젠
 ### 3. 개별 슬라이드 상세 검사 (필요 시)
 특정 슬라이드에 문제가 의심되면 고해상도 개별 이미지로 확인:
 ```bash
-soffice --headless --convert-to pdf 04_PPTX/최종_프레젠테이션.pptx
+soffice --headless --convert-to pdf 05_PPTX/최종_프레젠테이션.pptx
 pdftoppm -jpeg -r 200 -f 5 -l 5 최종_프레젠테이션.pdf slide_detail
 ```
 
 ### 4. PPTX 파일 무결성 검증
 ```bash
-python .agent/skills/pptx-official/ooxml/scripts/validate.py 04_PPTX/최종_프레젠테이션.pptx
+python .agent/skills/pptx-official/ooxml/scripts/validate.py 05_PPTX/최종_프레젠테이션.pptx
 ```
 
 ## 판정 기준 (Decision Criteria)
@@ -99,6 +99,6 @@ python .agent/skills/pptx-official/ooxml/scripts/validate.py 04_PPTX/최종_프�
 ```
 
 ## 산출물
-- **썸네일 그리드**: `04_PPTX/thumbnails/grid-*.jpg`
-- **QA 리포트**: `04_PPTX/qa_report.md` (체크리스트 결과 + 수정 지시)
+- **썸네일 그리드**: `05_PPTX/thumbnails/grid-*.jpg`
+- **QA 리포트**: `05_PPTX/qa_report.md` (체크리스트 결과 + 수정 지시)
 - **최종 판정**: 승인 / 조건부 승인 / 반려

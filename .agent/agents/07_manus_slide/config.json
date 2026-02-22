@@ -6,7 +6,7 @@
     "required_env": ["MANUS_API_KEY"],
     "optional_env": [],
     "input_policy": {
-        "required": "06_SlidePrompt/*슬라이드 생성 프롬프트.md (N개, 파일 수 가변)",
+        "required": "04_SlidePrompt/*슬라이드 생성 프롬프트.md (N개, 파일 수 가변)",
         "optional": "02_Material/*.md (교안 원문 대조 검증용)"
     },
     "output_policy": {

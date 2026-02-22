@@ -102,6 +102,6 @@ Nano Banana Pro의 페이지 유형 체계로 변환합니다:
 - **유형 매핑 정확성**: 원본 슬라이드 유형(T-COVER 등)이 Nano Banana 페이지 유형(cover/content/data)에 적절히 매핑되었는가?
 
 ## 산출물
-- **슬라이드 플랜**: `05_NanoPPTX/slides_plan.json`
-- **강사 노트 목록**: `05_NanoPPTX/speaker_notes.json` (PPTX 삽입용 별도 추출)
+- **슬라이드 플랜**: `06_NanoPPTX/slides_plan.json`
+- **강사 노트 목록**: `06_NanoPPTX/speaker_notes.json` (PPTX 삽입용 별도 추출)
 - **플래닝 리포트**: 슬라이드 수, 유형 분포, 텍스트 축약 사항 요약

@@ -32,7 +32,7 @@ python .agent/scripts/manus_slide.py {프로젝트폴더} --file {세션ID}
 #### 분할 파일 (청크)
 청크를 교시 순서대로 순차 제출합니다:
 ```bash
-# 임시 청크 파일을 06_SlidePrompt/ 패턴에 맞게 전달
+# 임시 청크 파일을 04_SlidePrompt/ 패턴에 맞게 전달
 # 또는 --chunk-dir 옵션 사용 (manus_slide.py 확장 필요)
 python .agent/scripts/manus_slide.py {프로젝트폴더} --file {chunk_파일명}
 ```

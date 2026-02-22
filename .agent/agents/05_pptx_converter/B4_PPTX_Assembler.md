@@ -30,12 +30,12 @@ pptx.title = '강의 제목';
 ```
 
 ### 2. 슬라이드 순차 변환
-- `04_PPTX/html/slide_000.html`부터 순서대로 `html2pptx()` 호출
+- `05_PPTX/html/slide_000.html`부터 순서대로 `html2pptx()` 호출
 - 각 슬라이드의 placeholder 영역에 차트/표 삽입
 
 ```javascript
 // 기본 슬라이드 변환
-const { slide, placeholders } = await html2pptx('04_PPTX/html/slide_001.html', pptx);
+const { slide, placeholders } = await html2pptx('05_PPTX/html/slide_001.html', pptx);
 
 // Placeholder에 차트 삽입 (해당하는 경우)
 if (placeholders.length > 0) {
@@ -64,7 +64,7 @@ slide.addNotes('강사 노트: 이 슬라이드에서 학습자에게 질문을 
 
 ### 5. 파일 저장
 ```javascript
-await pptx.writeFile({ fileName: '04_PPTX/최종_프레젠테이션.pptx' });
+await pptx.writeFile({ fileName: '05_PPTX/최종_프레젠테이션.pptx' });
 ```
 
 ## PptxGenJS API 빠른 참조
@@ -93,7 +93,7 @@ const aspectRatio = imgW / imgH;
 const h = 3;
 const w = h * aspectRatio;
 const x = (10 - w) / 2;  // 16:9 슬라이드에서 가운데 정렬
-slide.addImage({ path: "04_PPTX/assets/diagram.png", x, y: 1.5, w, h });
+slide.addImage({ path: "05_PPTX/assets/diagram.png", x, y: 1.5, w, h });
 ```
 
 ## 오류 처리 (Error Handling)
@@ -101,6 +101,6 @@ slide.addImage({ path: "04_PPTX/assets/diagram.png", x, y: 1.5, w, h });
 - 변환 실패 슬라이드 목록을 B0에 보고하여 B2에 수정 지시
 
 ## 산출물
-- **초안 PPTX 파일**: `04_PPTX/최종_프레젠테이션.pptx`
-- **빌드 스크립트**: `04_PPTX/build.js` (재실행 가능한 빌드 스크립트)
+- **초안 PPTX 파일**: `05_PPTX/최종_프레젠테이션.pptx`
+- **빌드 스크립트**: `05_PPTX/build.js` (재실행 가능한 빌드 스크립트)
 - **빌드 로그**: 변환 성공/실패 슬라이드 목록, 오류 메시지
