@@ -13,14 +13,14 @@ required_env:
 steps:
   # Phase 1: 사전 준비
   - id: step_1_skill_load
-    agent: "05_nanopptx/C0_Orchestrator"
+    agent: "06_nanopptx/C0_Orchestrator"
     action: "load_skills"
     input: "nanobanana-ppt-skills SKILL.md, imagen SKILL.md, gemini-api-dev SKILL.md, pptx-official SKILL.md, last30days SKILL.md (Nano Banana Pro prompting techniques)"
     output: "Skill Knowledge Loaded, Available Styles List"
     description: "관련 스킬 문서를 로드하고, 사용 가능한 비주얼 스타일 목록을 확인합니다."
 
   - id: step_2_input_validation
-    agent: "05_nanopptx/C0_Orchestrator"
+    agent: "06_nanopptx/C0_Orchestrator"
     action: "validate_input"
     input: "03_Slides/ directory (Slide Sequence Map, Layout Specs, Design Tokens), GEMINI_API_KEY, Output Language: Korean"
     output: "Validated Input Manifest, Selected Style, Resolution"
@@ -28,7 +28,7 @@ steps:
 
   # Phase 2: 콘텐츠 플래닝
   - id: step_3_content_planning
-    agent: "05_nanopptx/C1_Content_Planner"
+    agent: "06_nanopptx/C1_Content_Planner"
     action: "create_slide_plan"
     input: "Slide Markdown files, Slide Sequence Map, Design Tokens, Output Language: Korean"
     output: "slides_plan.json, speaker_notes.json, Asset Request Summary"
@@ -36,7 +36,7 @@ steps:
 
   # Phase 3: 프롬프트 생성
   - id: step_4_prompt_engineering
-    agent: "05_nanopptx/C2_Prompt_Engineer"
+    agent: "06_nanopptx/C2_Prompt_Engineer"
     action: "generate_prompts"
     input: "slides_plan.json, Selected Style Template, Nano Banana Pro prompting best practices, Output Language: Korean"
     output: "slide_prompts.json, style_preamble.md"
@@ -44,7 +44,7 @@ steps:
 
   # Phase 4: 이미지 생성
   - id: step_5_image_generation
-    agent: "05_nanopptx/C3_Image_Generator"
+    agent: "06_nanopptx/C3_Image_Generator"
     action: "generate_images"
     input: "slide_prompts.json, Style Template, Resolution config, Output Language: Korean"
     output: "Slide PNG images (slide-01.png ~ slide-NN.png), Generation Log"
@@ -52,7 +52,7 @@ steps:
 
   # Phase 5: PPTX 조립
   - id: step_6_pptx_build
-    agent: "05_nanopptx/C4_PPTX_Builder"
+    agent: "06_nanopptx/C4_PPTX_Builder"
     action: "build_pptx"
     input: "Slide PNG images, slides_plan.json, speaker_notes.json, Output Language: Korean"
     output: "Draft PPTX file, HTML Viewer, Build Log"
@@ -60,14 +60,14 @@ steps:
 
   # Phase 6: 품질 검증 및 수정 루프
   - id: step_7_visual_qa
-    agent: "05_nanopptx/C5_Visual_QA"
+    agent: "06_nanopptx/C5_Visual_QA"
     action: "inspect_quality"
     input: "Draft PPTX file, Slide PNG images, slides_plan.json, Output Language: Korean"
     output: "Thumbnail Grid, QA Report, Text Verification Report"
     description: "썸네일 그리드를 생성하고 시각 품질, 텍스트 정확성(한글 왜곡, 코드 오류), 스타일 일관성을 검사합니다."
 
   - id: step_8_fix_loop
-    agent: "05_nanopptx/C0_Orchestrator"
+    agent: "06_nanopptx/C0_Orchestrator"
     action: "coordinate_fixes"
     input: "QA Report, Text Verification Report, Output Language: Korean"
     output: "Fix Instructions or Final Approval"
@@ -80,7 +80,7 @@ steps:
 
   # Phase 7: 최종 산출물
   - id: step_9_finalize
-    agent: "05_nanopptx/C0_Orchestrator"
+    agent: "06_nanopptx/C0_Orchestrator"
     action: "finalize_output"
     input: "Approved PPTX file, QA Report, Generation Log, Output Language: Korean"
     output: "Final PPTX file, Conversion Report, Interactive Viewer"

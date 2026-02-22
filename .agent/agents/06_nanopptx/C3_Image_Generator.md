@@ -22,10 +22,10 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ### 방법 1: generate_ppt.py 스크립트 사용 (권장)
 ```bash
 python generate_ppt.py \
-  --plan 05_NanoPPTX/slides_plan.json \
+  --plan 06_NanoPPTX/slides_plan.json \
   --style styles/gradient-glass.md \
   --resolution 2K \
-  --output 05_NanoPPTX/images/
+  --output 06_NanoPPTX/images/
 ```
 
 ### 방법 2: Gemini API 직접 호출
@@ -49,7 +49,7 @@ response = client.models.generate_content(
 if response.candidates[0].content.parts:
     for part in response.candidates[0].content.parts:
         if hasattr(part, 'inline_data'):
-            with open(f"05_NanoPPTX/images/slide-{num:02d}.png", "wb") as f:
+            with open(f"06_NanoPPTX/images/slide-{num:02d}.png", "wb") as f:
                 f.write(part.inline_data.data)
 ```
 
@@ -57,7 +57,7 @@ if response.candidates[0].content.parts:
 ```bash
 python .agent/skills/imagen/scripts/generate_image.py \
   "[프롬프트 텍스트]" \
-  "05_NanoPPTX/images/slide-01.png" \
+  "06_NanoPPTX/images/slide-01.png" \
   --size 2K
 ```
 
@@ -91,7 +91,7 @@ python .agent/skills/imagen/scripts/generate_image.py \
 
 ## 파일 명명 규칙
 ```
-05_NanoPPTX/images/
+06_NanoPPTX/images/
 ├── slide-01.png    (커버)
 ├── slide-02.png
 ├── slide-03.png
@@ -110,6 +110,6 @@ python .agent/skills/imagen/scripts/generate_image.py \
 | 20장 | 4K | 약 15~18분 |
 
 ## 산출물
-- **슬라이드 이미지**: `05_NanoPPTX/images/slide-01.png ~ slide-NN.png`
-- **생성 로그**: `05_NanoPPTX/generation_log.json` (각 슬라이드별 생성 시간, 재시도 횟수, 프롬프트 버전)
+- **슬라이드 이미지**: `06_NanoPPTX/images/slide-01.png ~ slide-NN.png`
+- **생성 로그**: `06_NanoPPTX/generation_log.json` (각 슬라이드별 생성 시간, 재시도 횟수, 프롬프트 버전)
 - **생성 상태 리포트**: 성공/실패 슬라이드 목록

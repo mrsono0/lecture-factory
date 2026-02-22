@@ -1,18 +1,18 @@
 ---
 name: nano-pptx
-description: NanoBanana PPTX 생성 파이프라인 오케스트레이터. 05_NanoBanana_PPTX 워크플로우를 실행하여 AI 이미지 기반 고품질 슬라이드를 생성합니다. 디자인 중심 슬라이드, 글래스모피즘/벤토그리드 스타일에 적합합니다. GEMINI_API_KEY가 필요합니다.
+description: NanoBanana PPTX 생성 파이프라인 오케스트레이터. 06_NanoBanana_PPTX 워크플로우를 실행하여 AI 이미지 기반 고품질 슬라이드를 생성합니다. 디자인 중심 슬라이드, 글래스모피즘/벤토그리드 스타일에 적합합니다. GEMINI_API_KEY가 필요합니다.
 tools: Read, Edit, Write, Bash, Glob, Grep, Task
 model: opus
 ---
 
 # NanoBanana PPTX 생성 파이프라인 오케스트레이터
 
-당신은 Lecture Factory의 **05_NanoBanana_PPTX** 파이프라인을 실행하는 오케스트레이터입니다.
+당신은 Lecture Factory의 **06_NanoBanana_PPTX** 파이프라인을 실행하는 오케스트레이터입니다.
 
 ## 실행 전 필수 준비
 
 1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/05_NanoBanana_PPTX.yaml`을 읽고 스텝 순서를 파악합니다.
+2. **워크플로우 로드**: `.agent/workflows/06_NanoBanana_PPTX.yaml`을 읽고 스텝 순서를 파악합니다.
 3. **스킬 파일 로드** (5개):
    - `.agent/skills/nanobanana-ppt-skills/SKILL.md`
    - `.agent/skills/imagen/SKILL.md`
@@ -26,12 +26,12 @@ model: opus
 
 | Step | Agent | 프롬프트 파일 |
 |---|---|---|
-| 1, 2, 8, 9 | C0 Orchestrator | `.agent/agents/05_nanopptx/C0_Orchestrator.md` |
-| 3 | C1 Content Planner | `.agent/agents/05_nanopptx/C1_Content_Planner.md` |
-| 4 | C2 Prompt Engineer | `.agent/agents/05_nanopptx/C2_Prompt_Engineer.md` |
-| 5 | C3 Image Generator | `.agent/agents/05_nanopptx/C3_Image_Generator.md` |
-| 6 | C4 PPTX Builder | `.agent/agents/05_nanopptx/C4_PPTX_Builder.md` |
-| 7 | C5 Visual QA | `.agent/agents/05_nanopptx/C5_Visual_QA.md` |
+| 1, 2, 8, 9 | C0 Orchestrator | `.agent/agents/06_nanopptx/C0_Orchestrator.md` |
+| 3 | C1 Content Planner | `.agent/agents/06_nanopptx/C1_Content_Planner.md` |
+| 4 | C2 Prompt Engineer | `.agent/agents/06_nanopptx/C2_Prompt_Engineer.md` |
+| 5 | C3 Image Generator | `.agent/agents/06_nanopptx/C3_Image_Generator.md` |
+| 6 | C4 PPTX Builder | `.agent/agents/06_nanopptx/C4_PPTX_Builder.md` |
+| 7 | C5 Visual QA | `.agent/agents/06_nanopptx/C5_Visual_QA.md` |
 
 ## 파이프라인 실행 순서 (완전 순차)
 
@@ -80,11 +80,11 @@ Step 8에서 C0이 판단합니다:
 
 ## 산출물
 
-- `05_NanoPPTX/최종_프레젠테이션.pptx`
-- `05_NanoPPTX/변환리포트.md`
-- `05_NanoPPTX/images/slide-01.png ~ slide-NN.png`
-- `05_NanoPPTX/prompts/` (이미지 생성 프롬프트)
-- `05_NanoPPTX/index.html` (인터랙티브 뷰어)
+- `06_NanoPPTX/최종_프레젠테이션.pptx`
+- `06_NanoPPTX/변환리포트.md`
+- `06_NanoPPTX/images/slide-01.png ~ slide-NN.png`
+- `06_NanoPPTX/prompts/` (이미지 생성 프롬프트)
+- `06_NanoPPTX/index.html` (인터랙티브 뷰어)
 
 ## 출력 규칙
 

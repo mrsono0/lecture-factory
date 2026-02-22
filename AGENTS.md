@@ -25,15 +25,15 @@ The Lecture Factory system consists of **seven** main pipelines과 **1개의 E2E
 | 1 | **Lecture Planning** | `01_Lecture_Planning.yaml` | Create a structured curriculum from raw ideas | `01_Planning/강의구성안.md` |
 | 2 | **Material Writing** | `02_Material_Writing.yaml` | Write detailed lecture material (text + code) | `02_Material/강의교안_v1.0.md` |
 | 3 | **Slide Generation** | `03_Slide_Generation.yaml` | Create presentation slide storyboard | `03_Slides/{session}/슬라이드기획안.md` |
-| 4 | **PPTX Conversion** | `04_PPTX_Conversion.yaml` | Convert slide storyboard to PowerPoint file | `04_PPTX/최종_프레젠테이션.pptx` |
-| 5 | **NanoBanana PPTX** | `05_NanoBanana_PPTX.yaml` | AI image-based high-quality slide generation | `05_NanoPPTX/최종_프레젠테이션.pptx` |
-| 6 | **Slide Prompt Generation** | `06_SlidePrompt_Generation.yaml` | Generate one-shot slide generation prompts from lecture materials | `06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개) |
+| 4 | **Slide Prompt Generation** | `04_SlidePrompt_Generation.yaml` | Generate one-shot slide generation prompts from lecture materials | `04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개) |
+| 5 | **PPTX Conversion** | `05_PPTX_Conversion.yaml` | Convert slide storyboard to PowerPoint file | `05_PPTX/최종_프레젠테이션.pptx` |
+| 6 | **NanoBanana PPTX** | `06_NanoBanana_PPTX.yaml` | AI image-based high-quality slide generation | `06_NanoPPTX/최종_프레젠테이션.pptx` |
 | 7 | **Manus Slide Generation** | `07_Manus_Slide.yaml` | Send slide prompts to Manus AI (Nano Banana Pro) with session-based chunking and download PPTX | `07_ManusSlides/{세션ID}_{세션제목}.pptx` (×N개) |
-| E2E | **End-to-End** | — (마스터 오케스트레이터) | 1, 2, 3, 6단계 순차 자동 실행 | 기획안→교안→슬라이드→프롬프트 |
+| E2E | **End-to-End** | — (마스터 오케스트레이터) | 1, 2, 3, 4단계 순차 자동 실행 | 기획안→교안→슬라이드→프롬프트 |
 
-> **Note**: Pipelines 4, 5, 7 are alternative PPTX generation methods:
-> - **04**: HTML-based (faster, code-heavy slides)
-> - **05**: Gemini AI image (higher visual quality, design-heavy)
+> **Note**: Pipelines 5, 6, 7 are alternative PPTX generation methods:
+> - **05**: HTML-based (faster, code-heavy slides)
+> - **06**: Gemini AI image (higher visual quality, design-heavy)
 > - **07**: Manus AI cloud (requires Manus Pro plan)
 
 ---
@@ -45,7 +45,7 @@ Lecture Factory 파이프라인은 사용 중인 AI 에이전트 인터페이스
 - **Gemini CLI 환경**: `/skill lecture-plan` 등 스킬 기반 실행. 상세 가이드는 `.gemini/Lecture_Creation_Guide.md` 참조.
 - **Claude Code 환경**: `/project:lecture-plan` 등 슬래시 커맨드 기반 실행. E2E 통합 실행은 `/project:lecture-factory`. 상세 가이드는 `.claude/Lecture_Creation_Guide.md` 참조.
 
-두 환경 모두 입력 파일 생략 시 이전 단계 결과물을 자동 탐색합니다. Claude Code에서는 `/project:lecture-factory` 커맨드로 1, 2, 3, 6단계를 순차 자동 실행할 수 있습니다. (4·5·7단계 PPTX 생성은 별도 실행)
+두 환경 모두 입력 파일 생략 시 이전 단계 결과물을 자동 탐색합니다. Claude Code에서는 `/project:lecture-factory` 커맨드로 1, 2, 3, 4단계를 순차 자동 실행할 수 있습니다. (5·6·7단계 PPTX 생성은 별도 실행)
 
 ---
 
@@ -72,10 +72,10 @@ YYYY-MM-DD_강의제목/
 │   │   ├── Phase3B_CodeValidation.md
 │   │   └── Phase4_Trace_QA.md
 │   └── Day1_PM/ (동일 구조)
-├── 04_PPTX/                 (Pipeline 4)
-├── 05_NanoPPTX/             (Pipeline 5)
-├── 06_SlidePrompt/          (Pipeline 6)
+├── 04_SlidePrompt/          (Pipeline 4)
 │   └── {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md  (×N개)
+├── 05_PPTX/                 (Pipeline 5)
+├── 06_NanoPPTX/             (Pipeline 6)
 ├── 07_ManusSlides/          (Pipeline 7)
 │   ├── {세션ID}_{세션제목}.pptx  (×N개)
 │   ├── manus_task_log.json
@@ -112,22 +112,22 @@ YYYY-MM-DD_강의제목/
 - Phase 3: A4 + A5 + A8 (병렬), A5 → A6 (Lab 카드)
 - Phase 4: A10 → A9 (최종 QA)
 
-### Team 4: PPTX Converter (04_pptx_converter) — 6 agents
-**Flow**: B0 → B1 → B3 → B2 → B4 → B5 → B0 (승인/반려)
-**Tech**: html2pptx.js (Playwright + PptxGenJS), Sharp, react-icons
-
-### Team 5: NanoBanana (05_nanopptx) — 6 agents
-**Flow**: C0 → C1 → C2 → C3 → C4 → C5 → C0 (승인/부분 재생성/반려)
-**Required**: `GEMINI_API_KEY`
-
-### Team 6: Slide Prompt Generator (06_prompt_generator) — 5 agents
+### Team 4: Slide Prompt Generator (04_prompt_generator) — 5 agents
 **Flow**:
 - Phase A: P0 (입력 탐색, N개 스캐폴딩)
 - Phase B: P1 (교육 구조 ×N) ∥ P3 (비주얼 스펙) [병렬]
 - Phase C: P2 (슬라이드 명세 ×N)
 - Phase D: P0 (조립) → P4 (QA)
 
-> **Pipeline 6 정책**: §⑥ 교안 원문 섹션에 교안 마크다운 전문을 삽입합니다. 상세 규칙은 P0/P2 에이전트 명세 참조.
+> **Pipeline 4 정책**: §④ 교안 원문 섹션에 교안 마크다운 전문을 삽입합니다. 상세 규칙은 P0/P2 에이전트 명세 참조.
+
+### Team 5: PPTX Converter (05_pptx_converter) — 6 agents
+**Flow**: B0 → B1 → B3 → B2 → B4 → B5 → B0 (승인/반려)
+**Tech**: html2pptx.js (Playwright + PptxGenJS), Sharp, react-icons
+
+### Team 6: NanoBanana (06_nanopptx) — 6 agents
+**Flow**: C0 → C1 → C2 → C3 → C4 → C5 → C0 (승인/부분 재생성/반려)
+**Required**: `GEMINI_API_KEY`
 
 ### Team 7: Manus Slide (07_manus_slide) — 6 agents
 **Flow**: D0 → D1 → D2 → D3 → D4 → D5 → D0 (승인/재제출/반려)
@@ -180,15 +180,15 @@ YYYY-MM-DD_강의제목/
 | **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |
 | | | A8 Copy Tone Editor | `writing` |
 | | | A9 QA Auditor | `ultrabrain` |
-| **P04** PPTX Converter | `quick` | B0 Orchestrator, B1 Slide Parser | `unspecified-low` |
-| | | B2 HTML Renderer | `visual-engineering` |
-| | | B5 Visual QA | `visual-engineering` |
-| **P05** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
-| **P06** Prompt Generator | `writing` | P0 Orchestrator | `unspecified-low` |
+| **P04** Prompt Generator | `writing` | P0 Orchestrator | `unspecified-low` |
 | | | P1 Education Structurer | `deep` |
 | | | P2 Slide Prompt Architect | `deep` |
 | | | P3 Visual Spec Curator | `visual-engineering` |
 | | | P4 QA Auditor | `ultrabrain` |
+| **P05** PPTX Converter | `quick` | B0 Orchestrator, B1 Slide Parser | `unspecified-low` |
+| | | B2 HTML Renderer | `visual-engineering` |
+| | | B5 Visual QA | `visual-engineering` |
+| **P06** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
 | **P07** Manus Slide | `quick` | D0 Orchestrator | `unspecified-low` |
 | | | D2 Chunk Splitter | `writing` |
 | | | D5 Visual QA | `ultrabrain` |
@@ -209,7 +209,7 @@ All review and decision-making applies these **3 expert perspectives simultaneou
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `GEMINI_API_KEY` | Pipeline 1, 5 | Google AI API Key |
+| `GEMINI_API_KEY` | Pipeline 1, 6 | Google AI API Key |
 | `TAVILY_API_KEY` | Pipeline 1 | Tavily 검색 API Key |
 | `MANUS_API_KEY` | Pipeline 7 | Manus AI API Key (각 환경의 `.env`에 설정) |
 
@@ -230,7 +230,7 @@ All review and decision-making applies these **3 expert perspectives simultaneou
 
 - **Auto Input Detection**: 2단계 이후 입력 파일 생략 시 이전 단계 결과물을 자동 탐색합니다.
 - **Agent-specific Feedback**: "A4 에이전트에게 어조를 좀 더 친근하게 바꿔줘"와 같이 특정 에이전트에 지시 가능합니다.
-- **Pipeline 4 vs 5 vs 7**: 코드 중심 → 04, 로컬 AI 이미지 → 05, 클라우드 AI → 07.
+- **Pipeline 5 vs 6 vs 7**: 코드 중심 → 05, 로컬 AI 이미지 → 06, 클라우드 AI → 07.
 
 ---
 

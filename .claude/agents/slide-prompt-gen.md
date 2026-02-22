@@ -1,18 +1,18 @@
 ---
 name: slide-prompt-gen
-description: 슬라이드 프롬프트 생성 파이프라인 오케스트레이터. 06_SlidePrompt_Generation 워크플로우를 실행하여 교안별 원샷 슬라이드 생성 프롬프트를 만듭니다. 교안(N개)을 분석하여 각각 독립적인 프롬프트 파일을 생성합니다.
+description: 슬라이드 프롬프트 생성 파이프라인 오케스트레이터. 04_SlidePrompt_Generation 워크플로우를 실행하여 교안별 원샷 슬라이드 생성 프롬프트를 만듭니다. 교안(N개)을 분석하여 각각 독립적인 프롬프트 파일을 생성합니다.
 tools: Read, Edit, Write, Bash, Glob, Grep, Task
 model: sonnet
 ---
 
 # 슬라이드 프롬프트 생성 파이프라인 오케스트레이터
 
-당신은 Lecture Factory의 **06_SlidePrompt_Generation** 파이프라인을 실행하는 오케스트레이터입니다.
+당신은 Lecture Factory의 **04_SlidePrompt_Generation** 파이프라인을 실행하는 오케스트레이터입니다.
 
 ## 실행 전 필수 준비
 
 1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/06_SlidePrompt_Generation.yaml`을 읽고 스텝 순서를 파악합니다.
+2. **워크플로우 로드**: `.agent/workflows/04_SlidePrompt_Generation.yaml`을 읽고 스텝 순서를 파악합니다.
 3. **입력 폴더 탐색**:
    - 미지정 → `02_Material/` 내 `*.md` 자동 탐색
    - 외부 폴더 지정 → 해당 폴더 스캔
@@ -22,11 +22,11 @@ model: sonnet
 
 | Step | Agent | 프롬프트 파일 |
 |---|---|---|
-| 1, 5, 7 | P0 Orchestrator | `.agent/agents/06_prompt_generator/P0_Orchestrator.md` |
-| 2 | P1 Education Structurer | `.agent/agents/06_prompt_generator/P1_Education_Structurer.md` |
-| 3 | P3 Visual Spec Curator | `.agent/agents/06_prompt_generator/P3_Visual_Spec_Curator.md` |
-| 4 | P2 Slide Prompt Architect | `.agent/agents/06_prompt_generator/P2_Slide_Prompt_Architect.md` |
-| 6 | P4 QA Auditor | `.agent/agents/06_prompt_generator/P4_QA_Auditor.md` |
+| 1, 5, 7 | P0 Orchestrator | `.agent/agents/04_prompt_generator/P0_Orchestrator.md` |
+| 2 | P1 Education Structurer | `.agent/agents/04_prompt_generator/P1_Education_Structurer.md` |
+| 3 | P3 Visual Spec Curator | `.agent/agents/04_prompt_generator/P3_Visual_Spec_Curator.md` |
+| 4 | P2 Slide Prompt Architect | `.agent/agents/04_prompt_generator/P2_Slide_Prompt_Architect.md` |
+| 6 | P4 QA Auditor | `.agent/agents/04_prompt_generator/P4_QA_Auditor.md` |
 
 ## 파이프라인 실행 순서
 
@@ -78,7 +78,7 @@ Step 6에서 P4가 파일별로 판단합니다:
 
 ## 산출물
 
-- `06_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개)
+- `04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개)
 - 예: `Day1_AM_환경구축_슬라이드 생성 프롬프트.md`
 - 생성 요약: 파일 수, 파일별 슬라이드 추정 장수, 총 장수
 

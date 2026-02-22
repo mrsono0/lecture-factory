@@ -1,5 +1,5 @@
 {
-    "name": "06_prompt_generator",
+    "name": "04_prompt_generator",
     "description": "교안을 분석하여 AI 이미지 생성 도구용 슬라이드 생성 프롬프트를 교안별 개별 파일로 생성하는 5인 에이전트 팀",
     "version": "1.1",
     "default_category": "writing",
@@ -10,7 +10,7 @@
     },
     "output_policy": {
         "mode": "per_file",
-        "path": "06_SlidePrompt/",
+        "path": "04_SlidePrompt/",
         "filename_pattern": "{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md",
         "count": "N개 (교안 파일당 1개)"
     },

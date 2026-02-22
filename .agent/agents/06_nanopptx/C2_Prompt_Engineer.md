@@ -148,6 +148,6 @@ Nano Banana Pro의 한글 텍스트 렌더링 정확도를 높이기 위해:
 - **텍스트 정확성**: 한글 텍스트가 따옴표로 정확히 명시되어 있는가?
 
 ## 산출물
-- **프롬프트 파일**: `05_NanoPPTX/prompts/slide_prompts.json` (전체 슬라이드 프롬프트)
-- **스타일 프리앰블**: `05_NanoPPTX/prompts/style_preamble.md` (공통 스타일 기술)
+- **프롬프트 파일**: `06_NanoPPTX/prompts/slide_prompts.json` (전체 슬라이드 프롬프트)
+- **스타일 프리앰블**: `06_NanoPPTX/prompts/style_preamble.md` (공통 스타일 기술)
 - **프롬프트 생성 리포트**: 슬라이드별 프롬프트 요약 및 주의사항

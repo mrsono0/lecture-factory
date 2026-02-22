@@ -1,5 +1,5 @@
 {
-    "name": "05_nanopptx",
+    "name": "06_nanopptx",
     "description": "Nano Banana Pro 이미지 생성 기반 PPTX 변환 에이전트 팀",
     "default_category": "visual-engineering",
     "skill_dependencies": ["nanobanana-ppt-skills", "imagen", "gemini-api-dev", "pptx-official", "last30days"],

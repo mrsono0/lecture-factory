@@ -55,8 +55,8 @@ bun.lock
 # ── 생성 산출물: PPTX / 이미지 / 중간 HTML ──────────────────
 # 마크다운 소스에서 재생성 가능한 바이너리 산출물
 *.pptx
-*/04_PPTX/**/html/
-*/05_NanoPPTX/**/images/
+*/05_PPTX/**/html/
+*/06_NanoPPTX/**/images/
 
 # ── 참고자료 바이너리 (PDF, ZIP 등) ──────────────────────────
 *.pdf

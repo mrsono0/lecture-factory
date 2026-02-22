@@ -141,7 +141,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - 리젝 횟수: 블록당 최대 2회. 2회 초과 시 사용자에게 에스컬레이션합니다.
 
 ## 산출물
-- **프로젝트 폴더**: `{project_folder}/06_SlidePrompt/`
+- **프로젝트 폴더**: `{project_folder}/04_SlidePrompt/`
 - **교안별 프롬프트 파일**: `{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개, 교안당 1개)
   - 예: `Day1_AM_환경구축_슬라이드 생성 프롬프트.md`
   - 예: `Day2_PM_함수와모듈_슬라이드 생성 프롬프트.md`
@@ -157,7 +157,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 3. **03_Slides 참조 확인**: 존재 시 사용 가능한 산출물 매핑
 4. **P1/P2/P3에 작업 분배 지시**
 5. **교안별 개별 프롬프트 파일 조립 및 P4 QA 제출**
-6. **최종 승인 후 `06_SlidePrompt/` 폴더에 교안별 개별 파일로 저장**
+6. **최종 승인 후 `04_SlidePrompt/` 폴더에 교안별 개별 파일로 저장**
 
 ## 분할 처리 전략 (대량 교안)
 - 교안 파일이 **10개 이상**인 경우:

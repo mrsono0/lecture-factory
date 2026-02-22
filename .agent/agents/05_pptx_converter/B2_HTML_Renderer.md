@@ -119,6 +119,6 @@ body {
 > **주의**: 슬라이드에 상단 바(topbar), 하단 바(bottombar) 등 고정 헤더/푸터 영역을 절대 포함하지 않습니다. body 전체 영역을 콘텐츠에 사용하고, 배경은 항상 밝은 색상(흰색, 밝은 회색, 밝은 파스텔)을 사용합니다.
 
 ## 산출물
-- **슬라이드별 HTML 파일**: `04_PPTX/html/slide_000.html`, `slide_001.html`, ...
-- **공통 CSS 파일**: `04_PPTX/html/common.css` (참조용, 실제로는 각 HTML에 인라인)
+- **슬라이드별 HTML 파일**: `05_PPTX/html/slide_000.html`, `slide_001.html`, ...
+- **공통 CSS 파일**: `05_PPTX/html/common.css` (참조용, 실제로는 각 HTML에 인라인)
 - **HTML 생성 리포트**: 생성된 파일 목록과 슬라이드-HTML 매핑 테이블

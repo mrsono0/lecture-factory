@@ -2,7 +2,7 @@
 """
 Manus AI 슬라이드 생성 헬퍼 스크립트
 
-06_SlidePrompt/*.md 프롬프트 파일을 Manus AI에 일괄 제출하여
+04_SlidePrompt/*.md 프롬프트 파일을 Manus AI에 일괄 제출하여
 Nano Banana Pro로 슬라이드를 생성하고 PPTX를 다운로드합니다.
 
 사용법:
@@ -322,28 +322,28 @@ def find_project_folder(arg_path=None):
     """프로젝트 폴더 자동 탐색"""
     if arg_path:
         p = Path(arg_path)
-        if (p / "06_SlidePrompt").is_dir():
+        if (p / "04_SlidePrompt").is_dir():
             return p
         # 날짜 프리픽스 프로젝트 폴더 탐색
         for d in sorted(p.glob("20*"), reverse=True):
-            if (d / "06_SlidePrompt").is_dir():
+            if (d / "04_SlidePrompt").is_dir():
                 return d
 
     cwd = Path.cwd()
-    # 현재 디렉토리에 06_SlidePrompt가 있으면 바로 사용
-    if (cwd / "06_SlidePrompt").is_dir():
+    # 현재 디렉토리에 04_SlidePrompt가 있으면 바로 사용
+    if (cwd / "04_SlidePrompt").is_dir():
         return cwd
     # 하위 프로젝트 폴더 탐색
     for d in sorted(cwd.glob("20*"), reverse=True):
-        if (d / "06_SlidePrompt").is_dir():
+        if (d / "04_SlidePrompt").is_dir():
             return d
 
     return None
 
 
 def discover_prompts(project_dir):
-    """06_SlidePrompt/ 내 프롬프트 파일 목록 반환"""
-    prompt_dir = project_dir / "06_SlidePrompt"
+    """04_SlidePrompt/ 내 프롬프트 파일 목록 반환"""
+    prompt_dir = project_dir / "04_SlidePrompt"
     files = sorted(prompt_dir.glob(PROMPT_GLOB))
     return files
 
@@ -1109,14 +1109,14 @@ def main():
     # 프로젝트 폴더 탐색
     project = find_project_folder(args.project_dir)
     if not project:
-        log.error("06_SlidePrompt/ 폴더를 찾을 수 없습니다. 경로를 인자로 지정하세요.")
+        log.error("04_SlidePrompt/ 폴더를 찾을 수 없습니다. 경로를 인자로 지정하세요.")
         sys.exit(1)
     log.info("프로젝트: %s", project.name)
 
     # 프롬프트 파일 탐색
     prompts = discover_prompts(project)
     if not prompts:
-        log.error("%s 에 프롬프트 파일이 없습니다.", project / "06_SlidePrompt")
+        log.error("%s 에 프롬프트 파일이 없습니다.", project / "04_SlidePrompt")
         sys.exit(1)
 
     # --file 필터 적용

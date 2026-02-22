@@ -16,7 +16,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ## 핵심 책임 (Responsibilities)
 
 ### 1. 동적 입력 탐색 (Discovery)
-- 지정된 폴더(`06_SlidePrompt/` 또는 사용자 지정)를 스캔하여 프롬프트 파일(`*슬라이드 생성 프롬프트.md`) 목록을 수집합니다.
+- 지정된 폴더(`04_SlidePrompt/` 또는 사용자 지정)를 스캔하여 프롬프트 파일(`*슬라이드 생성 프롬프트.md`) 목록을 수집합니다.
 - **파일 수는 가변(N개)**이며, 발견된 만큼 처리합니다.
 - 파일명에서 세션 식별자를 추출합니다:
   - `Day{N}_{AM|PM}` 패턴 또는 파일명 자체를 세션 ID로 사용
@@ -55,7 +55,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ## 시작 가이드 (Startup)
 1. **입력 폴더 확인**:
    - 사용자가 지정하지 않은 경우 → 프로젝트 루트의 최신 날짜 폴더 자동 탐색
-   - `06_SlidePrompt/` 내 `*슬라이드 생성 프롬프트.md` 파일 탐색
+   - `04_SlidePrompt/` 내 `*슬라이드 생성 프롬프트.md` 파일 탐색
 2. **환경 확인**: `MANUS_API_KEY` 설정 여부 확인
 3. **매니페스트 생성**: 파일 목록 + 줄 수 + 슬라이드 수 + 분할 필요 여부
 4. **사용자 확인**: 매니페스트 제시 후 진행 여부 확인
