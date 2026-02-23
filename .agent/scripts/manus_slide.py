@@ -48,7 +48,7 @@ log = logging.getLogger("manus_slide")
 # ─── 설정 ───────────────────────────────────────────────────
 MANUS_API_BASE = "https://api.manus.ai/v1"
 POLL_INTERVAL = 30  # 폴링 간격 (초)
-MAX_WAIT_TIME = 1800  # 최대 대기 시간 (30분)
+MAX_WAIT_TIME = 2700  # 최대 대기 시간 (45분)
 MAX_CONCURRENT = 5  # 동시 제출 최대 수
 PROMPT_GLOB = "*슬라이드 생성 프롬프트.md"
 CHUNK_THRESHOLD = 1000  # 이 줄 수 이상이면 세션 단위 분할
@@ -503,7 +503,26 @@ def setup_project_with_files(session, prompts, project_dir):
     common_header = "\n\n".join(common_header_parts)
 
     if not common_header.strip():
-        log.warning("공통 헤더(①②④⑤)를 추출할 수 없음 — 파일 업로드 건너뜀")
+        # 폴백: ①②④⑤ 마커가 없는 프롬프트 형식 대응 (섹션명 기반 추출)
+        import re
+        fallback_sections = ["교안 정보", "시각 스타일 가이드", "품질 기준"]
+        for sec_name in fallback_sections:
+            pattern = rf"^(#{{1,3}}\s*{re.escape(sec_name)}.*)$"
+            match = re.search(pattern, first_content, re.MULTILINE)
+            if match:
+                start = match.start()
+                next_hdr = re.search(
+                    rf"^#{{1,3}}\s+(?!{re.escape(sec_name)})",
+                    first_content[match.end():],
+                    re.MULTILINE,
+                )
+                end = match.end() + next_hdr.start() if next_hdr else len(first_content)
+                common_header_parts.append(first_content[start:end].rstrip())
+        common_header = "\n\n".join(common_header_parts)
+        if common_header.strip():
+            log.info("폴백 헤더 추출 성공 (섹션명 기반, %d줄)", len(common_header.splitlines()))
+    if not common_header.strip():
+        log.warning("공통 헤더를 추출할 수 없음 — 파일 업로드 건너뜀")
         return project_id, {}
 
     # 공통 헤더를 임시 파일로 저장 후 업로드
@@ -801,7 +820,7 @@ def _count_slides(content):
 def _extract_section(content, section_marker):
     import re
 
-    pattern = rf"^(#{1, 3}\s*{re.escape(section_marker)}.*)$"
+    pattern = rf"^(#{{1,3}}\s*{re.escape(section_marker)}.*)$"
     match = re.search(pattern, content, re.MULTILINE)
     if not match:
         return ""
@@ -1026,8 +1045,12 @@ def _submit_single_content(
 
         if not file_urls:
             log.warning("[%s] 다운로드 가능한 파일 없음", label)
-            share_link = task_data.get("shareableLink") or task_data.get(
-                "shareable_link", ""
+            metadata = task_data.get("metadata", {})
+            share_link = (
+                task_data.get("shareableLink")
+                or task_data.get("shareable_link", "")
+                or metadata.get("share_url", "")
+                or metadata.get("task_url", "")
             )
             return {
                 "label": label,
