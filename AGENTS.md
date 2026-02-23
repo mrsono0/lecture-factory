@@ -212,19 +212,19 @@ YYYY-MM-DD_강의제목/
 ---
 
 ## Agent Execution Logging
-
 모든 파이프라인 실행 시 에이전트별 구조화된 로그를 기록합니다.
 
- **프로토콜 정의**: `.agent/logging-protocol.md` (JSONL 포맷, 20필드 스키마, 토큰/비용 추정 공식, model 매핑)
+ **프로토콜 정의**: `.agent/logging-protocol.md` (JSONL 포맷, 20+ 필드 스키마, 토큰/비용 추정 공식, model 매핑)
  **로그 위치**: `.agent/logs/{YYYY-MM-DD}_{pipeline_name}.jsonl`
  **워크플로우 설정**: 각 `.agent/workflows/*.yaml`의 `logging:` 섹션
- **이벤트 유형**: `START`, `END`, `FAIL`, `RETRY`, `DECISION`
+ **이벤트 유형**: `START`, `END`, `FAIL`, `RETRY`, `DECISION`, `SESSION_START`, `SESSION_END`
+ **실행 모델**: Step-by-Step (순차 실행) 또는 Session-Parallel (세션 병렬 위임), 파이프라인별 기본 모델은 `logging-protocol.md` §11 참조
  **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)` (input_bytes + output_bytes 기반, 정확도 ~85-90%)
  **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (quick=Haiku급, deep=Sonnet급, ultrabrain=Opus급)
-
-오케스트레이터는 각 step 실행 전후로 `logging-protocol.md`를 참조하여 JSONL 로그를 기록합니다.
+오케스트레이터는 실행 모델에 따라 step 또는 session 단위로 `logging-protocol.md`를 참조하여 JSONL 로그를 기록합니다.
+- **Step-by-Step**: 각 step 실행 전후로 START/END 이벤트 기록 (Pipeline 01, 02, 05, 06, 07, 08)
+- **Session-Parallel**: 세션 단위 병렬 위임 시 SESSION_START/SESSION_END 이벤트 기록 (Pipeline 03, 04)
 로그 파일(`.jsonl`)은 `.gitignore`에 의해 Git 추적에서 제외됩니다.
-
 ---
 
 ## Integrated Quality Perspective
