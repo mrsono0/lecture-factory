@@ -72,3 +72,17 @@ Task(subagent_type="log-analyzer", prompt=$ARGUMENTS)
 - `jq >= 1.6` 설치 (`brew install jq` / `apt install jq`)
 - `.agent/logs/` 디렉토리에 JSONL 로그 파일 1개 이상 존재
 - 로그는 파이프라인 실행 시 자동 생성됨 (`.agent/logging-protocol.md` 참조)
+
+## 로깅 (MANDATORY)
+
+파이프라인 실행 시 `.agent/logging-protocol.md`에 따라 JSONL 로그를 기록해야 합니다.
+
+1. **run_id 생성**: `run_{YYYYMMDD}_{HHMMSS}` 형식으로 생성합니다.
+2. **로그 파일**: `.agent/logs/{DATE}_08_Log_Analysis.jsonl`에 append합니다.
+3. **위임 시 전달**: 서브에이전트에게 위임할 때 prompt에 다음을 포함합니다:
+   ```
+   [LOGGING] 이 실행의 run_id는 "{run_id}"입니다.
+   로그를 ".agent/logs/{DATE}_08_Log_Analysis.jsonl"에 기록하세요.
+   로깅 프로토콜: .agent/logging-protocol.md
+   ```
+4. **로깅 프로토콜**: `.agent/logging-protocol.md`의 §9 오케스트레이터 구현 가이드를 참조합니다.

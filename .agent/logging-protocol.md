@@ -31,6 +31,8 @@
 | `FAIL` | 에이전트 실행 실패 시 | error_message 포함 |
 | `RETRY` | 재시도 시작 시 | retry 카운트 증가 |
 | `DECISION` | QA/승인 스텝 판정 시 | decision 필드에 approved/rejected |
+| `SESSION_START` | 세션 단위 병렬 실행 시작 | session_id, session_name 포함. Session-Parallel 모델 전용 |
+| `SESSION_END` | 세션 단위 병렬 실행 완료 | 세션 전체의 duration/bytes/cost + output_files 포함 |
 
 ---
 
@@ -41,15 +43,16 @@
 | 필드 | 타입 | 필수 | 설명 | 예시 |
 |------|------|:----:|------|------|
 | `run_id` | string | O | 파이프라인 실행 고유 ID | `"run_20260222_143005"` |
+| `parent_run_id` | string | — | E2E 실행 시 마스터 run_id (선택) | `"run_20260222_140000"` / `null` |
 | `ts` | string | O | ISO 8601 타임스탬프 | `"2026-02-22T14:30:05"` |
-| `status` | string | O | 이벤트 유형 | `"START"` / `"END"` / `"FAIL"` / `"RETRY"` / `"DECISION"` |
+| `status` | string | O | 이벤트 유형 | `"START"` / `"END"` / `"FAIL"` / `"RETRY"` / `"DECISION"` / `"SESSION_START"` / `"SESSION_END"` |
 | `workflow` | string | O | 파이프라인명 | `"01_Lecture_Planning"` |
-| `step_id` | string | O | 워크플로우 YAML의 step id | `"step_0_scope"` |
+| `step_id` | string | O | 워크플로우 YAML의 step id | `"step_0_scope"` / `"session_Day1_AM"` |
 | `agent` | string | O | 에이전트명 | `"A0_Orchestrator"` |
 | `category` | string | O | config.json의 LLM 카테고리 | `"deep"` / `"ultrabrain"` |
 | `model` | string | O | 실행 시 배정된 LLM 모델명 (model_config에서 category→model 조회) | `"anthropic/claude-opus-4-6"` |
 | `action` | string | O | 워크플로우 YAML의 action 필드 | `"analyze_request"` |
-| `parallel_group` | string | — | 병렬 실행 그룹 (없으면 null) | `"phase3"` / `null` |
+| `parallel_group` | string | — | 병렬 실행 그룹 (없으면 null) | `"phase3"` / `"batch_1"` / `null` |
 | `retry` | number | O | 재시도 횟수 (0=첫 실행) | `0` |
 
 ### 3.2 END 전용 필드
@@ -69,6 +72,17 @@
 | 필드 | 타입 | 필수 | 설명 | 예시 |
 |------|------|:----:|------|------|
 | `error_message` | string | O | 에러 메시지 | `"Timeout after 300s"` |
+
+### 3.4 SESSION 전용 필드 (SESSION_START / SESSION_END)
+
+> Session-Parallel 실행 모델에서 사용됩니다. SESSION_END는 END 전용 필드(§3.2)를 동일하게 포함합니다.
+
+| 필드 | 타입 | 필수 | 설명 | 예시 |
+|------|------|:----:|------|------|
+| `session_id` | string | O | 세션 식별자 | `"Day1_AM"` |
+| `session_name` | string | O | 세션 표시명 | `"환경구축과 첫 API"` |
+| `total_slides` | number | — | 생성된 슬라이드 수 (해당 시) | `38` |
+| `output_files` | string[] | — | 생성된 파일 목록 (상대 경로) | `["슬라이드기획안.md", "Phase1_IR_Glossary.md"]` |
 
 ---
 
@@ -127,12 +141,15 @@ run_{YYYYMMDD}_{HHMMSS}
 - 파이프라인 실행 시작 시 1회 생성
 - 해당 파이프라인의 모든 step이 동일한 `run_id`를 공유
 - 재시도(retry) 시에도 동일한 `run_id` 유지
+- E2E 실행 시 각 하위 파이프라인은 자체 `run_id`를 생성하고, 마스터의 `run_id`는 `parent_run_id`에 기록
 
 **예시**: `run_20260222_143005`
 
 ---
 
 ## 7. JSONL 예시
+
+### 7.1 Step-by-Step 모델 (기존)
 
 ```jsonl
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:05","status":"START","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"opencode/claude-sonnet-4-6","action":"analyze_request","parallel_group":null,"retry":0}
@@ -146,6 +163,16 @@ run_{YYYYMMDD}_{HHMMSS}
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:52:16","status":"RETRY","workflow":"01_Lecture_Planning","step_id":"step_3_curriculum","agent":"A3_Curriculum_Architect","category":"ultrabrain","model":"opencode/gpt-5.3-codex","action":"design_structure","parallel_group":null,"retry":1}
 ```
 
+### 7.2 Session-Parallel 모델 (신규)
+
+```jsonl
+{"run_id":"run_20260223_230000","ts":"2026-02-23T23:00:00","status":"SESSION_START","workflow":"03_Slide_Generation","step_id":"session_Day1_AM","agent":"A0_Orchestrator","category":"visual-engineering","model":"anthropic/claude-sonnet-4-6","action":"generate_slides","parallel_group":"batch_1","retry":0,"session_id":"Day1_AM","session_name":"환경구축과 첫 API"}
+{"run_id":"run_20260223_230000","ts":"2026-02-23T23:00:00","status":"SESSION_START","workflow":"03_Slide_Generation","step_id":"session_Day1_PM","agent":"A0_Orchestrator","category":"visual-engineering","model":"anthropic/claude-sonnet-4-6","action":"generate_slides","parallel_group":"batch_1","retry":0,"session_id":"Day1_PM","session_name":"프롬프트엔지니어링과 SpringBoot 핵심"}
+{"run_id":"run_20260223_230000","ts":"2026-02-23T23:08:30","status":"SESSION_END","workflow":"03_Slide_Generation","step_id":"session_Day1_AM","agent":"A0_Orchestrator","category":"visual-engineering","model":"anthropic/claude-sonnet-4-6","action":"generate_slides","parallel_group":"batch_1","retry":0,"session_id":"Day1_AM","session_name":"환경구축과 첫 API","duration_sec":510,"input_bytes":42000,"output_bytes":168000,"est_input_tokens":12727,"est_output_tokens":50909,"est_cost_usd":0.802,"decision":null,"total_slides":38,"output_files":["슬라이드기획안.md","슬라이드기획안_번들.md","Phase1_IR_Glossary.md","Phase2_SequenceMap_DesignTokens.md","Phase3_Layout_Copy_Lab.md","Phase3B_CodeValidation.md","Phase4_Trace_QA.md"]}
+{"run_id":"run_20260223_230000","ts":"2026-02-23T23:09:45","status":"SESSION_END","workflow":"03_Slide_Generation","step_id":"session_Day1_PM","agent":"A0_Orchestrator","category":"visual-engineering","model":"anthropic/claude-sonnet-4-6","action":"generate_slides","parallel_group":"batch_1","retry":0,"session_id":"Day1_PM","session_name":"프롬프트엔지니어링과 SpringBoot 핵심","duration_sec":585,"input_bytes":36000,"output_bytes":155000,"est_input_tokens":10909,"est_output_tokens":46970,"est_cost_usd":0.736,"decision":null,"total_slides":55,"output_files":["슬라이드기획안.md","슬라이드기획안_번들.md","Phase1_IR_Glossary.md","Phase2_SequenceMap_DesignTokens.md","Phase3_Layout_Copy_Lab.md","Phase3B_CodeValidation.md","Phase4_Trace_QA.md"]}
+{"run_id":"run_20260223_230000","ts":"2026-02-23T23:20:00","status":"END","workflow":"03_Slide_Generation","step_id":"pipeline_summary","agent":"Sisyphus","category":"unspecified-low","model":"anthropic/claude-opus-4-6","action":"orchestrate_pipeline","parallel_group":null,"retry":0,"duration_sec":1200,"input_bytes":0,"output_bytes":0,"est_input_tokens":0,"est_output_tokens":0,"est_cost_usd":8.02,"decision":"approved"}
+```
+
 ---
 
 ## 8. 분석 쿼리 예시 (jq)
@@ -153,7 +180,7 @@ run_{YYYYMMDD}_{HHMMSS}
 ### 보틀넥 분석: 소요시간 TOP 5
 ```bash
 cat .agent/logs/*.jsonl | jq -s '
-  map(select(.status=="END"))
+  map(select(.status=="END" or .status=="SESSION_END"))
   | sort_by(-.duration_sec)
   | .[0:5]
   | .[] | {step_id, agent, category, duration_sec}
@@ -163,7 +190,7 @@ cat .agent/logs/*.jsonl | jq -s '
 ### 비용 분석: 파이프라인별 총 비용
 ```bash
 cat .agent/logs/*.jsonl | jq -s '
-  map(select(.status=="END"))
+  map(select(.status=="END" or .status=="SESSION_END"))
   | group_by(.workflow)
   | map({
       workflow: .[0].workflow,
@@ -176,7 +203,7 @@ cat .agent/logs/*.jsonl | jq -s '
 ### 에이전트별 평균 소요시간
 ```bash
 cat .agent/logs/*.jsonl | jq -s '
-  map(select(.status=="END"))
+  map(select(.status=="END" or .status=="SESSION_END"))
   | group_by(.agent)
   | map({
       agent: .[0].agent,
@@ -199,7 +226,7 @@ cat .agent/logs/*.jsonl | jq -s '
 ### 병렬 실행 효율 분석
 ```bash
 cat .agent/logs/*.jsonl | jq -s '
-  map(select(.status=="END" and .parallel_group != null))
+  map(select((.status=="END" or .status=="SESSION_END") and .parallel_group != null))
   | group_by(.parallel_group)
   | map({
       group: .[0].parallel_group,
@@ -211,18 +238,47 @@ cat .agent/logs/*.jsonl | jq -s '
 '
 ```
 
+### 세션별 산출물 요약 (Session-Parallel)
+```bash
+cat .agent/logs/*.jsonl | jq -s '
+  map(select(.status=="SESSION_END"))
+  | map({session_id, session_name, duration_sec, total_slides, est_cost_usd, output_files})
+'
+```
+
 ---
 
 ## 9. 오케스트레이터 구현 가이드
 
-각 서브에이전트 오케스트레이터(`.claude/agents/*.md`)는 다음 절차로 로그를 기록합니다:
+### 9.0 실행 모델 분류
 
-### 9.1 파이프라인 시작 시
-1. `run_id`를 생성합니다: `run_{YYYYMMDD}_{HHMMSS}`
-2. 워크플로우 YAML의 `logging:` 섹션을 읽어 로그 파일 경로를 결정합니다.
-3. 로그 파일이 없으면 새로 생성, 있으면 append 모드로 엽니다.
+Lecture Factory는 두 가지 실행 모델을 지원합니다:
 
-### 9.2 각 step 실행 시
+| 실행 모델 | 설명 | 이벤트 패턴 | 대표 파이프라인 |
+|-----------|------|------------|---------------|
+| **Step-by-Step** | 오케스트레이터가 내부 에이전트를 순차/병렬 호출 | N×(START+END) | 01, 02, 05, 06, 07, 08 |
+| **Session-Parallel** | 상위 오케스트레이터가 세션 단위로 병렬 위임 | M×(SESSION_START+SESSION_END) | 03, 04 |
+
+**판단 기준**:
+- **Step-by-Step**: 오케스트레이터 자체가 워크플로우 YAML의 각 step을 직접 실행할 때
+- **Session-Parallel**: 상위 시스템(Sisyphus 등)이 세션을 병렬 에이전트로 위임하고, 각 에이전트가 전체 파이프라인을 자율 실행할 때
+
+**혼합 모델**: 일부 파이프라인은 상황에 따라 두 모델 모두 사용할 수 있습니다.
+- Pipeline 01: 보통 Step-by-Step이지만, 여러 강의를 병렬 기획 시 Session-Parallel 가능
+- Pipeline 03/04: 보통 Session-Parallel이지만, 단일 세션 처리 시 Step-by-Step 가능
+
+### 9.1 공통: 파이프라인 시작 시
+1. **`run_id` 확인**: 상위에서 전달받은 `run_id`가 있으면 사용, 없으면 `run_{YYYYMMDD}_{HHMMSS}` 형식으로 자체 생성합니다.
+2. **`parent_run_id` 확인**: E2E 실행으로 호출된 경우 상위의 마스터 `run_id`를 `parent_run_id`로 기록합니다.
+3. 워크플로우 YAML의 `logging:` 섹션을 읽어 로그 파일 경로를 결정합니다.
+4. 로그 파일이 없으면 새로 생성, 있으면 append 모드로 엽니다.
+5. `config.json`을 읽어 에이전트별 카테고리 매핑을 로드합니다.
+
+### 9.2 Step-by-Step 모델
+
+오케스트레이터가 워크플로우 YAML의 각 step을 직접 실행할 때 사용합니다.
+
+#### 9.2.1 각 step 실행 시
 1. **START 로그**: step 시작 직전에 START 이벤트를 기록합니다.
 2. **에이전트 실행**: 에이전트의 프롬프트를 읽고 역할을 수행합니다.
 3. **END 로그**: step 완료 직후에 END 이벤트를 기록합니다.
@@ -232,19 +288,58 @@ cat .agent/logs/*.jsonl | jq -s '
    - `est_input_tokens`, `est_output_tokens`: bytes ÷ 3.3
    - `est_cost_usd`: 토큰 × 카테고리별 단가
 
-### 9.3 실패/재시도 시
+#### 9.2.2 실패/재시도 시
 1. **FAIL 로그**: 실패 즉시 FAIL 이벤트를 기록합니다 (`error_message` 포함).
 2. **RETRY 로그**: 재시도 시작 직전에 RETRY 이벤트를 기록합니다 (`retry` 카운트 증가).
 
-### 9.4 config.json 카테고리 결정
+### 9.3 Session-Parallel 모델
+
+상위 시스템이 세션 단위로 병렬 에이전트를 위임하고, 각 에이전트가 전체 파이프라인을 자율 실행할 때 사용합니다.
+
+#### 9.3.1 세션 시작 시
+1. 상위 오케스트레이터로부터 `run_id`를 전달받습니다.
+   - 전달받지 못한 경우, 자체 `run_id`를 생성합니다.
+2. `SESSION_START` 이벤트를 기록합니다:
+   - `step_id`: `"session_{session_id}"` (예: `"session_Day1_AM"`)
+   - `session_id`: 세션 식별자 (예: `"Day1_AM"`)
+   - `session_name`: 세션 표시명 (예: `"환경구축과 첫 API"`)
+   - `parallel_group`: 배치 그룹 (예: `"batch_1"`)
+
+#### 9.3.2 세션 완료 시
+1. `SESSION_END` 이벤트를 기록합니다:
+   - `duration_sec`: SESSION_START부터 현재까지의 경과 시간
+   - `input_bytes`: 세션 입력(교안 마크다운 등)의 UTF-8 바이트 수
+   - `output_bytes`: 세션 산출물 전체의 UTF-8 바이트 수 합계
+   - `est_input_tokens`, `est_output_tokens`: bytes ÷ 3.3
+   - `est_cost_usd`: 토큰 × 카테고리별 단가
+   - `output_files`: 생성된 파일 목록 (상대 경로)
+   - `total_slides`: 슬라이드 수 (해당 시)
+
+#### 9.3.3 세션 실패 시
+1. `FAIL` 이벤트를 기록합니다 (기존 FAIL 스키마 동일)
+   - `step_id`: `"session_{session_id}"` (예: `"session_Day1_AM"`)
+   - `error_message`: 실패 원인
+
+### 9.4 상위 오케스트레이터의 로깅 책임 (Session-Parallel 시)
+
+Sisyphus(또는 E2E 오케스트레이터)가 Session-Parallel 실행을 조율할 때:
+
+1. **파이프라인 시작 전**: `run_id`를 생성하여 모든 세션 에이전트에게 전달합니다.
+2. **배치 관리**: 병렬 배치의 `parallel_group`을 지정합니다 (예: `"batch_1"`, `"batch_2"`).
+3. **파이프라인 종료 후**: 전체 파이프라인의 요약 `END` 이벤트를 기록합니다:
+   - `step_id`: `"pipeline_summary"`
+   - `duration_sec`: 전체 파이프라인 소요 시간
+   - `est_cost_usd`: 개별 세션 비용의 합산
+
+### 9.5 config.json 카테고리 결정
 1. `config.json`의 `agent_models`에서 현재 에이전트를 찾습니다.
 2. 있으면 → 해당 `category` 사용
 3. 없으면 → `default_category` 사용
 
-### 9.5 model 필드 결정 (category→model 매핑)
+### 9.6 model 필드 결정 (category→model 매핑)
 1. 파이프라인 시작 시 워크플로우 YAML의 `logging.model_config` 경로를 읽어 모델 설정 파일을 로드합니다.
 2. 해당 파일의 `categories` 섹션에서 `category` 키로 `model` 값을 조회합니다.
-3. 매 step의 START/END 로그에 조회된 `model` 값을 기록합니다.
+3. 매 step/session의 START/END/SESSION_START/SESSION_END 로그에 조회된 `model` 값을 기록합니다.
 4. 매핑 실패 시(config에 카테고리 없음) `"unknown"`을 기록합니다.
 
 ---
@@ -262,3 +357,25 @@ cat .agent/logs/*.jsonl | jq -s '
  **2026-02-23 이후** 생성되는 모든 로그는 `model` 필드를 **필수**로 포함해야 합니다.
  기존 로그는 재처리 없이 현재 상태로 유지합니다.
 **예시**: `category: "ultrabrain"` → config의 `categories.ultrabrain.model` → `"opencode/gpt-5.3-codex"`
+
+### 10.3 SESSION 이벤트 하위 호환
+ `SESSION_START`/`SESSION_END` 이벤트는 2026-02-23부터 도입되었습니다.
+ 기존 분석 쿼리(`select(.status=="END")`)는 SESSION_END를 자동으로 무시하므로 하위 호환됩니다.
+ SESSION 이벤트를 포함한 분석이 필요하면 `select(.status=="END" or .status=="SESSION_END")`로 필터링합니다.
+
+---
+
+## 11. 파이프라인별 기본 실행 모델
+
+| Pipeline | 기본 모델 | 세션 분할 기준 | 이벤트 패턴 |
+|----------|----------|---------------|------------|
+| 01 Lecture Planning | Step-by-Step | 단일 실행 (세션 없음) | 9 steps × (START+END) |
+| 02 Material Writing | Step-by-Step | 일자별 AM/PM 분할 가능 | 11 agents × (START+END) |
+| 03 Slide Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
+| 04 SlidePrompt Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
+| 05 PPTX Conversion | Step-by-Step | 세션별 개별 실행 | 6 steps × (START+END) |
+| 06 NanoBanana PPTX | Step-by-Step | 세션별 개별 실행 | 6 steps × (START+END) |
+| 07 Manus Slide | Step-by-Step | 세션별 순차 처리 | 6 steps × (START+END) |
+| 08 Log Analysis | Step-by-Step | 단일 실행 | 6 steps × (START+END) |
+
+> **Note**: 기본 모델은 권장 사항이며, 실행 상황에 따라 다른 모델이 사용될 수 있습니다 (§9.0 혼합 모델 참조).

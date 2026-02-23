@@ -82,6 +82,44 @@ KLING_SECRET_KEY=<Keling AI Secret Key>
 - **변환 리포트**: `06_NanoPPTX/변환리포트.md`
 - **인터랙티브 뷰어**: `06_NanoPPTX/index.html` (키보드 네비게이션 지원)
 
+## 🔴 실행 로깅 (MANDATORY)
+
+> 이 섹션은 `.agent/logging-protocol.md`의 구현 가이드입니다. **모든 실행에서 반드시 수행**합니다.
+
+### 로깅 초기화 (파이프라인 시작 시)
+1. **`run_id` 확인**: 상위에서 전달받은 `run_id`가 있으면 사용, 없으면 `run_{YYYYMMDD}_{HHMMSS}` 형식으로 생성합니다.
+2. **로그 파일 경로**: `.agent/workflows/06_NanoBanana_PPTX.yaml`의 `logging.path`를 읽어 결정합니다.
+3. **config.json 로드**: `.agent/agents/06_nanopptx/config.json`에서 `default_category`와 `agent_models`를 읽어 에이전트별 카테고리를 결정합니다.
+4. **model 매핑**: `logging.model_config` 경로의 파일에서 `categories.{category}.model` 값을 조회합니다.
+
+### Step-by-Step 실행 시
+- 각 step 실행 **직전**에 `START` 이벤트를 JSONL에 append합니다.
+- 각 step 실행 **직후**에 `END` 이벤트를 JSONL에 append합니다.
+  - `duration_sec` = 현재 시간 - START 시간
+  - `input_bytes` = 에이전트 입력의 UTF-8 바이트 수
+  - `output_bytes` = 에이전트 산출물의 UTF-8 바이트 수
+  - `est_input_tokens` = round(input_bytes ÷ 3.3)
+  - `est_output_tokens` = round(output_bytes ÷ 3.3)
+  - `est_cost_usd` = (est_input_tokens × input_price + est_output_tokens × output_price) ÷ 1000
+- 실패 시 `FAIL`, 재시도 시 `RETRY` 이벤트를 기록합니다.
+
+### Session-Parallel 실행 시 (세션 단위 위임을 받은 경우)
+- 세션 처리 **시작** 시 `SESSION_START` 이벤트를 기록합니다.
+  - `session_id`: 세션 식별자 (예: `"Day1_AM"`)
+  - `session_name`: 세션 표시명
+- 세션 처리 **완료** 시 `SESSION_END` 이벤트를 기록합니다.
+  - END 전용 필드(duration_sec, input/output_bytes, est_tokens, est_cost) + output_files, total_slides
+- 실패 시 `FAIL` 이벤트를 기록합니다 (`step_id`: `"session_{session_id}"`)
+
+### 이 파이프라인의 로깅 설정
+- **workflow**: `"06_NanoBanana_PPTX"`
+- **워크플로우 YAML**: `.agent/workflows/06_NanoBanana_PPTX.yaml`
+- **기본 실행 모델**: Step-by-Step
+- **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
+- **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
+
+---
+
 ## 시작 가이드 (Startup)
 1. **입력 파일 확인**: `YYYY-MM-DD_강의제목/03_Slides/` 디렉토리의 세션별 서브폴더(예: `Day1_AM/`, `Day2_PM/`)를 탐색합니다. 서브폴더가 1개면 자동 선택, 복수면 사용자에게 어떤 세션을 처리할지 확인합니다.
 2. **스킬 파일 로드**: nanobanana-ppt-skills, imagen, gemini-api-dev, pptx-official SKILL.md 읽기
