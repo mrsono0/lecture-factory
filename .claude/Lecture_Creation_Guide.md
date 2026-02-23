@@ -1,7 +1,7 @@
 # 강의 생성 시스템 사용자 가이드 (Claude Code Edition)
 
 이 문서는 Lecture Factory 시스템의 **사용법**을 안내합니다.
-8개 파이프라인을 슬래시 커맨드로 실행하여 강의 기획부터 PPTX, 로그 분석까지 생성할 수 있습니다.
+7개 파이프라인을 슬래시 커맨드로 실행하여 강의 기획부터 PPTX까지 생성할 수 있습니다. 로그 분석 시스템은 [`Developer_Guide.md`](./Developer_Guide.md)를 참조하세요.
 
 > 시스템 아키텍처, 에이전트 파이프라인 상세, 커맨드 매핑 등 기술적 내용은 [`Developer_Guide.md`](./Developer_Guide.md)를 참조하세요.
 
@@ -18,7 +18,7 @@
 | **5. PPTX 변환** | HTML 기반 PPTX 생성 | `/project:pptx-convert` | `05_PPTX/최종_프레젠테이션.pptx` |
 | **6. AI PPTX** | AI 이미지 기반 고품질 PPTX | `/project:nano-pptx` | `06_NanoPPTX/최종_프레젠테이션.pptx` |
 | **7. Manus 슬라이드** | Manus AI로 PPTX 생성 | `/project:manus-slide` | `07_ManusSlides/*.pptx` (×N개) |
-| **8. 로그 분석** | 파이프라인 실행 로그 분석 | `/project:log-analysis` | `.agent/dashboard/log_analysis_{date}.md` |
+
 | **전체 자동화** | 1, 2, 3, 4단계 자동 연결 실행 | `/project:lecture-factory` | 기획안→교안→슬라이드→프롬프트 |
 
 > **5단계, 6단계, 7단계는 택 1**: 코드 중심 → 05(HTML 기반, 빠름) / 로컬 AI 이미지 → 06(Gemini API) / 클라우드 AI 생성 → 07(Manus API, 고품질)
@@ -337,57 +337,6 @@ python .agent/scripts/manus_slide.py
 | `타임아웃 (30분 초과)` | Manus 서버 부하 | `manus_task_log.json`의 task_id로 웹에서 확인 |
 | `다운로드 파일 없음` | 파일 URL 미반환 | shareable_link로 웹에서 수동 다운로드 |
 
-### 8단계: 로그 분석 (Log Analysis)
-
-**목표**: 파이프라인 1~7단계의 실행 로그(JSONL)를 자동 분석하여 보틀넥, 비용, 실패 패턴을 진단하고 최적화 리포트를 생성합니다.
-
-**필수 요건**: `jq >= 1.6` (`brew install jq`)
-
-#### 실행 명령
-
-```bash
-# 기본 (전체 분석)
-/project:log-analysis
-
-# 비용 집중 분석
-/project:log-analysis --mode cost
-
-# 성능/보틀넥 집중
-/project:log-analysis --mode performance
-
-# 안정성/실패 집중
-/project:log-analysis --mode reliability
-
-# 실행 간 비교
-/project:log-analysis --mode compare
-```
-
-#### 분석 모드
-
-| 모드 | 초점 |
-|------|------|
-| `auto` (기본) | 전체 분석 — 보틀넥 + 비용 + 실패 + 토큰효율 |
-| `cost` | 비용 최적화 — 카테고리/에이전트별 비용 분석 |
-| `performance` | 보틀넥 해소 — 소요시간 TOP N, 병렬 효율 |
-| `reliability` | 실패 원인 — 재시도/실패 패턴, 스키마 검증 |
-| `compare` | 실행 간 비교 — 동일 파이프라인 전후 비교 |
-
-#### 스크립트 직접 실행 (에이전트 없이)
-
-```bash
-.agent/scripts/analyze_logs.sh                     # 전체 분석
-.agent/scripts/analyze_logs.sh summary             # 파이프라인별 요약
-.agent/scripts/analyze_logs.sh bottleneck 10       # 소요시간 TOP 10
-.agent/scripts/analyze_logs.sh cost                # 비용 분석
-.agent/scripts/analyze_logs.sh failure             # 재시도/실패
-```
-
-> 전체 11개 서브커맨드는 `.agent/scripts/analyze_logs.sh --help` 또는 [`Developer_Guide.md`](./Developer_Guide.md)를 참조하세요.
-
-#### 결과물
-
-- `.agent/dashboard/log_analysis_{YYYY-MM-DD}.md`
-- 구성: Executive Summary → 파이프라인 개요 → 인사이트 → 최적화 제안(ROI 순) → 에이전트 성과 카드 → SLA/SLO
 
 ---
 
