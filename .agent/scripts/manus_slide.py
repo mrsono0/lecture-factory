@@ -376,7 +376,7 @@ def create_task(session, prompt_content, filename, project_id=None, file_ids=Non
         "taskMode": "agent",
         "interactiveMode": False,
         "createShareableLink": True,
-        "hide_in_task_list": True,  # M9: Manus UI 오염 방지
+        "hideInTaskList": True,  # M9: Manus UI 오염 방지
     }
 
     # 파일 업로드 모드: projectId + attachments 추가
@@ -490,7 +490,7 @@ def setup_project_with_files(session, prompts, project_dir):
               공통 헤더를 첫 프롬프트에서 추출 → 임시 파일로 저장 → 업로드
     """
     # SLIDE_GENERATION_PREFIX를 project instruction으로 사용
-    project_name = f"Lecture Slides - {project_dir.name}"
+    project_name = project_dir.name
     project_id = create_project(session, project_name, SLIDE_GENERATION_PREFIX)
 
     # 첫 번째 프롬프트에서 공통 헤더(①②④⑤) 추출
