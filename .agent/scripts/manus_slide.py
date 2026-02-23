@@ -805,9 +805,37 @@ def strip_headers_footers(pptx_path):
 
 
 def _count_slides(content):
+    """슬라이드 수 카운트 — P04 표준 포맷 우선, 기존 패턴 하위 호환.
+
+    우선순위:
+      1. [슬라이드 NN] 개별 레이블 카운트 (P04 v2 표준)
+      2. "총 N개 슬라이드" / "총 N장" 직접 선언
+      3. "(N장)" / "(약 N~M장)" 블록별 장수 합산 (상한값 사용)
+      4. "(슬라이드 N~M)" 범위의 최대값
+    """
     import re
 
-    return len(re.findall(r"^#{2,4}\s*(?:슬라이드|Slide)\s*\d+", content, re.MULTILINE))
+    # 1차: [슬라이드 NN] 개별 레이블 카운트 (P04 표준 포맷)
+    labels = re.findall(r"\[슬라이드\s*\d+\]", content)
+    if labels:
+        return len(labels)
+
+    # 2차: "총 N개 슬라이드" 또는 "총 N장" 직접 선언
+    total_match = re.search(r"총\s*(?:약\s*)?(\d+)\s*(?:개\s*)?(?:슬라이드|장)", content)
+    if total_match:
+        return int(total_match.group(1))
+
+    # 3차: "(N장)" / "(약 N~M장)" 블록별 장수 합산 (범위 시 상한값)
+    block_counts = re.findall(r"\((?:약\s*)?(?:\d+\s*~\s*)?(\d+)\s*장\)", content)
+    if block_counts:
+        return sum(int(n) for n in block_counts)
+
+    # 4차: "(슬라이드 N~M)" 범위의 최대값
+    range_matches = re.findall(r"\(슬라이드\s*\d+\s*~\s*(\d+)\)", content)
+    if range_matches:
+        return max(int(n) for n in range_matches)
+
+    return 0
 
 
 def _extract_section_by_name(content, section_name):
