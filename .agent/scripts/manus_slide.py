@@ -54,6 +54,16 @@ PROMPT_GLOB = "*슬라이드 생성 프롬프트.md"
 CHUNK_THRESHOLD = 1000  # 이 줄 수 이상이면 세션 단위 분할
 CHUNK_MAX_SLIDES = 35  # 이 슬라이드 수 이상이면 분할
 
+# ─── 프롬프트 섹션명 (P04 고정 스키마) ────────────────────────
+SECTION_NAMES = [
+    "교안 정보",
+    "시각 스타일 가이드",
+    "품질 기준",
+    "슬라이드 구성 지시사항",
+    "교안 원문",
+]
+COMMON_HEADER_SECTIONS = ["교안 정보", "시각 스타일 가이드", "품질 기준"]
+
 # ─── 안정성 설정 ─────────────────────────────────────────────
 RETRY_TOTAL = 3  # 최대 재시도 횟수
 RETRY_BACKOFF = 1  # 재시도 대기 (1s, 2s, 4s)
@@ -493,34 +503,17 @@ def setup_project_with_files(session, prompts, project_dir):
     project_name = project_dir.name
     project_id = create_project(session, project_name, SLIDE_GENERATION_PREFIX)
 
-    # 첫 번째 프롬프트에서 공통 헤더(①②④⑤) 추출
+    # 첫 번째 프롬프트에서 공통 헤더 섹션 추출 (고정 섹션명 기반)
     first_content = prompts[0].read_text(encoding="utf-8")
     common_header_parts = []
-    for marker in ["①", "②", "④", "⑤"]:
-        section = _extract_section(first_content, marker)
+    role_def = _extract_role_definition(first_content)
+    if role_def:
+        common_header_parts.append(role_def)
+    for sec_name in COMMON_HEADER_SECTIONS:
+        section = _extract_section_by_name(first_content, sec_name)
         if section:
             common_header_parts.append(section)
     common_header = "\n\n".join(common_header_parts)
-
-    if not common_header.strip():
-        # 폴백: ①②④⑤ 마커가 없는 프롬프트 형식 대응 (섹션명 기반 추출)
-        import re
-        fallback_sections = ["교안 정보", "시각 스타일 가이드", "품질 기준"]
-        for sec_name in fallback_sections:
-            pattern = rf"^(#{{1,3}}\s*{re.escape(sec_name)}.*)$"
-            match = re.search(pattern, first_content, re.MULTILINE)
-            if match:
-                start = match.start()
-                next_hdr = re.search(
-                    rf"^#{{1,3}}\s+(?!{re.escape(sec_name)})",
-                    first_content[match.end():],
-                    re.MULTILINE,
-                )
-                end = match.end() + next_hdr.start() if next_hdr else len(first_content)
-                common_header_parts.append(first_content[start:end].rstrip())
-        common_header = "\n\n".join(common_header_parts)
-        if common_header.strip():
-            log.info("폴백 헤더 추출 성공 (섹션명 기반, %d줄)", len(common_header.splitlines()))
     if not common_header.strip():
         log.warning("공통 헤더를 추출할 수 없음 — 파일 업로드 건너뜀")
         return project_id, {}
@@ -817,22 +810,30 @@ def _count_slides(content):
     return len(re.findall(r"^#{2,4}\s*(?:슬라이드|Slide)\s*\d+", content, re.MULTILINE))
 
 
-def _extract_section(content, section_marker):
+def _extract_section_by_name(content, section_name):
+    """고정 섹션명 기반 섹션 추출 (### 헤딩 ~ 다음 ### 헤딩까지)"""
     import re
 
-    pattern = rf"^(#{{1,3}}\s*{re.escape(section_marker)}.*)$"
+    pattern = rf"^###\s+{re.escape(section_name)}\s*$"
     match = re.search(pattern, content, re.MULTILINE)
     if not match:
         return ""
     start = match.start()
-    next_section = re.search(
-        r"^#{1,3}\s*[①②③④⑤⑥§]", content[match.end() :], re.MULTILINE
-    )
-    if next_section:
-        end = match.end() + next_section.start()
-    else:
-        end = len(content)
+    # 다음 ### 헤딩까지 (#### 이하는 섹션 내부이므로 무시)
+    rest = content[match.end() :]
+    next_h3 = re.search(r"^###\s+", rest, re.MULTILINE)
+    end = match.end() + next_h3.start() if next_h3 else len(content)
     return content[start:end].rstrip()
+
+
+def _extract_role_definition(content):
+    """헤딩 없는 첫 문단 (Role Definition) 추출 — 첫 ### 이전까지"""
+    import re
+
+    first_h3 = re.search(r"^###\s+", content, re.MULTILINE)
+    if not first_h3:
+        return content.strip()
+    return content[: first_h3.start()].strip()
 
 
 def _find_session_boundaries(section_text, pattern):
@@ -868,11 +869,11 @@ def split_by_session(
 
     log.info("[분할] %d줄, ~%d슬라이드 → 세션 단위 분할 시작", line_count, slide_count)
 
-    section_3 = _extract_section(prompt_content, "③")
-    section_6 = _extract_section(prompt_content, "⑥")
+    section_3 = _extract_section_by_name(prompt_content, "슬라이드 구성 지시사항")
+    section_6 = _extract_section_by_name(prompt_content, "교안 원문")
 
     if not section_3 and not section_6:
-        log.info("[분할] ③/⑥ 섹션을 찾을 수 없음 — 분할 건너뜀")
+        log.info("[분할] 슬라이드 구성 지시사항/교안 원문 섹션을 찾을 수 없음 — 분할 건너뜀")
         return [prompt_content]
 
     s3_boundaries = (
@@ -890,9 +891,13 @@ def split_by_session(
         log.info("[분할] 세션 경계가 1개 이하 — 분할 건너뜀")
         return [prompt_content]
 
+    # Role Definition (헤딩 없는 첫 문단) + 공통 헤더 섹션 추출
     common_header_parts = []
-    for marker in ["①", "②", "④", "⑤"]:
-        section = _extract_section(prompt_content, marker)
+    role_def = _extract_role_definition(prompt_content)
+    if role_def:
+        common_header_parts.append(role_def)
+    for sec_name in COMMON_HEADER_SECTIONS:
+        section = _extract_section_by_name(prompt_content, sec_name)
         if section:
             common_header_parts.append(section)
     common_header = "\n\n".join(common_header_parts)
