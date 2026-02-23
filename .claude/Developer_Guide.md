@@ -5,6 +5,113 @@
 
 ---
 
+
+## 로그 분석 시스템 — 빠른 시작 가이드 (Pipeline 08)
+
+Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파이프라인 1~7의 실행 로그(JSONL)를 수집하여 보틀넥, 비용, 실패 패턴을 자동 진단하고 최적화 전략을 리포트로 산출합니다.
+
+### 사전 요구사항
+
+- `jq >= 1.6` 설치 필요 (`brew install jq` / `apt install jq`)
+- `.agent/logs/` 디렉토리에 JSONL 로그 파일 1개 이상 존재
+- 로그는 파이프라인 실행 시 자동 생성됨 (`.agent/logging-protocol.md` 참조)
+
+### 분석 스크립트 직접 사용
+
+터미널에서 `analyze_logs.sh`를 직접 실행하여 빠르게 데이터를 확인할 수 있습니다:
+
+```bash
+# 전체 분석 (기본)
+.agent/scripts/analyze_logs.sh
+
+# 개별 서브커맨드
+.agent/scripts/analyze_logs.sh summary            # 파이프라인별 실행 요약
+.agent/scripts/analyze_logs.sh bottleneck 10      # 소요시간 TOP 10
+.agent/scripts/analyze_logs.sh cost               # 비용 분석 (파이프라인별 + TOP 5)
+.agent/scripts/analyze_logs.sh agent              # 에이전트별 통계
+.agent/scripts/analyze_logs.sh failure            # 재시도/실패 분석
+.agent/scripts/analyze_logs.sh parallel           # 병렬 실행 효율
+.agent/scripts/analyze_logs.sh category           # LLM 카테고리별 비용
+.agent/scripts/analyze_logs.sh timeline [run_id]  # 특정 실행의 타임라인
+.agent/scripts/analyze_logs.sh validate           # JSONL 스키마 검증
+.agent/scripts/analyze_logs.sh report             # 종합 마크다운 리포트 생성
+.agent/scripts/analyze_logs.sh all                # 위 모든 분석 한번에 실행
+```
+
+### AI 에이전트 파이프라인으로 실행
+
+에이전트 팀(L0~L5)을 통해 심층 분석 리포트를 생성합니다:
+
+```bash
+/project:log-analysis                    # 전체 분석 (auto 모드)
+/project:log-analysis --mode cost         # 비용 집중 분석
+/project:log-analysis --mode performance  # 성능/보틀넥 집중
+/project:log-analysis --mode reliability  # 안정성/실패 집중
+/project:log-analysis --mode compare      # 실행 간 비교
+```
+
+### 분석 모드 요약
+
+| 모드 | 초점 | 실행되는 서브커맨드 |
+|------|------|-------------------|
+| `auto` (기본) | 전체 분석 | `all` |
+| `cost` | 비용 최적화 | `cost`, `category`, `agent` |
+| `performance` | 보틀넥 해소 | `bottleneck`, `parallel`, `timeline` |
+| `reliability` | 실패 원인 | `failure`, `validate` |
+| `compare` | 실행 간 비교 | `summary`, `timeline [run_id1]`, `timeline [run_id2]` |
+
+### 산출물
+
+- **리포트**: `.agent/dashboard/log_analysis_{YYYY-MM-DD}.md`
+- **구성**: Executive Summary → 파이프라인 개요 → 인사이트(보틀넥/비용/안정성/토큰효율) → 최적화 제안(ROI 순) → 에이전트 성과 카드(p50/p95/p99) → SLA/SLO 현황 → 트렌드
+
+### 파일 구조
+
+```
+.agent/
+├── scripts/analyze_logs.sh     ← jq 기반 분석 도구 (599줄, 11 서브커맨드)
+├── logging-protocol.md         ← JSONL 스키마 정의 (20필드, 5이벤트, 비용 단가표)
+├── logs/*.jsonl                ← 파이프라인 실행 로그 (자동 생성)
+├── dashboard/                  ← 분석 리포트 출력 위치
+└── agents/08_log_analyzer/     ← 에이전트 프롬프트 (L0~L5, 6명)
+    ├── config.json
+    ├── L0_Orchestrator.md
+    ├── L1_Data_Collector.md
+    ├── L2_Insight_Analyst.md
+    ├── L3_Optimizer.md
+    ├── L4_Report_Writer.md
+    └── L5_QA_Auditor.md
+```
+
+### 로그 스키마 핵심 (logging-protocol.md)
+
+각 파이프라인 실행 시 에이전트별로 JSONL 이벤트가 기록됩니다:
+
+| 이벤트 | 발생 시점 | 핵심 필드 |
+|--------|---------|----------|
+| `START` | 에이전트 실행 직전 | `run_id`, `agent`, `category`, `model`, `action` |
+| `END` | 실행 완료 후 | + `duration_sec`, `input_bytes`, `output_bytes`, `est_cost_usd` |
+| `FAIL` | 실행 실패 시 | + `error_message` |
+| `RETRY` | 재시도 시작 | + `retry` 카운트 |
+| `DECISION` | QA 판정 시 | + `decision` (approved/rejected) |
+
+**토큰/비용 추정 공식**:
+- 토큰: `est_tokens = round(bytes ÷ 3.3)` (정확도 ~85-90%)
+- 비용: 카테고리별 단가 적용 — `quick` $0.00025/1K input, `deep` $0.003/1K, `ultrabrain` $0.015/1K
+
+### 확장 가이드
+
+**새 파이프라인의 로그 활성화**:
+1. 워크플로우 YAML에 `logging:` 섹션 추가 (기존 YAML 참조)
+2. `logging-protocol.md`의 스키마 필드를 준수하여 JSONL 기록
+3. `analyze_logs.sh`는 `.agent/logs/*.jsonl`을 자동 탐색하므로 별도 등록 불필요
+
+**분석 스크립트 서브커맨드 추가**:
+1. `.agent/scripts/analyze_logs.sh`에 새 함수 정의
+2. `case` 문에 서브커맨드 등록
+3. `L1_Data_Collector.md`의 서브커맨드 테이블에 문서화
+
+---
 ## 아키텍처: Subagents 기반 실행 모델
 
 ```
@@ -64,6 +171,7 @@
 | `/project:nano-pptx` | `.claude/commands/nano-pptx.md` | `06_NanoBanana_PPTX.yaml` |
 | `/project:manus-slide` | `.claude/commands/manus-slide.md` | `.agent/scripts/manus_slide.py` |
 | `/project:lecture-factory` | `.claude/commands/lecture-factory.md` | 전체 파이프라인 E2E 통합 오케스트레이션 |
+| `/project:log-analysis` | `.claude/commands/log-analysis.md` | `08_Log_Analysis.yaml` |
 
 ### 커스텀 에이전트 (`/agents`)
 
@@ -75,6 +183,7 @@
 | `slide-prompt-gen` | `.claude/agents/slide-prompt-gen.md` | sonnet | Phase B (2개 bg) |
 | `pptx-converter` | `.claude/agents/pptx-converter.md` | sonnet | Step 4∥5 (2개) |
 | `nano-pptx` | `.claude/agents/nano-pptx.md` | opus | 없음 (완전 순차) |
+| `log-analyzer` | `.claude/agents/log-analyzer.md` | sonnet | Phase 2 (2개 bg) |
 
 ---
 
@@ -136,6 +245,34 @@
 **실행 방식**: Python 스크립트 (`.agent/scripts/manus_slide.py`)
 
 **파이프라인 플로우**: D0→D1→D2→D3→D4→D5→D0 (승인/재제출/반려)
+
+
+### 8단계: Log Analysis
+
+**팀 공통 원칙**: 모든 인사이트에 정량적 근거를 포함하고, 최적화 제안은 실행 가능한 구체적 내용이어야 합니다.
+
+**파이프라인 플로우**:
+- Phase 1: L0 (Orchestrator) → L1 (Data Collector) → L1 (Schema Validate) — 순차
+- Phase 2: L2 (Insight Analyst) ∥ L3 (Optimizer) — **병렬** (`run_in_background`)
+- Phase 3: L4 (Report Writer) — L2+L3 산출물 통합
+- Phase 4: L5 (QA Auditor) → L0 (승인/반려, 반려 시 L4로 루프)
+
+**에이전트 카테고리 라우팅**:
+- L0: `unspecified-low` | L1: `quick` | L2, L4: `deep` | L3, L5: `ultrabrain`
+
+**데이터 흐름**:
+```text
+.agent/logs/*.jsonl
+    ↓ L0: 분석 모드 결정 (auto/cost/performance/reliability/compare)
+    ↓ L1: analyze_logs.sh 실행 → Data Packet (JSON)
+    ↓
+  L2 (인사이트) ─┐
+  L3 (최적화)   ─┤ 병렬
+                 ↓
+    L4: 통합 리포트 → L5: QA → L0: 승인
+    ↓
+.agent/dashboard/log_analysis_{date}.md
+```
 
 ---
 
@@ -242,4 +379,4 @@ YYYY-MM-DD_강의제목/
 - **병렬 실행**: material-writer의 Phase 3는 `run_in_background`로 5개 에이전트를 동시 실행하여 시간을 절약합니다.
 - **대본 시스템**: 교안의 🗣️ 강사 대본은 슬라이드 변환 시 Speaker Notes로 이동하며, 본문의 비유/서사는 압축 보존됩니다.
 - **에이전트별 모델 라우팅**: 각 파이프라인의 `.agent/agents/{team}/config.json`에서 에이전트별 LLM 카테고리를 오버라이드할 수 있습니다. 상세 매핑은 `AGENTS.md`의 "Per-Agent Model Routing" 섹션을 참조하세요.
-- **Ground Truth**: `.agent/workflows/*.yaml` 7개 워크플로우 YAML이 시스템의 Ground Truth입니다. `.claude/` 디렉토리는 이 워크플로우를 호출하는 인터페이스 레이어입니다.
+ **Ground Truth**: `.agent/workflows/*.yaml` 8개 워크플로우 YAML이 시스템의 Ground Truth입니다. `.claude/` 디렉토리는 이 워크플로우를 호출하는 인터페이스 레이어입니다.
