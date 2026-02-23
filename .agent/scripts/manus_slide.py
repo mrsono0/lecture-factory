@@ -12,6 +12,7 @@ Nano Banana Pro로 슬라이드를 생성하고 PPTX를 다운로드합니다.
   python .agent/scripts/manus_slide.py --resume                  # 이전 완료 파일 자동 스킵
   python .agent/scripts/manus_slide.py --quiet                   # 사일런스 모드
   python .agent/scripts/manus_slide.py --verbose                 # 디버그 출력
+  python .agent/scripts/manus_slide.py --no-upload               # 기존 방식 (프리픽스 직접 삽입)
 """
 
 import argparse
@@ -353,11 +354,22 @@ def discover_prompts(project_dir):
 # ═══════════════════════════════════════════════════════════════
 
 
-def create_task(session, prompt_content, filename):
-    """Manus AI에 슬라이드 생성 Task 생성 (헤더/풋터 금지 프리픽스 자동 삽입)"""
-    # 프롬프트 최상단에 규칙 프리픽스, 최하단에 export 지시 삽입
+def create_task(session, prompt_content, filename, project_id=None, file_ids=None):
+    """Manus AI에 슬라이드 생성 Task 생성 (헤더/풋터 금지 프리픽스 자동 삽입)
+
+    Args:
+        project_id: 프로젝트 ID (설정 시 SLIDE_GENERATION_PREFIX 생략, projectId 추가)
+        file_ids: 첨부 파일 ID 목록 (설정 시 attachments에 추가)
+    """
+    # 프롬프트 최하단에 export 지시 삽입
     export_suffix = "\n\n---\n\n[최종 출력 지시]\n위 교안의 모든 슬라이드를 Nano Banana Pro 이미지로 생성한 후, 반드시 하나의 PPTX 파일로 조립하여 다운로드 가능한 파일로 출력하세요. 발표자 노트도 PPTX 안에 포함하고, 별도 slide_notes.md 파일로도 저장하세요. PPTX 파일 출력은 절대 생략하지 마세요.\n"
-    prefixed_content = SLIDE_GENERATION_PREFIX + prompt_content + export_suffix
+
+    # project_id가 있으면 SLIDE_GENERATION_PREFIX는 프로젝트 instruction에 포함되어 있으므로 생략
+    if project_id:
+        prefixed_content = prompt_content + export_suffix
+    else:
+        prefixed_content = SLIDE_GENERATION_PREFIX + prompt_content + export_suffix
+
     payload = {
         "prompt": prefixed_content,
         "agentProfile": "manus-1.6-max",
@@ -366,6 +378,15 @@ def create_task(session, prompt_content, filename):
         "createShareableLink": True,
         "hide_in_task_list": True,  # M9: Manus UI 오염 방지
     }
+
+    # 파일 업로드 모드: projectId + attachments 추가
+    if project_id:
+        payload["projectId"] = project_id
+    if file_ids:
+        payload["attachments"] = [
+            {"type": "file_id", "file_id": fid} for fid in file_ids
+        ]
+
     resp = session.post(
         f"{MANUS_API_BASE}/tasks",
         json=payload,
@@ -394,6 +415,116 @@ def create_task(session, prompt_content, filename):
     if share_url:
         log.debug("share_url: %s", share_url)
     return task_id, data
+
+
+def create_project(session, name, instruction=""):
+    """Manus AI 프로젝트 생성 (POST /v1/projects)"""
+    payload = {"name": name}
+    if instruction:
+        payload["instruction"] = instruction
+    resp = session.post(
+        f"{MANUS_API_BASE}/projects",
+        json=payload,
+        timeout=(10, 60),
+    )
+    if resp.status_code != 200:
+        error_detail = resp.text[:300] if resp.text else "No response body"
+        raise requests.RequestException(
+            f"프로젝트 생성 실패: {resp.status_code} {resp.reason}: {error_detail}"
+        )
+    data = resp.json()
+    project_id = data.get("id") or data.get("project_id") or data.get("projectId")
+    log.info("프로젝트 생성 완료: %s (id=%s)", name, project_id)
+    return project_id
+
+
+def upload_file(session, filepath):
+    """Manus AI에 파일 업로드 (POST /v1/files → PUT presigned URL)
+
+    Note: presigned URL은 3분 후 만료, 업로드 파일은 48시간 후 자동 삭제됩니다.
+    """
+    filepath = Path(filepath)
+    if not filepath.exists():
+        raise FileNotFoundError(f"업로드 파일 없음: {filepath}")
+
+    # Step 1: presigned URL 요청
+    resp = session.post(
+        f"{MANUS_API_BASE}/files",
+        json={"filename": filepath.name},
+        timeout=(10, 60),
+    )
+    if resp.status_code != 200:
+        error_detail = resp.text[:300] if resp.text else "No response body"
+        raise requests.RequestException(
+            f"파일 등록 실패: {resp.status_code} {resp.reason}: {error_detail}"
+        )
+    file_data = resp.json()
+    file_id = file_data.get("id") or file_data.get("file_id") or file_data.get("fileId")
+    upload_url = file_data.get("upload_url") or file_data.get("uploadUrl")
+
+    if not upload_url:
+        raise requests.RequestException("presigned URL을 받지 못했습니다")
+
+    # Step 2: presigned URL로 파일 업로드 (PUT)
+    file_bytes = filepath.read_bytes()
+    put_resp = requests.put(upload_url, data=file_bytes, timeout=(10, 120))
+    if put_resp.status_code not in (200, 201):
+        raise requests.RequestException(
+            f"파일 업로드 실패: {put_resp.status_code} {put_resp.reason}"
+        )
+
+    file_size_kb = len(file_bytes) / 1024
+    log.info(
+        "파일 업로드 완료: %s (%.1fKB, id=%s)", filepath.name, file_size_kb, file_id
+    )
+    return file_id
+
+
+def setup_project_with_files(session, prompts, project_dir):
+    """배치 시작 시 1회: 프로젝트 생성 + 공통 헤더 파일 업로드
+
+    Returns:
+        tuple: (project_id, file_ids_dict)
+            - project_id: 생성된 프로젝트 ID
+            - file_ids_dict: {prompt_filename: [file_id]} 매핑
+              공통 헤더를 첫 프롬프트에서 추출 → 임시 파일로 저장 → 업로드
+    """
+    # SLIDE_GENERATION_PREFIX를 project instruction으로 사용
+    project_name = f"Lecture Slides - {project_dir.name}"
+    project_id = create_project(session, project_name, SLIDE_GENERATION_PREFIX)
+
+    # 첫 번째 프롬프트에서 공통 헤더(①②④⑤) 추출
+    first_content = prompts[0].read_text(encoding="utf-8")
+    common_header_parts = []
+    for marker in ["①", "②", "④", "⑤"]:
+        section = _extract_section(first_content, marker)
+        if section:
+            common_header_parts.append(section)
+    common_header = "\n\n".join(common_header_parts)
+
+    if not common_header.strip():
+        log.warning("공통 헤더(①②④⑤)를 추출할 수 없음 — 파일 업로드 건너뜀")
+        return project_id, {}
+
+    # 공통 헤더를 임시 파일로 저장 후 업로드
+    file_ids = {}
+    tmp_dir = Path(tempfile.mkdtemp(prefix="manus_upload_"))
+    try:
+        header_path = tmp_dir / "common_header.md"
+        header_path.write_text(common_header, encoding="utf-8")
+        header_file_id = upload_file(session, header_path)
+        # 모든 프롬프트에 동일한 공통 헤더 file_id 매핑
+        for prompt_file in prompts:
+            file_ids[prompt_file.name] = [header_file_id]
+        log.info(
+            "공통 헤더 업로드 완료: %d줄, file_id=%s",
+            len(common_header.splitlines()),
+            header_file_id,
+        )
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    return project_id, file_ids
 
 
 def poll_task(session, task_id, filename, max_wait=MAX_WAIT_TIME):
@@ -701,7 +832,10 @@ def _find_session_boundaries(section_text, pattern):
 
 
 def split_by_session(
-    prompt_content, threshold_lines=CHUNK_THRESHOLD, threshold_slides=CHUNK_MAX_SLIDES
+    prompt_content,
+    threshold_lines=CHUNK_THRESHOLD,
+    threshold_slides=CHUNK_MAX_SLIDES,
+    use_upload=False,
 ):
     """대형 프롬프트를 교시(세션) 경계에서 분할."""
     import re
@@ -758,7 +892,7 @@ def split_by_session(
 
     chunks = []
     for i in range(split_count):
-        parts = [common_header]
+        parts = [] if use_upload else [common_header]
         if i < len(s3_boundaries):
             start, end, label = s3_boundaries[i]
             s3_chunk = section_3[start:end].rstrip()
@@ -844,13 +978,17 @@ def merge_pptx(chunk_pptx_paths, output_path):
 # ═══════════════════════════════════════════════════════════════
 
 
-def _submit_single_content(session, prompt_content, label, output_dir):
+def _submit_single_content(
+    session, prompt_content, label, output_dir, project_id=None, file_ids=None
+):
     """단일 콘텐츠 제출→폴링→다운로드 (C6: 10091 자동 재제출 포함)"""
     max_submit_attempts = 2  # 10091 시 1회 재제출
 
     for attempt in range(1, max_submit_attempts + 1):
         try:
-            task_id, create_data = create_task(session, prompt_content, label)
+            task_id, create_data = create_task(
+                session, prompt_content, label, project_id=project_id, file_ids=file_ids
+            )
             log.info("task_id: %s (시도 %d/%d)", task_id, attempt, max_submit_attempts)
         except requests.RequestException as e:
             log.error("[%s] Task 생성 실패 (시도 %d): %s", label, attempt, e)
@@ -935,7 +1073,15 @@ def _submit_single_content(session, prompt_content, label, output_dir):
     return {"label": label, "status": "submit_failed", "error": "최대 재시도 초과"}
 
 
-def process_single(session, prompt_file, output_dir, no_split=False):
+def process_single(
+    session,
+    prompt_file,
+    output_dir,
+    no_split=False,
+    project_id=None,
+    file_ids=None,
+    use_upload=False,
+):
     """단일 프롬프트 파일 처리: (분할 판단→) 제출 → 폴링 → 다운로드 (→ 병합)"""
     filename = prompt_file.stem
     short_name = filename.replace("_슬라이드 생성 프롬프트", "")
@@ -947,10 +1093,17 @@ def process_single(session, prompt_file, output_dir, no_split=False):
     if no_split:
         chunks = [prompt_content]
     else:
-        chunks = split_by_session(prompt_content)
+        chunks = split_by_session(prompt_content, use_upload=use_upload)
 
     if len(chunks) == 1:
-        result = _submit_single_content(session, chunks[0], short_name, output_dir)
+        result = _submit_single_content(
+            session,
+            chunks[0],
+            short_name,
+            output_dir,
+            project_id=project_id,
+            file_ids=file_ids,
+        )
         return {
             "file": str(prompt_file.name),
             "task_id": result.get("task_id"),
@@ -981,7 +1134,14 @@ def process_single(session, prompt_file, output_dir, no_split=False):
 
         chunk_label = f"{short_name}_chunk{i + 1}"
         log.info("--- 청크 %d/%d ---", i + 1, len(chunks))
-        cr = _submit_single_content(session, chunk_content, chunk_label, chunk_dir)
+        cr = _submit_single_content(
+            session,
+            chunk_content,
+            chunk_label,
+            chunk_dir,
+            project_id=project_id,
+            file_ids=file_ids,
+        )
         chunk_results.append(cr)
 
         # C4: 청크 진행 상태 즉시 저장
@@ -1081,6 +1241,11 @@ def main():
         help="세션 단위 분할 비활성화 (원본 전체 제출)",
     )
     parser.add_argument(
+        "--no-upload",
+        action="store_true",
+        help="파일 업로드 모드 비활성화 (기존 방식: 프리픽스를 프롬프트에 직접 삽입)",
+    )
+    parser.add_argument(
         "--quiet", "-q", action="store_true", help="사일런스 모드 (경고/에러만 출력)"
     )
     parser.add_argument(
@@ -1160,6 +1325,29 @@ def main():
         _release_lock(output_dir)
         sys.exit(1)
 
+    # 파일 업로드 모드: 프로젝트 생성 + 공통 헤더 업로드
+    project_id = None
+    file_ids_map = {}
+    use_upload = not args.no_upload
+
+    if use_upload:
+        try:
+            project_id, file_ids_map = setup_project_with_files(
+                session, prompts, project
+            )
+            log.info(
+                "파일 업로드 모드 활성화 (project_id=%s, 헤더 파일 %d개)",
+                project_id,
+                len(file_ids_map),
+            )
+        except (requests.RequestException, FileNotFoundError, OSError) as e:
+            log.warning("파일 업로드 모드 설정 실패 — 기존 방식으로 폴백: %s", e)
+            project_id = None
+            file_ids_map = {}
+            use_upload = False
+    else:
+        log.info("파일 업로드 모드 비활성화 (--no-upload)")
+
     # C2: --resume — 이전 완료 파일 스킵
     completed_files = set()
     if args.resume:
@@ -1186,8 +1374,16 @@ def main():
             log.info("[SKIP] %s (이전 완료)", prompt_file.name)
             continue
 
+        # 해당 프롬프트의 file_ids 조회
+        prompt_file_ids = file_ids_map.get(prompt_file.name, []) if use_upload else None
         result = process_single(
-            session, prompt_file, output_dir, no_split=args.no_split
+            session,
+            prompt_file,
+            output_dir,
+            no_split=args.no_split,
+            project_id=project_id,
+            file_ids=prompt_file_ids,
+            use_upload=use_upload,
         )
         results.append(result)
 
@@ -1241,6 +1437,8 @@ def main():
         "no_file": len(no_file),
         "failed": len(failed),
         "interrupted": _shutdown_requested,
+        "upload_mode": use_upload,
+        "project_id": project_id,
         "elapsed_seconds": elapsed,
         "results": results,
     }

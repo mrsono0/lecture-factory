@@ -25,9 +25,20 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ### 2. 파이프라인 조율
 - **Phase 1 (사전 준비)**: 매니페스트 생성 → D1에 전체 파일 검증 요청
+- **Phase 1.5 (파일 업로드)**: `setup_project_with_files()` 호출 → Manus AI 프로젝트 생성 + 공통 헤더(①②④⑤) 파일 업로드 (실패 시 기존 방식으로 자동 폴백)
 - **Phase 2 (분할·최적화)**: D1 검증 통과 파일을 D2에 분할 요청 (임계값 이하는 원샷 마킹)
-- **Phase 3 (제출·생성)**: D3에 청크/원본 프롬프트 순차 제출 지시
+- **Phase 3 (제출·생성)**: D3에 청크/원본 프롬프트 순차 제출 지시 (파일 업로드 모드 시 `project_id` + `file_ids` 전달)
 - **Phase 4 (후처리·QA)**: D4 후처리 → D5 QA → 승인/재제출 판단
+
+### 2.5 파일 업로드 모드 (File Upload Mode)
+`manus_slide.py`는 기본적으로 **파일 업로드 모드**로 실행됩니다:
+1. **프로젝트 생성** (`create_project()`): `SLIDE_GENERATION_PREFIX`(슬라이드 생성 공통 지시)를 Manus AI 프로젝트의 instruction으로 설정
+2. **파일 업로드** (`upload_file()`): 공통 헤더(①②④⑤ 섹션, ~103줄)를 Manus Files API로 1회 업로드 → `file_id` 획득
+3. **태스크 제출**: 각 청크 제출 시 `project_id` + `file_ids`를 전달하고, 프롬프트에는 동적 콘텐츠(③⑥)만 포함
+- **효과**: 4분할 시 공통 헤더 중복 ~309줄(~21KB) 절감
+- **폴백**: 프로젝트 생성 또는 파일 업로드 실패 시 자동으로 기존 방식(전체 프롬프트 포함)으로 전환
+- **비활성화**: `--no-upload` CLI 옵션으로 파일 업로드 모드를 건너뛸 수 있음
+- **주의**: 업로드된 파일은 48시간 후 자동 삭제, presigned URL은 3분 만료 → 배치 시작 직전 업로드
 
 ### 3. QA 게이트 관리
 - D5의 QA 리포트를 수신하고 판단합니다:
@@ -40,16 +51,18 @@ If the user provides a local folder path, you **MUST** analyze all files in that
   - 1,000줄 이하 파일은 분할하지 않음 (원샷)
   - D1에서 REJECT된 파일은 API 호출 전 차단
   - 일일 Nano Banana Pro 이미지 한도(~35장) 고려하여 배치 크기 조정
+  - 파일 업로드 모드로 공통 헤더 중복 전송 제거 → API 페이로드 절감
 
 ### 5. 진행 상황 리포트
 - 각 Phase 완료 시 사용자에게 진행 현황 보고:
   - 파일 수, 청크 수, 제출 완료/대기, 예상 잔여 시간
+  - 파일 업로드 모드 활성화 여부, project_id
 
 ## 산출물
 - **프로젝트 폴더**: `{project_folder}/07_ManusSlides/`
 - **PPTX 파일**: `{세션ID}_{세션제목}.pptx` (×N개, 프롬프트 파일당 1개)
 - **실행 로그**: `manus_task_log.json` (개별 task_id, 상태, 소요 시간)
-- **생성 리포트**: `generation_report.json` (성공/실패/재시도 현황)
+- **생성 리포트**: `generation_report.json` (성공/실패/재시도 현황 + `upload_mode`, `project_id` 필드)
 - **발표자 노트**: `slide_notes.md` (선택적, Manus가 생성한 경우)
 
 ## 🔴 실행 로깅 (MANDATORY)
@@ -96,5 +109,9 @@ If the user provides a local folder path, you **MUST** analyze all files in that
    - `04_SlidePrompt/` 내 `*슬라이드 생성 프롬프트.md` 파일 탐색
 2. **환경 확인**: `MANUS_API_KEY` 설정 여부 확인
 3. **매니페스트 생성**: 파일 목록 + 줄 수 + 슬라이드 수 + 분할 필요 여부
-4. **사용자 확인**: 매니페스트 제시 후 진행 여부 확인
-5. **D1 → D2 → D3 → D4 → D5 순차 실행**
+4. **파일 업로드 설정** (기본 활성):
+   - `setup_project_with_files()` 호출 → Manus AI 프로젝트 생성 + 공통 헤더 업로드
+   - 실패 시 경고 후 기존 방식(인라인 프롬프트)으로 자동 폴백
+   - `--no-upload` 옵션 사용 시 이 단계를 건너뜀
+5. **사용자 확인**: 매니페스트 제시 후 진행 여부 확인
+6. **D1 → D2 → D3 → D4 → D5 순차 실행**
