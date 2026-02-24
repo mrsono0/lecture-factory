@@ -14,6 +14,13 @@ logging:
 
 steps:
   # Phase 1: 순차 실행 — 스코프 정의 → 트렌드 리서치 → 학습자 분석 → 커리큘럼 설계
+  
+  # ⚠️ Note on NotebookLM Execution (Critical)
+  # Step 1 (A1_Trend_Researcher) requires NotebookLM URL execution.
+  # Due to subagent limitations (skill() tool not accessible), the NotebookLM 
+  # queries should be executed by the Main Agent before delegating to A1, 
+  # OR A1 must use bash() tool to execute commands directly.
+  # See: .agent/agents/01_planner/A1_Trend_Researcher.md §🔴 CRITICAL
   - id: step_0_scope
     agent: "01_planner/A0_Orchestrator"
     action: "analyze_request"
@@ -26,6 +33,11 @@ steps:
     depends_on: "step_0_scope"
     input: "Scope Definition, Output Language: Korean"
     output: "Trend Report & Fact Packet (01_Planning/Trend_Report.md)"
+
+    notes: |
+      ⚠️ NotebookLM Execution: A1 must execute bash commands to run notebooklm queries.
+      Verification: Check Trend_Report.md contains "Query 1/2/3" with actual stdout.
+      On Failure: A0 must reject and retry step_1_trend_analysis (see A0_Orchestrator.md §🔴 A1 검증 프로토콜)
     # Note: A1 uses Deep Research / NotebookLM skills here
 
   - id: step_2_learner_analysis
