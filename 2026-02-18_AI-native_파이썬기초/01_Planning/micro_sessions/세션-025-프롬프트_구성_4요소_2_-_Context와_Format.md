@@ -73,6 +73,15 @@ gemini_optimized:
     recommended: []
 ```
 
+
+## 📚 참고자료 매핑
+
+| 참고자료 | 관련 섹션 | 활용 방법 |
+|----------|----------|----------|
+| 3 프롤프트 엔지니어링.pdf | §3.3-3.7 프롬프트 4요소 (Persona/Task/Context/Format) | 4요소 프레임워크 상세 설명 |
+| gemini-for-google-workspace-prompting-guide-101.pdf | §Persona/Task/Context/Format 가이드 | Google 공식 프롬프트 가이드라인 |
+| 3 프롤프트 엔지니어링.pdf | §3.9 코드 생성 프롬프트 특화 기법 | 코드 프롬프트 5대 항목 근거 |
+
 ## ✅ 체크리스트 (작성자 자가 검증)
 
 - [x] 단 1개의 핵심 학습 목표만 명시했는가?

@@ -7,7 +7,7 @@
     "avg_duration_minutes": 21.7,
     "total_days": 5,
     "hours_per_day": 8,
-    "version": "1.0",
+    "version": "2.1",
     "generated_at": "2026-02-24",
     "id_format": "MS-PY101-{number:03d}",
     "original_id_formats_normalized": [
@@ -15,7 +15,9 @@
       "MS-AI-native_파이썬기초",
       "MS-01",
       "MS-PY101"
-    ]
+    ],
+    "normalized_at": "2026-02-25",
+    "reference_mapping_added": "2026-02-25"
   },
   "statistics": {
     "sessions_per_day": {
@@ -84,7 +86,15 @@
       "next_sessions": [
         "MS-PY101-002"
       ],
-      "file_path": "micro_sessions/세션-001-과정_로드맵과_아이스브레이킹.md"
+      "file_path": "micro_sessions/세션-001-과정_로드맵과_아이스브레이킹.md",
+      "reference_sources": [
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§전체 (패러다임 전환, 네비게이션 비유, 문제정의 vs 해결)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-002",
@@ -106,7 +116,15 @@
       "next_sessions": [
         "MS-PY101-003"
       ],
-      "file_path": "micro_sessions/세션-002-AI_시대의_서사_핵심_복습.md"
+      "file_path": "micro_sessions/세션-002-AI_시대의_서사_핵심_복습.md",
+      "reference_sources": [
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§전체 (패러다임 전환, 네비게이션 비유, 문제정의 vs 해결)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-003",
@@ -128,7 +146,21 @@
       "next_sessions": [
         "MS-PY101-004"
       ],
-      "file_path": "micro_sessions/세션-003-학습_방법론과_SDD_미리보기.md"
+      "file_path": "micro_sessions/세션-003-학습_방법론과_SDD_미리보기.md",
+      "reference_sources": [
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§전체 (패러다임 전환, 네비게이션 비유, 문제정의 vs 해결)"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§예측→검증→설명 사이클"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-004",
@@ -150,7 +182,15 @@
       "next_sessions": [
         "MS-PY101-005"
       ],
-      "file_path": "micro_sessions/세션-004-Antigravity_설치와_시연.md"
+      "file_path": "micro_sessions/세션-004-Antigravity_설치와_시연.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-005",
@@ -172,7 +212,15 @@
       "next_sessions": [
         "MS-PY101-006"
       ],
-      "file_path": "micro_sessions/세션-005-Editor_뷰와_기본_조작.md"
+      "file_path": "micro_sessions/세션-005-Editor_뷰와_기본_조작.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-006",
@@ -194,7 +242,15 @@
       "next_sessions": [
         "MS-PY101-007"
       ],
-      "file_path": "micro_sessions/세션-006-Agent_Manager와_첫_인사.md"
+      "file_path": "micro_sessions/세션-006-Agent_Manager와_첫_인사.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-007",
@@ -216,7 +272,15 @@
       "next_sessions": [
         "MS-PY101-008"
       ],
-      "file_path": "micro_sessions/세션-007-멀티에이전트_오케스트레이션_기초.md"
+      "file_path": "micro_sessions/세션-007-멀티에이전트_오케스트레이션_기초.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-008",
@@ -238,7 +302,15 @@
       "next_sessions": [
         "MS-PY101-009"
       ],
-      "file_path": "micro_sessions/세션-008-프롬프트로_시스템_환경_확인.md"
+      "file_path": "micro_sessions/세션-008-프롬프트로_시스템_환경_확인.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.1 프롬프트의 본질"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-009",
@@ -260,7 +332,15 @@
       "next_sessions": [
         "MS-PY101-010"
       ],
-      "file_path": "micro_sessions/세션-009-AI와_함께_Python_설치하기.md"
+      "file_path": "micro_sessions/세션-009-AI와_함께_Python_설치하기.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-010",
@@ -282,7 +362,15 @@
       "next_sessions": [
         "MS-PY101-011"
       ],
-      "file_path": "micro_sessions/세션-010-트러블슈팅과_5Whys_기법.md"
+      "file_path": "micro_sessions/세션-010-트러블슈팅과_5Whys_기법.md",
+      "reference_sources": [
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.1 에러 유형과 디버깅 기초"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-011",
@@ -304,7 +392,21 @@
       "next_sessions": [
         "MS-PY101-012"
       ],
-      "file_path": "micro_sessions/세션-011-uv_패키지_매니저_소개와_설치.md"
+      "file_path": "micro_sessions/세션-011-uv_패키지_매니저_소개와_설치.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        },
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§도구 환경 (uv 패키지 매니저)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-012",
@@ -326,7 +428,15 @@
       "next_sessions": [
         "MS-PY101-013"
       ],
-      "file_path": "micro_sessions/세션-012-가상환경의_필요성_이해.md"
+      "file_path": "micro_sessions/세션-012-가상환경의_필요성_이해.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§도구 환경 (uv 패키지 매니저)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-013",
@@ -348,7 +458,15 @@
       "next_sessions": [
         "MS-PY101-014"
       ],
-      "file_path": "micro_sessions/세션-013-uv로_가상환경_생성_및_활성화.md"
+      "file_path": "micro_sessions/세션-013-uv로_가상환경_생성_및_활성화.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§도구 환경 (uv 패키지 매니저)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-014",
@@ -370,7 +488,21 @@
       "next_sessions": [
         "MS-PY101-015"
       ],
-      "file_path": "micro_sessions/세션-014-uv_pip로_패키지_설치_체험.md"
+      "file_path": "micro_sessions/세션-014-uv_pip로_패키지_설치_체험.md",
+      "reference_sources": [
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§환경 구성 (Windows 11, Gemini 3 Pro, Antigravity)"
+          ]
+        },
+        {
+          "file": "AI-native_파이썬기초.md",
+          "sections": [
+            "§도구 환경 (uv 패키지 매니저)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-015",
@@ -392,7 +524,15 @@
       "next_sessions": [
         "MS-PY101-016"
       ],
-      "file_path": "micro_sessions/세션-015-프롬프트로_첫_파이썬_코드_생성.md"
+      "file_path": "micro_sessions/세션-015-프롬프트로_첫_파이썬_코드_생성.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.1 프롬프트의 본질"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-016",
@@ -414,7 +554,15 @@
       "next_sessions": [
         "MS-PY101-017"
       ],
-      "file_path": "micro_sessions/세션-016-코드_실행과_예측-검증-설명.md"
+      "file_path": "micro_sessions/세션-016-코드_실행과_예측-검증-설명.md",
+      "reference_sources": [
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§예측→검증→설명 사이클"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-017",
@@ -436,7 +584,21 @@
       "next_sessions": [
         "MS-PY101-018"
       ],
-      "file_path": "micro_sessions/세션-017-프롬프트_변형으로_코드_변화_관찰하기.md"
+      "file_path": "micro_sessions/세션-017-프롬프트_변형으로_코드_변화_관찰하기.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.1 프롬프트의 본질"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.1 에러 유형과 디버깅 기초"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-018",
@@ -458,7 +620,8 @@
       "next_sessions": [
         "MS-PY101-019"
       ],
-      "file_path": "micro_sessions/세션-018-종합_실습_1_나만의_환경_구축부터_프로그램_실행까지.md"
+      "file_path": "micro_sessions/세션-018-종합_실습_1_나만의_환경_구축부터_프로그램_실행까지.md",
+      "reference_sources": []
     },
     {
       "id": "MS-PY101-019",
@@ -480,7 +643,8 @@
       "next_sessions": [
         "MS-PY101-020"
       ],
-      "file_path": "micro_sessions/세션-019-종합_실습_2_미니_스펙_첫_경험_고객_관리_프로그램.md"
+      "file_path": "micro_sessions/세션-019-종합_실습_2_미니_스펙_첫_경험_고객_관리_프로그램.md",
+      "reference_sources": []
     },
     {
       "id": "MS-PY101-020",
@@ -502,7 +666,8 @@
       "next_sessions": [
         "MS-PY101-021"
       ],
-      "file_path": "micro_sessions/세션-020-동료_학습과_자주_묻는_질문_해결.md"
+      "file_path": "micro_sessions/세션-020-동료_학습과_자주_묻는_질문_해결.md",
+      "reference_sources": []
     },
     {
       "id": "MS-PY101-021",
@@ -522,7 +687,8 @@
       "next_sessions": [
         "MS-PY101-022"
       ],
-      "file_path": "micro_sessions/세션-021-Day_1_핵심_정리_퀴즈와_QnA.md"
+      "file_path": "micro_sessions/세션-021-Day_1_핵심_정리_퀴즈와_QnA.md",
+      "reference_sources": []
     },
     {
       "id": "MS-PY101-022",
@@ -542,7 +708,15 @@
         ]
       },
       "next_sessions": [],
-      "file_path": "micro_sessions/세션-022-마무리_및_Day_2_예고.md"
+      "file_path": "micro_sessions/세션-022-마무리_및_Day_2_예고.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.1 프롬프트의 본질"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-023",
@@ -564,7 +738,15 @@
       "next_sessions": [
         "MS-PY101-024"
       ],
-      "file_path": "micro_sessions/세션-023-프롬프트의_본질.md"
+      "file_path": "micro_sessions/세션-023-프롬프트의_본질.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.1 프롬프트의 본질"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-024",
@@ -586,7 +768,21 @@
       "next_sessions": [
         "MS-PY101-025"
       ],
-      "file_path": "micro_sessions/세션-024-프롬프트_구성_4요소_1_-_Persona와_Task.md"
+      "file_path": "micro_sessions/세션-024-프롬프트_구성_4요소_1_-_Persona와_Task.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.3-3.7 프롬프트 4요소 (Persona/Task/Context/Format)"
+          ]
+        },
+        {
+          "file": "gemini-for-google-workspace-prompting-guide-101.pdf",
+          "sections": [
+            "§Persona/Task/Context/Format 가이드"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-025",
@@ -608,7 +804,27 @@
       "next_sessions": [
         "MS-PY101-026"
       ],
-      "file_path": "micro_sessions/세션-025-프롬프트_구성_4요소_2_-_Context와_Format.md"
+      "file_path": "micro_sessions/세션-025-프롬프트_구성_4요소_2_-_Context와_Format.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.3-3.7 프롬프트 4요소 (Persona/Task/Context/Format)"
+          ]
+        },
+        {
+          "file": "gemini-for-google-workspace-prompting-guide-101.pdf",
+          "sections": [
+            "§Persona/Task/Context/Format 가이드"
+          ]
+        },
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.9 코드 생성 프롬프트 특화 기법"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-026",
@@ -630,7 +846,21 @@
       "next_sessions": [
         "MS-PY101-027"
       ],
-      "file_path": "micro_sessions/세션-026-좋은_프롬프트_vs_나쁜_프롬프트_비교_실험.md"
+      "file_path": "micro_sessions/세션-026-좋은_프롬프트_vs_나쁜_프롬프트_비교_실험.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.8 좋은 프롬프트 vs 나쁜 프롬프트 비교"
+          ]
+        },
+        {
+          "file": "gemini-for-google-workspace-prompting-guide-101.pdf",
+          "sections": [
+            "§반복 개선(Iterative) 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-027",
@@ -652,7 +882,15 @@
       "next_sessions": [
         "MS-PY101-028"
       ],
-      "file_path": "micro_sessions/세션-027-코드_생성_특화_프롬프트_5대_필수_항목.md"
+      "file_path": "micro_sessions/세션-027-코드_생성_특화_프롬프트_5대_필수_항목.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.9 코드 생성 프롬프트 특화 기법"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-028",
@@ -674,7 +912,21 @@
       "next_sessions": [
         "MS-PY101-029"
       ],
-      "file_path": "micro_sessions/세션-028-점진적_개선(Iterative_Refinement)의_이해.md"
+      "file_path": "micro_sessions/세션-028-점진적_개선(Iterative_Refinement)의_이해.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.10 점진적 개선(Iterative Refinement)"
+          ]
+        },
+        {
+          "file": "gemini-for-google-workspace-prompting-guide-101.pdf",
+          "sections": [
+            "§반복 개선 전략"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-029",
@@ -696,7 +948,21 @@
       "next_sessions": [
         "MS-PY101-030"
       ],
-      "file_path": "micro_sessions/세션-029-프롬프트_고도화_실습_비밀번호_검사기_만들기.md"
+      "file_path": "micro_sessions/세션-029-프롬프트_고도화_실습_비밀번호_검사기_만들기.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.10 점진적 개선(Iterative Refinement)"
+          ]
+        },
+        {
+          "file": "gemini-for-google-workspace-prompting-guide-101.pdf",
+          "sections": [
+            "§반복 개선 전략"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-030",
@@ -718,7 +984,21 @@
       "next_sessions": [
         "MS-PY101-031"
       ],
-      "file_path": "micro_sessions/세션-030-고급_프롬프트_기법_CoT와_Few-shot.md"
+      "file_path": "micro_sessions/세션-030-고급_프롬프트_기법_CoT와_Few-shot.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.5 CoT(Chain of Thought)"
+          ]
+        },
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.6 Few-shot 프롬프팅"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-031",
@@ -740,7 +1020,21 @@
       "next_sessions": [
         "MS-PY101-032"
       ],
-      "file_path": "micro_sessions/세션-031-요구사항(Requirements)의_본질_여행_계획서.md"
+      "file_path": "micro_sessions/세션-031-요구사항(Requirements)의_본질_여행_계획서.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.1 요구사항 분석의 본질"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§문제 정의 vs 문제 해결"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-032",
@@ -762,7 +1056,27 @@
       "next_sessions": [
         "MS-PY101-033"
       ],
-      "file_path": "micro_sessions/세션-032-체계적인_요구사항_도출_5W1H_체크리스트.md"
+      "file_path": "micro_sessions/세션-032-체계적인_요구사항_도출_5W1H_체크리스트.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.9 코드 생성 프롬프트 특화 기법"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.1 요구사항 분석의 본질"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§문제 정의 vs 문제 해결"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-033",
@@ -784,7 +1098,21 @@
       "next_sessions": [
         "MS-PY101-034"
       ],
-      "file_path": "micro_sessions/세션-033-SDD(Specification-Driven_Development)의_이해.md"
+      "file_path": "micro_sessions/세션-033-SDD(Specification-Driven_Development)의_이해.md",
+      "reference_sources": [
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§SDD(Specification-Driven Development)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.2 명세서 작성의 실무"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-034",
@@ -806,7 +1134,21 @@
       "next_sessions": [
         "MS-PY101-035"
       ],
-      "file_path": "micro_sessions/세션-034-AI와_함께하는_요구사항_작성_실습.md"
+      "file_path": "micro_sessions/세션-034-AI와_함께하는_요구사항_작성_실습.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.1 요구사항 분석의 본질"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§문제 정의 vs 문제 해결"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-035",
@@ -828,7 +1170,27 @@
       "next_sessions": [
         "MS-PY101-036"
       ],
-      "file_path": "micro_sessions/세션-035-PRD(Product_Requirements_Document)란_무엇인가?.md"
+      "file_path": "micro_sessions/세션-035-PRD(Product_Requirements_Document)란_무엇인가?.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.1 요구사항 분석의 본질"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§문제 정의 vs 문제 해결"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.3 PRD(Product Requirements Document) 구조"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-036",
@@ -850,7 +1212,21 @@
       "next_sessions": [
         "MS-PY101-037"
       ],
-      "file_path": "micro_sessions/세션-036-PRD의_핵심_구조와_기능_명세(FR)_작성법.md"
+      "file_path": "micro_sessions/세션-036-PRD의_핵심_구조와_기능_명세(FR)_작성법.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.9 코드 생성 프롬프트 특화 기법"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.3 PRD(Product Requirements Document) 구조"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-037",
@@ -872,7 +1248,15 @@
       "next_sessions": [
         "MS-PY101-038"
       ],
-      "file_path": "micro_sessions/세션-037-사용자_시나리오와_성공_지표_정의.md"
+      "file_path": "micro_sessions/세션-037-사용자_시나리오와_성공_지표_정의.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.4 사용자 시나리오 작성법"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-038",
@@ -894,7 +1278,15 @@
       "next_sessions": [
         "MS-PY101-039"
       ],
-      "file_path": "micro_sessions/세션-038-고객_정보_관리_프로그램_PRD_완성하기.md"
+      "file_path": "micro_sessions/세션-038-고객_정보_관리_프로그램_PRD_완성하기.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.3 PRD(Product Requirements Document) 구조"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-039",
@@ -916,7 +1308,27 @@
       "next_sessions": [
         "MS-PY101-040"
       ],
-      "file_path": "micro_sessions/세션-039-미니_스펙_프로젝트_주제_선정_및_요구사항.md"
+      "file_path": "micro_sessions/세션-039-미니_스펙_프로젝트_주제_선정_및_요구사항.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.1 요구사항 분석의 본질"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§문제 정의 vs 문제 해결"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.5 미니 스펙 프로젝트 가이드"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-040",
@@ -938,7 +1350,27 @@
       "next_sessions": [
         "MS-PY101-041"
       ],
-      "file_path": "micro_sessions/세션-040-미니_스펙_프로젝트_PRD_작성_및_프롬프트_준비.md"
+      "file_path": "micro_sessions/세션-040-미니_스펙_프로젝트_PRD_작성_및_프롬프트_준비.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.9 코드 생성 프롬프트 특화 기법"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.3 PRD(Product Requirements Document) 구조"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.5 미니 스펙 프로젝트 가이드"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-041",
@@ -960,7 +1392,39 @@
       "next_sessions": [
         "MS-PY101-042"
       ],
-      "file_path": "micro_sessions/세션-041-미니_스펙_프로젝트_코드_생성_및_실행_검증.md"
+      "file_path": "micro_sessions/세션-041-미니_스펙_프로젝트_코드_생성_및_실행_검증.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.9 코드 생성 프롬프트 특화 기법"
+          ]
+        },
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.10 점진적 개선(Iterative Refinement)"
+          ]
+        },
+        {
+          "file": "gemini-for-google-workspace-prompting-guide-101.pdf",
+          "sections": [
+            "§반복 개선 전략"
+          ]
+        },
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3.11 환각(Hallucination) 방지 전략"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.5 미니 스펙 프로젝트 가이드"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-042",
@@ -982,7 +1446,15 @@
       "next_sessions": [
         "MS-PY101-043"
       ],
-      "file_path": "micro_sessions/세션-042-팀별_발표_'나는_이렇게_AI와_대화했다'.md"
+      "file_path": "micro_sessions/세션-042-팀별_발표_'나는_이렇게_AI와_대화했다'.md",
+      "reference_sources": [
+        {
+          "file": "3 프롤프트 엔지니어링.pdf",
+          "sections": [
+            "§3 프롬프트 엔지니어링 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-043",
@@ -1002,7 +1474,15 @@
         "recommended": []
       },
       "next_sessions": [],
-      "file_path": "micro_sessions/세션-043-Day_2_핵심_요약_및_프롬프트_포트폴리오_정리.md"
+      "file_path": "micro_sessions/세션-043-Day_2_핵심_요약_및_프롬프트_포트폴리오_정리.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.5 미니 스펙 프로젝트 가이드"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-044",
@@ -1024,7 +1504,27 @@
       "next_sessions": [
         "MS-PY101-045"
       ],
-      "file_path": "micro_sessions/세션-044-변수의_개념과_이름표_상자_비유.md"
+      "file_path": "micro_sessions/세션-044-변수의_개념과_이름표_상자_비유.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.1 변수와 데이터 타입의 이해"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§데이터는 재료, 변수는 그릇 비유"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§코딩 비유 체계"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-045",
@@ -1046,7 +1546,21 @@
       "next_sessions": [
         "MS-PY101-046"
       ],
-      "file_path": "micro_sessions/세션-045-기본데이터타입.md"
+      "file_path": "micro_sessions/세션-045-기본데이터타입.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.1 변수와 데이터 타입의 이해"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§데이터는 재료, 변수는 그릇 비유"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-046",
@@ -1068,7 +1582,21 @@
       "next_sessions": [
         "MS-PY101-047"
       ],
-      "file_path": "micro_sessions/세션-046-타입변환과fstring.md"
+      "file_path": "micro_sessions/세션-046-타입변환과fstring.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.1 변수와 데이터 타입의 이해"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§데이터는 재료, 변수는 그릇 비유"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-047",
@@ -1090,7 +1618,15 @@
       "next_sessions": [
         "MS-PY101-048"
       ],
-      "file_path": "micro_sessions/세션-047-기본연산자와실습.md"
+      "file_path": "micro_sessions/세션-047-기본연산자와실습.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8 코딩 관련 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-048",
@@ -1112,7 +1648,15 @@
       "next_sessions": [
         "MS-PY101-049"
       ],
-      "file_path": "micro_sessions/세션-048-리스트와기본조작.md"
+      "file_path": "micro_sessions/세션-048-리스트와기본조작.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.3 리스트와 딕셔너리 활용"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-049",
@@ -1134,7 +1678,15 @@
       "next_sessions": [
         "MS-PY101-050"
       ],
-      "file_path": "micro_sessions/세션-049-리스트인덱싱.md"
+      "file_path": "micro_sessions/세션-049-리스트인덱싱.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.3 리스트와 딕셔너리 활용"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-050",
@@ -1156,7 +1708,15 @@
       "next_sessions": [
         "MS-PY101-051"
       ],
-      "file_path": "micro_sessions/세션-050-딕셔너리의이해.md"
+      "file_path": "micro_sessions/세션-050-딕셔너리의이해.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.3 리스트와 딕셔너리 활용"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-051",
@@ -1178,7 +1738,15 @@
       "next_sessions": [
         "MS-PY101-052"
       ],
-      "file_path": "micro_sessions/세션-051-복합자료구조.md"
+      "file_path": "micro_sessions/세션-051-복합자료구조.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.3 리스트와 딕셔너리 활용"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-052",
@@ -1200,7 +1768,15 @@
       "next_sessions": [
         "MS-PY101-053"
       ],
-      "file_path": "micro_sessions/세션-052-조건문if_elif_else.md"
+      "file_path": "micro_sessions/세션-052-조건문if_elif_else.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.4 제어문과 흐름 제어"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-053",
@@ -1222,7 +1798,15 @@
       "next_sessions": [
         "MS-PY101-054"
       ],
-      "file_path": "micro_sessions/세션-053-반복문for와range.md"
+      "file_path": "micro_sessions/세션-053-반복문for와range.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.4 제어문과 흐름 제어"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-054",
@@ -1244,7 +1828,15 @@
       "next_sessions": [
         "MS-PY101-055"
       ],
-      "file_path": "micro_sessions/세션-054-반복문while과제어.md"
+      "file_path": "micro_sessions/세션-054-반복문while과제어.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.4 제어문과 흐름 제어"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-055",
@@ -1266,7 +1858,21 @@
       "next_sessions": [
         "MS-PY101-056"
       ],
-      "file_path": "micro_sessions/세션-055-예외처리_try_except.md"
+      "file_path": "micro_sessions/세션-055-예외처리_try_except.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.5 예외 처리(try-except)"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.1 에러 유형 분류"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-056",
@@ -1288,7 +1894,15 @@
       "next_sessions": [
         "MS-PY101-057"
       ],
-      "file_path": "micro_sessions/세션-056-함수의개념과정의.md"
+      "file_path": "micro_sessions/세션-056-함수의개념과정의.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.6 함수 정의와 호출"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-057",
@@ -1310,7 +1924,27 @@
       "next_sessions": [
         "MS-PY101-058"
       ],
-      "file_path": "micro_sessions/세션-057-함수의매개변수와반환값.md"
+      "file_path": "micro_sessions/세션-057-함수의매개변수와반환값.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.1 변수와 데이터 타입의 이해"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§데이터는 재료, 변수는 그릇 비유"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.6 함수 정의와 호출"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-058",
@@ -1332,7 +1966,15 @@
       "next_sessions": [
         "MS-PY101-059"
       ],
-      "file_path": "micro_sessions/세션-058-내장함수활용.md"
+      "file_path": "micro_sessions/세션-058-내장함수활용.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.6 함수 정의와 호출"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-059",
@@ -1354,7 +1996,21 @@
       "next_sessions": [
         "MS-PY101-060"
       ],
-      "file_path": "micro_sessions/세션-059-리스트컴프리헨션.md"
+      "file_path": "micro_sessions/세션-059-리스트컴프리헨션.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.3 리스트와 딕셔너리 활용"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.7 리스트 컴프리헨션"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-060",
@@ -1376,7 +2032,15 @@
       "next_sessions": [
         "MS-PY101-061"
       ],
-      "file_path": "micro_sessions/세션-060-종합실습_데이터모델링.md"
+      "file_path": "micro_sessions/세션-060-종합실습_데이터모델링.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.8 종합 실습 프로젝트"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-061",
@@ -1398,7 +2062,27 @@
       "next_sessions": [
         "MS-PY101-062"
       ],
-      "file_path": "micro_sessions/세션-061-종합실습_로직구현.md"
+      "file_path": "micro_sessions/세션-061-종합실습_로직구현.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.4 제어문과 흐름 제어"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.6 함수 정의와 호출"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.8 종합 실습 프로젝트"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-062",
@@ -1420,7 +2104,21 @@
       "next_sessions": [
         "MS-PY101-063"
       ],
-      "file_path": "micro_sessions/세션-062-종합실습_통계분석.md"
+      "file_path": "micro_sessions/세션-062-종합실습_통계분석.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.6 함수 정의와 호출"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.8 종합 실습 프로젝트"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-063",
@@ -1442,7 +2140,15 @@
       "next_sessions": [
         "MS-PY101-064"
       ],
-      "file_path": "micro_sessions/세션-063-생성코드리뷰게임.md"
+      "file_path": "micro_sessions/세션-063-생성코드리뷰게임.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8 코딩 관련 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-064",
@@ -1462,221 +2168,847 @@
         ]
       },
       "next_sessions": [],
-      "file_path": "micro_sessions/세션-064-Day3_총정리.md"
+      "file_path": "micro_sessions/세션-064-Day3_총정리.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8 코딩 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-065",
       "title": "절차적 프로그래밍의 개념과 특징",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-064"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-064"
+        ],
+        "recommended": []
+      },
+      "complexity": "low",
+      "number": 65,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3000,
+      "keywords": "절차적 프로그래밍, 순차 실행, 코드의 선형 흐름",
+      "learning_objective": "이 세션 종료 시 수강생은 절차적 프로그래밍의 개념을 '일렬 도미노'에 비유하여 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-066"
       ],
-      "type": "narrative",
-      "complexity": "low"
+      "file_path": "micro_sessions/세션-065-절차적_프로그래밍의_개념과_특징.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-066",
       "title": "AI 시대의 서사 복습: 구조적 프로그래밍으로의 여정",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-065"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-065"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 66,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3000,
+      "keywords": "스파게티 코드, 전역 변수, 함수",
+      "learning_objective": "이 세션 종료 시 수강생은 절차적 프로그래밍의 한계인 '스파게티 코드' 문제를 설명하고 함수 도입의 필요성을 이해할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-067"
       ],
-      "type": "narrative",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-066-AI_시대의_서사_복습.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§구조적 프로그래밍으로의 여정"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-067",
       "title": "고객 정보 관리 프로그램 PRD 복습 및 설계",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-066"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-066"
+        ],
+        "recommended": []
+      },
+      "complexity": "low",
+      "number": 67,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3500,
+      "keywords": "PRD, 기능 목록, CRUD 요구사항",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 2에서 작성한 PRD(제품 요구사항 정의서)를 바탕으로 고객 관리 프로그램의 필수 기능 목록(FR-001~FR-004)을 확정할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-068"
       ],
-      "type": "narrative",
-      "complexity": "low"
+      "file_path": "micro_sessions/세션-067-고객_정보_관리_프로그램_PRD_설계.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.3 PRD 구조"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-068",
       "title": "CRUD 개념 이해 및 1차 프롬프트 작성 실습",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-067"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-067"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 68,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "CRUD, 프롬프트 엔지니어링, 절차적 생성",
+      "learning_objective": "이 세션 종료 시 수강생은 CRUD의 4가지 핵심 개념을 포함하여 AI에게 절차적 콘솔 프로그램을 요청하는 1차 프롬프트를 작성할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-069"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-068-CRUD_개념_이해_및_1차_프롬프트_작성_실습.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-069",
       "title": "데이터 저장 구조(전역 리스트, 딕셔너리) 이해",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-068"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-068"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 69,
+      "day": 4,
+      "chunk_type": "code",
+      "estimated_chars": 3500,
+      "keywords": "전역 변수, 리스트, 딕셔너리, 자료구조",
+      "learning_objective": "이 세션 종료 시 수강생은 AI가 생성한 코드에서 전역 리스트와 딕셔너리가 결합된 데이터 저장 구조를 식별하고 그 원리를 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-070"
       ],
-      "type": "code",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-069-데이터_저장_구조(전역_리스트,_딕셔너리)_이해.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-070",
       "title": "절차적 Create, Read 기능 구현 및 테스트",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-069"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-069"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 70,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "Create, Read, input(), append(), for 반복문",
+      "learning_objective": "이 세션 종료 시 수강생은 AI가 생성한 절차적 코드 중 C(등록)와 R(조회) 기능의 동작 원리를 이해하고, 직접 실행하여 정상 작동을 검증할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-071"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-070-절차적_Create_Read_구현_및_테스트.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.3 테스트 시나리오 3분류 (정상/경계/예외)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.6 TDD와 GWT/AAA 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-071",
       "title": "절차적 Update, Delete 기능 구현 및 통합 테스트",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-070"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-070"
+        ],
+        "recommended": []
+      },
+      "complexity": "high",
+      "number": 71,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "Update, Delete, 데이터 검색 로직, remove(), 통합 테스트",
+      "learning_objective": "이 세션 종료 시 수강생은 U(수정)와 D(삭제) 기능의 핵심인 '대상 데이터 검색' 로직을 이해하고, CRUD 전체 통합 테스트를 완료할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-072"
       ],
-      "type": "lab",
-      "complexity": "high"
+      "file_path": "micro_sessions/세션-071-절차적_Update_Delete_구현_및_통합_테스트.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.3 테스트 시나리오 3분류 (정상/경계/예외)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.6 TDD와 GWT/AAA 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-072",
       "title": "코드 리뷰: 전역 변수와 코드 중복의 한계점 발견",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-071"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-071"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 72,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3500,
+      "keywords": "코드 리뷰, 전역 변수의 위험성, 코드 중복 (DRY 원칙)",
+      "learning_objective": "이 세션 종료 시 수강생은 완성된 절차적 코드를 리뷰하며 전역 변수의 위험성과 코드 중복(DRY 원칙 위배) 문제를 식별할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-073"
       ],
-      "type": "narrative",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-072-코드_리뷰-_전역_변수와_코드_중복의_한계점_발견.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.12 코드 리뷰 5대 체크포인트"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.4 PR과 코드 리뷰 프로세스"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-073",
       "title": "절차적 코드의 구조적 리팩토링 프롬프트 작성",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-072"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-072"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 73,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 3500,
+      "keywords": "리팩토링, 구조적 프로그래밍, 함수 분리, 관심사 분리",
+      "learning_objective": "이 세션 종료 시 수강생은 절차적 코드를 기능별 함수로 분리하고 전역 변수를 제거하도록 요구하는 구조적 리팩토링 프롬프트를 작성할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-074"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-073-절차적_코드의_구조적_리팩토링_프롬프트_작성.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-074",
       "title": "구조적 데이터 흐름(매개변수와 리턴)의 이해",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-073"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-073"
+        ],
+        "recommended": []
+      },
+      "complexity": "high",
+      "number": 74,
+      "day": 4,
+      "chunk_type": "code",
+      "estimated_chars": 3500,
+      "keywords": "매개변수(Parameter), 인자(Argument), 리턴(Return), 함수 스코프",
+      "learning_objective": "이 세션 종료 시 수강생은 구조적 코드(v2)에서 전역 변수 대신 함수 간 데이터를 주고받는 방식인 매개변수와 리턴의 역할을 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-075"
       ],
-      "type": "code",
-      "complexity": "high"
+      "file_path": "micro_sessions/세션-074-구조적_데이터_흐름(매개변수와_리턴)의_이해.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-075",
       "title": "절차적 vs 구조적 코드 나란히 비교 분석",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-074"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-074"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 75,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3500,
+      "keywords": "코드 비교, 장단점 분석, 함수 호출, 모듈화",
+      "learning_objective": "이 세션 종료 시 수강생은 v1과 v2 코드를 비교 분석하여, 메인 루프의 간결화와 함수 호출의 장점을 2가지 이상 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-076"
       ],
-      "type": "narrative",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-075-절차적_vs_구조적_코드_나란히_비교_분석.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.11 코드 비교 분석 기법"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-076",
       "title": "요구사항 추가를 통한 구조적 확장성 체험",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-075"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-075"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 76,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "유지보수, 확장성, 기능 추가, 플러그인",
+      "learning_objective": "이 세션 종료 시 수강생은 구조적으로 분리된 v2 코드에 '검색 기능'을 추가하는 프롬프트를 실행하고, 기존 코드에 미치는 영향을 최소화하며 기능이 확장됨을 검증할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-077"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-076-요구사항_추가를_통한_구조적_확장성_체험.md",
+      "reference_sources": [
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.3 PRD 구조"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-077",
       "title": "테스트는 시승이다: 테스트 시나리오 3분류 이해",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-076"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-076"
+        ],
+        "recommended": []
+      },
+      "complexity": "low",
+      "number": 77,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3500,
+      "keywords": "테스트 시나리오, 정상(Happy Path), 경계값(Edge Case), 예외(Exception)",
+      "learning_objective": "이 세션 종료 시 수강생은 테스트 시나리오의 3분류(정상, 경계값, 예외)를 일상적인 비유(시승)를 통해 정확히 구분하고 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-078"
       ],
-      "type": "narrative",
-      "complexity": "low"
+      "file_path": "micro_sessions/세션-077-테스트는_시승이다-_테스트_시나리오_3분류_이해.md",
+      "reference_sources": [
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.3 테스트 시나리오 3분류 (정상/경계/예외)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.6 TDD와 GWT/AAA 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-078",
       "title": "고객 관리 프로그램 테스트 시나리오 작성 실습",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-077"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-077"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 78,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "테스트 시나리오 표, QA, 테스트 데이터",
+      "learning_objective": "이 세션 종료 시 수강생은 고객 관리 프로그램의 특정 기능에 대해 정상/경계값/예외 케이스를 모두 포함한 테스트 시나리오 표를 작성할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-079"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-078-고객_관리_프로그램_테스트_시나리오_작성_실습.md",
+      "reference_sources": [
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.3 테스트 시나리오 3분류 (정상/경계/예외)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.6 TDD와 GWT/AAA 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-079",
       "title": "품질 검사관: 코드 리뷰 5대 체크포인트",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-078"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-078"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 79,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3500,
+      "keywords": "코드 리뷰, 5대 체크포인트, 방어적 프로그래밍",
+      "learning_objective": "이 세션 종료 시 수강생은 코드 품질을 검증하기 위한 5대 체크포인트(요구사항, 입력 검증, 경계값, 자료구조, 가독성/구조)를 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-080"
       ],
-      "type": "narrative",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-079-품질_검사관-_코드_리뷰_5대_체크포인트.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.12 코드 리뷰 5대 체크포인트"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.4 PR과 코드 리뷰 프로세스"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-080",
       "title": "완벽한 리뷰 코멘트 작성 및 AI 피드백 실습",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-079"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-079"
+        ],
+        "recommended": []
+      },
+      "complexity": "high",
+      "number": 80,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "리뷰 코멘트 3요소, 위치, 문제점, 재현 방법, AI 피드백",
+      "learning_objective": "이 세션 종료 시 수강생은 리뷰 코멘트 3요소(위치, 문제점, 재현 방법)를 포함한 프롬프트를 작성하여 AI에게 코드 수정을 지시하고, 예외 처리가 반영된 코드를 획득할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-081"
       ],
-      "type": "lab",
-      "complexity": "high"
+      "file_path": "micro_sessions/세션-080-완벽한_리뷰_코멘트_작성_및_AI_피드백_실습.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.12 코드 리뷰 5대 체크포인트"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.4 PR과 코드 리뷰 프로세스"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-081",
       "title": "Day 4 종합: 절차에서 구조로, 그리고 테스트까지",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-080"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-080"
+        ],
+        "recommended": []
+      },
+      "complexity": "low",
+      "number": 81,
+      "day": 4,
+      "chunk_type": "narrative",
+      "estimated_chars": 3500,
+      "keywords": "절차적 프로그래밍, 구조적 프로그래밍, 테스트, 코드 리뷰 종합",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 4에서 학습한 '절차적 코드 작성 → 구조적 리팩토링 → 테스트 및 코드 리뷰'의 전체 사이클을 3단계로 요약하여 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-082"
       ],
-      "type": "narrative",
-      "complexity": "low"
+      "file_path": "micro_sessions/세션-081-Day_4_종합-_절차에서_구조로,_그리고_테스트까지.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.3 테스트 시나리오 3분류 (정상/경계/예외)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.6 TDD와 GWT/AAA 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.12 코드 리뷰 5대 체크포인트"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.4 PR과 코드 리뷰 프로세스"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9-8.13 절차→구조 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-082",
       "title": "나만의 미니 프로젝트: 기획 및 절차적 코드 생성",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-081",
-        "MS-PY101-068"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-081",
+          "MS-PY101-068"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 82,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 3000,
+      "keywords": "자유 실습, 미니 프로젝트, 절차적 1차 생성",
+      "learning_objective": "이 세션 종료 시 수강생은 자유 주제를 선정하여 CRUD 기능이 포함된 절차적 형태의 1차 코드를 AI를 통해 생성해낼 수 있다.",
+      "next_sessions": [
+        "MS-PY101-083"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-082-나만의_미니_프로젝트-_기획_및_절차적_코드_생성.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.9 절차적 프로그래밍 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.13 미니 프로젝트 실습"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9 디버깅/테스트 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-083",
       "title": "미니 프로젝트: 구조적 리팩토링 및 퀄리티 체크",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-082",
-        "MS-PY101-073"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-082",
+          "MS-PY101-073"
+        ],
+        "recommended": []
+      },
+      "complexity": "high",
+      "number": 83,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 3000,
+      "keywords": "리팩토링, 코드 품질 검증, AI 평가",
+      "learning_objective": "이 세션 종료 시 수강생은 자신의 미니 프로젝트 코드를 구조적으로 리팩토링하고, AI에게 두 버전의 품질 평가(점수 매기기)를 요구하여 개선을 정량적으로 확인할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-084"
       ],
-      "type": "lab",
-      "complexity": "high"
+      "file_path": "micro_sessions/세션-083-미니_프로젝트-_구조적_리팩토링_및_퀄리티_체크.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.10 리팩토링과 구조적 프로그래밍"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.13 미니 프로젝트 실습"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9 디버깅/테스트 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-084",
       "title": "미니 프로젝트: 극한의 테스트 시나리오 도출",
       "duration_min": 20,
-      "prerequisites": [
-        "MS-PY101-083",
-        "MS-PY101-078"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-083",
+          "MS-PY101-078"
+        ],
+        "recommended": []
+      },
+      "complexity": "high",
+      "number": 84,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 3000,
+      "keywords": "테스트 시나리오, 엣지 케이스, 창의적 예외 도출",
+      "learning_objective": "이 세션 종료 시 수강생은 자신의 미니 프로젝트 특성에 맞는 창의적이고 극한의 '예외 케이스(Edge Case)'를 최소 3가지 도출하여 시나리오 표로 작성할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-085"
       ],
-      "type": "lab",
-      "complexity": "high"
+      "file_path": "micro_sessions/세션-084-미니_프로젝트-_극한의_테스트_시나리오_도출.md",
+      "reference_sources": [
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.3 테스트 시나리오 3분류 (정상/경계/예외)"
+          ]
+        },
+        {
+          "file": "7 기획.pdf",
+          "sections": [
+            "§7.6 TDD와 GWT/AAA 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.13 미니 프로젝트 실습"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9 디버깅/테스트 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-085",
       "title": "미니 프로젝트: 코드 리뷰 기반 최종 완성 및 회고",
       "duration_min": 25,
-      "prerequisites": [
-        "MS-PY101-084",
-        "MS-PY101-080"
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-084",
+          "MS-PY101-080"
+        ],
+        "recommended": []
+      },
+      "complexity": "medium",
+      "number": 85,
+      "day": 4,
+      "chunk_type": "lab",
+      "estimated_chars": 4000,
+      "keywords": "회고(Retrospective), 문제 해결, 방어적 코드 반영, OOP 예고",
+      "learning_objective": "이 세션 종료 시 수강생은 3요소 리뷰 코멘트로 엣지 케이스를 방어하는 최종 코드를 완성하고, Day 4 학습 여정을 회고하며 다음 패러다임(OOP)의 필요성을 1가지 이상 설명할 수 있다.",
+      "next_sessions": [
+        "MS-PY101-086"
       ],
-      "type": "lab",
-      "complexity": "medium"
+      "file_path": "micro_sessions/세션-085-미니_프로젝트-_코드_리뷰_기반_최종_완성_및_회고.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.12 코드 리뷰 5대 체크포인트"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9.4 PR과 코드 리뷰 프로세스"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.13 미니 프로젝트 실습"
+          ]
+        },
+        {
+          "file": "9 디 버깅, 테스트, 배포.pdf",
+          "sections": [
+            "§9 디버깅/테스트 전체"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-086",
@@ -1698,7 +3030,15 @@
       "next_sessions": [
         "MS-PY101-087"
       ],
-      "file_path": "micro_sessions/세션-086-클래스와_인스턴스의_개념.md"
+      "file_path": "micro_sessions/세션-086-클래스와_인스턴스의_개념.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-087",
@@ -1720,7 +3060,15 @@
       "next_sessions": [
         "MS-PY101-088"
       ],
-      "file_path": "micro_sessions/세션-087-속성과_메서드_그리고_init.md"
+      "file_path": "micro_sessions/세션-087-속성과_메서드_그리고_init.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-088",
@@ -1742,7 +3090,15 @@
       "next_sessions": [
         "MS-PY101-089"
       ],
-      "file_path": "micro_sessions/세션-088-나만의_클래스_만들기_실습.md"
+      "file_path": "micro_sessions/세션-088-나만의_클래스_만들기_실습.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-089",
@@ -1764,7 +3120,21 @@
       "next_sessions": [
         "MS-PY101-090"
       ],
-      "file_path": "micro_sessions/세션-089-데이터를_담는_특별한_그릇_dataclass.md"
+      "file_path": "micro_sessions/세션-089-데이터를_담는_특별한_그릇_dataclass.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 @dataclass 활용"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 데이터 영속화 (파일/DB)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-090",
@@ -1787,7 +3157,21 @@
       "next_sessions": [
         "MS-PY101-091"
       ],
-      "file_path": "micro_sessions/세션-090-객체지향_리팩토링과_캡슐화_개념.md"
+      "file_path": "micro_sessions/세션-090-객체지향_리팩토링과_캡슐화_개념.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 캡슐화와 접근 제어"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-091",
@@ -1809,7 +3193,15 @@
       "next_sessions": [
         "MS-PY101-092"
       ],
-      "file_path": "micro_sessions/세션-091-고객관리_v3로의_진화.md"
+      "file_path": "micro_sessions/세션-091-고객관리_v3로의_진화.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-092",
@@ -1831,7 +3223,15 @@
       "next_sessions": [
         "MS-PY101-093"
       ],
-      "file_path": "micro_sessions/세션-092-데이터_검증_함수_추가.md"
+      "file_path": "micro_sessions/세션-092-데이터_검증_함수_추가.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 OOP 관련"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-093",
@@ -1853,7 +3253,21 @@
       "next_sessions": [
         "MS-PY101-094"
       ],
-      "file_path": "micro_sessions/세션-093-캡슐화_실습_및_v3_코드_리뷰.md"
+      "file_path": "micro_sessions/세션-093-캡슐화_실습_및_v3_코드_리뷰.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 캡슐화와 접근 제어"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-094",
@@ -1875,7 +3289,21 @@
       "next_sessions": [
         "MS-PY101-095"
       ],
-      "file_path": "micro_sessions/세션-094-상속의_개념과_필요성.md"
+      "file_path": "micro_sessions/세션-094-상속의_개념과_필요성.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 상속과 코드 재사용"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-095",
@@ -1897,7 +3325,27 @@
       "next_sessions": [
         "MS-PY101-096"
       ],
-      "file_path": "micro_sessions/세션-095-기존_클래스_확장하기_VIPCustomer와_super.md"
+      "file_path": "micro_sessions/세션-095-기존_클래스_확장하기_VIPCustomer와_super.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 상속과 코드 재사용"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 다형성(Polymorphism)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-096",
@@ -1919,7 +3367,21 @@
       "next_sessions": [
         "MS-PY101-097"
       ],
-      "file_path": "micro_sessions/세션-096-다형성_체험.md"
+      "file_path": "micro_sessions/세션-096-다형성_체험.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 다형성(Polymorphism)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-097",
@@ -1941,7 +3403,15 @@
       "next_sessions": [
         "MS-PY101-098"
       ],
-      "file_path": "micro_sessions/세션-097-의존성_주입_DI_개념.md"
+      "file_path": "micro_sessions/세션-097-의존성_주입_DI_개념.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 의존성 주입(DI) 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-098",
@@ -1963,7 +3433,15 @@
       "next_sessions": [
         "MS-PY101-099"
       ],
-      "file_path": "micro_sessions/세션-098-파일_저장_모듈_FileStorage_구현.md"
+      "file_path": "micro_sessions/세션-098-파일_저장_모듈_FileStorage_구현.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 데이터 영속화 (파일/DB)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-099",
@@ -1985,7 +3463,15 @@
       "next_sessions": [
         "MS-PY101-100"
       ],
-      "file_path": "micro_sessions/세션-099-DB_저장_모듈_SQLiteStorage_구현.md"
+      "file_path": "micro_sessions/세션-099-DB_저장_모듈_SQLiteStorage_구현.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 데이터 영속화 (파일/DB)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-100",
@@ -2008,7 +3494,21 @@
       "next_sessions": [
         "MS-PY101-101"
       ],
-      "file_path": "micro_sessions/세션-100-DI_적용_실습.md"
+      "file_path": "micro_sessions/세션-100-DI_적용_실습.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 의존성 주입(DI) 패턴"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 데이터 영속화 (파일/DB)"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-101",
@@ -2030,7 +3530,21 @@
       "next_sessions": [
         "MS-PY101-102"
       ],
-      "file_path": "micro_sessions/세션-101-고객관리_프로그램_진화_과정_총정리.md"
+      "file_path": "micro_sessions/세션-101-고객관리_프로그램_진화_과정_총정리.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 객체지향 프로그래밍(OOP) 기초"
+          ]
+        },
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 의존성 주입(DI) 패턴"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-102",
@@ -2052,7 +3566,27 @@
       "next_sessions": [
         "MS-PY101-103"
       ],
-      "file_path": "micro_sessions/세션-102-AI_시대의_서사_최종_연결.md"
+      "file_path": "micro_sessions/세션-102-AI_시대의_서사_최종_연결.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8 코딩 전체"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§AI 시대의 개발자 역할"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§OOP 패러다임 여정"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-103",
@@ -2075,7 +3609,15 @@
       "next_sessions": [
         "MS-PY101-104"
       ],
-      "file_path": "micro_sessions/세션-103-수료_프로젝트_코드_리뷰_공유.md"
+      "file_path": "micro_sessions/세션-103-수료_프로젝트_코드_리뷰_공유.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 OOP 관련"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-104",
@@ -2095,7 +3637,15 @@
       "next_sessions": [
         "MS-PY101-105"
       ],
-      "file_path": "micro_sessions/세션-104-파이썬_기초_전_과정_핵심_퀴즈.md"
+      "file_path": "micro_sessions/세션-104-파이썬_기초_전_과정_핵심_퀴즈.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 OOP 관련"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-105",
@@ -2117,7 +3667,15 @@
       "next_sessions": [
         "MS-PY101-106"
       ],
-      "file_path": "micro_sessions/세션-105-수료_후_학습_로드맵_및_심화_학습_상담.md"
+      "file_path": "micro_sessions/세션-105-수료_후_학습_로드맵_및_심화_학습_상담.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8.14 OOP 관련"
+          ]
+        }
+      ]
     },
     {
       "id": "MS-PY101-106",
@@ -2137,7 +3695,21 @@
         "recommended": []
       },
       "next_sessions": [],
-      "file_path": "micro_sessions/세션-106-최종_마무리_및_수료식.md"
+      "file_path": "micro_sessions/세션-106-최종_마무리_및_수료식.md",
+      "reference_sources": [
+        {
+          "file": "8 코딩.pdf",
+          "sections": [
+            "§8 코딩 전체"
+          ]
+        },
+        {
+          "file": "AI 시대의 서사 v3 - Claude.md",
+          "sections": [
+            "§AI 시대의 개발자 역할"
+          ]
+        }
+      ]
     }
   ],
   "dependency_graph": {

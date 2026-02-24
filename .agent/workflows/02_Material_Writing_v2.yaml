@@ -1,6 +1,6 @@
 name: "Material Writing Pipeline v2 - Session-Based Aggregation"
 description: "마이크로 세션별 개별 집필 후 취합하는 Gemini 최적화 교안 작성 워크플로우 (Writer Team v2) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
-version: "3.0"
+version: "4.0"
 
 output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
 max_retries: 2
@@ -16,6 +16,8 @@ session_writing_policy:
     session_index: "01_Planning/micro_sessions/_index.json"
     session_flow: "01_Planning/micro_sessions/_flow.md"
     dependency_graph: "01_Planning/micro_sessions/_dependency.mmd"
+    reference_mapping: "01_Planning/micro_sessions/_reference_mapping.json"
+    reference_materials: "참고자료/"
   
   # 출력 구조
   output_structure:
@@ -40,6 +42,38 @@ session_writing_policy:
     - "서술형 강제: 개조식 요약 금지, 긴 줄글 서술형 필수"
     - "브릿지 노트: 세션 간 연결성을 위한 전환 멘트 포함"
 
+  # ── 3-Source Mandatory 데이터 수집 정책 ─────────────────────────
+  data_collection_policy:
+    mode: "3_source_mandatory"
+    collection_unit: "Day"  # Day 단위 수집 → 세션별 분배
+    description: "3개 소스를 독립적으로 수집하고 세션별 팩트 패킷으로 통합"
+    
+    sources:
+      source_a_local:
+        name: "로컬 참고자료"
+        required: false  # 로컬에 자료가 없을 수도 있음
+        method: "📚 참고자료 매핑 기반 세션 타겟 추출"
+        input: "_reference_mapping.json + 참고자료/ 폴더"
+        
+      source_b_notebooklm:
+        name: "NotebookLM"
+        required: "conditional"  # URL 제공 시 필수
+        method: "Day별 심화 질의 (5회 수집 → 세션별 분배)"
+        note: "트렌드 리포트용이 아닌 강의 콘텐츠 소스로 활용"
+        
+      source_c_deep_research:
+        name: "딥리서치"
+        required: true  # 항상 필수
+        method: "웹 전체 대상 심층 탐색"
+        
+    fact_packet_structure:
+      per_session:
+        - "local_excerpt: 로컬 참고자료 발췌 (있는 경우)"
+        - "notebooklm: NotebookLM 질의 결과"
+        - "deep_research: 딥리서치 결과"
+        - "source_status: {local: found|not_found, notebooklm: collected|skipped, deep_research: collected}"
+        - "synthesis: 3-Source 교차 검증 통합 요약"
+
 logging:
   enabled: true
   protocol: ".agent/logging-protocol.md"
@@ -48,17 +82,24 @@ logging:
   format: "jsonl"
 
 steps:
-  # Phase 1: 소스 분석 및 구조화 (기존과 동일)
+  # Phase 1: 3-Source Mandatory 소스 수집 및 구조화
   - id: step_1_source_mining
     agent: "02_writer/A1_Source_Miner"
-    action: "extract_facts"
+    action: "extract_facts_3source"
     input: 
       - "Micro Session Specs (01_Planning/micro_sessions/)"
-      - "Source Materials"
-      - "NotebookLM URL (Optional)"
+      - "Reference Mapping (01_Planning/micro_sessions/_reference_mapping.json)"
+      - "Reference Materials (참고자료/ — 있는 경우)"
+      - "NotebookLM URL (제공 시 필수 실행)"
+      - "Deep Research (항상 필수 실행)"
       - "Output Language: Korean"
-    output: "Fact Packet"
+    output: "3-Source Fact Packet (세션별 통합 팩트)"
     notes: |
+      🔄 3-Source Mandatory: 3개 소스를 독립 수집 후 세션별 통합
+        - Source A (로컬): _reference_mapping.json 기반 타겟 추출 (없을 수 있음)
+        - Source B (NotebookLM): URL 제공 시 Day별 심화 질의 필수
+        - Source C (딥리서치): 항상 필수 실행
+      ⚠️ 충분성 판단 없음: 각 소스는 독립적으로 수집, 상호 대체하지 않음
       📊 External Tool Logging: A1_Source_Miner must log all external tool calls
       (notebooklm, deep-research, context7, firecrawl, pdf-official) to
       .agent/logs/{DATE}_02_Material_Writing_v2.jsonl using EXTERNAL_TOOL_START/END events.
@@ -68,7 +109,7 @@ steps:
     action: "setup_tracking"
     depends_on: "step_1_source_mining"
     input: 
-      - "Fact Packet"
+      - "3-Source Fact Packet"
       - "Source Materials"
       - "Output Language: Korean"
     output: "Traceability Packet (Initial)"
@@ -78,7 +119,7 @@ steps:
     action: "create_skeleton"
     depends_on: "step_2_traceability_setup"
     input: 
-      - "Fact Packet"
+      - "3-Source Fact Packet"
       - "Micro Session Index"
       - "Output Language: Korean"
     output: "Skeleton Packet (per session)"
@@ -92,9 +133,9 @@ steps:
     parallel_mode: "foreach_session"  # 각 마이크로 세션별 독립 실행
     batch_size: 3  # 한 번에 처리할 세션 수 (Gemini API rate limit 고려)
     input: 
-      - "Session Spec (from 01_Planning)"
+      - "Session Spec (from 01_Planning) — 📚 참고자료 매핑 섹션 포함"
       - "Skeleton Packet"
-      - "Fact Packet"
+      - "3-Source Fact Packet (세션별 통합 팩트)"
       - "Traceability Packet"
       - "Output Language: Korean"
     output: "Session Material Files (02_Material/sessions/세션-*.md)"
@@ -106,6 +147,11 @@ steps:
         - 친근한 구어체 (~해요, ~입니다)
         - 🗣️ 강사 대본 + 🎙️ 실습 가이드 포함
         - 비유 및 스토리텔링 ('AI 시대의 서사' 톤)
+      📚 참고자료 활용 규칙:
+        - 세션 명세서의 📚 참고자료 매핑 섹션을 반드시 확인
+        - 3-Source 팩트 패킷의 local_excerpt, notebooklm, deep_research 모두 반영
+        - 3개 소스에 없는 내용만 자체 생성 (출처 명시)
+        - 💡 강사 노트에 참고자료 출처 표기
       📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md
       ⚠️ 각 세션은 독립적으로 완결성을 가져야 함 (중간에 끊기지 않음)
 
@@ -127,7 +173,7 @@ steps:
     parallel_group: "phase3_enhancement"
     input: 
       - "Session Material Files"
-      - "Fact Packet"
+      - "3-Source Fact Packet"
       - "Output Language: Korean"
     output: "Visualization Packet (Mermaid Diagrams)"
 
@@ -229,7 +275,7 @@ steps:
     depends_on: "step_12_aggregation"
     input: 
       - "Aggregated Material (v1.0)"
-      - "Fact Packet"
+      - "3-Source Fact Packet"
       - "Traceability Packet"
       - "Output Language: Korean"
     output: "QA Report & Final Material"
@@ -240,6 +286,8 @@ steps:
       - "용어 및 비유 일관성"
       - "난이도 곡선 부드러움"
       - "시각화 적절성 (표/다이어그램)"
+      - "참고자료 활용도: 📚 참고자료 매핑 대비 실제 반영률 70% 이상"
+      - "3-Source 교차 검증: 팩트 패킷의 3개 소스가 교안에 균형 있게 반영"
     decision:
       approved: "Finish"
       rejected: "Go to step_4_session_writing"
@@ -279,8 +327,14 @@ upstream_integration:
       - "01_Planning/micro_sessions/_index.json"
       - "01_Planning/micro_sessions/_flow.md"
       - "01_Planning/micro_sessions/_dependency.mmd"
+      - "01_Planning/micro_sessions/_reference_mapping.json"
+    optional_inputs:
+      - "참고자료/ (로컬 참고자료 폴더 — 없을 수 있음)"
+      - "NotebookLM URL (제공 시 필수 활용)"
     notes: |
-      v2 워크플로우는 마이크로 세션별 개별 파일을 입력으로 받음.
+      v4 워크플로우는 3-Source Mandatory 정책을 적용.
+      _reference_mapping.json으로 세션별 참고자료를 타겟 추출하고,
+      NotebookLM + 딥리서치를 독립 수집하여 세션별 3-Source 팩트 패킷 생성.
       각 세션 파일은 독립적으로 처리되며, A4C가 최종 통합.
 
 downstream_integration:
