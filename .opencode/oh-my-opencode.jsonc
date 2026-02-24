@@ -76,6 +76,20 @@
       "model": "opencode/gpt-5.3-codex",
       "variant": "xhigh"
     },
+    // NEW: Micro Session Chunking - 15~25min session design
+    // Gemini 3.1 Pro — 1M context for chunk_type tagging and dependency mapping
+    "curriculum-chunking": {
+      "model": "google/antigravity-gemini-3.1-pro",
+      "variant": "high",
+      "prompt_append": "You are designing MICRO-SESSIONS (15-25min chunks) for curriculum planning. CRITICAL RULES:\n1. Each session MUST target exactly ONE learning objective\n2. Time: 15-25min (3,000-4,500 chars when written)\n3. Output estimated_chars (3000|4000|4500) and complexity tags\n4. Define clear prerequisites and dependencies\n5. Specify chunk_type: narrative|code|diagram|lab\n6. Include 🗣️ instructor script outline (1,500-2,000 chars)\n7. Include 🎙️ lab guide if applicable\n8. Use 'AI 시대의 서사' tone for analogies\n9. All outputs in Korean"
+    },
+    // NEW: Micro Session Writing - Individual session material (3,000-4,500 chars)
+    // Gemini 3.1 Pro — 1M context, optimized for long-form continuous prose
+    "micro-writing": {
+      "model": "google/antigravity-gemini-3.1-pro",
+      "variant": "high",
+      "prompt_append": "You are writing a SINGLE micro-session (15-25min) lecture material. CRITICAL RULES:\n1. Output MUST be 3,000-4,500 characters (Korean, including spaces)\n2. NEVER use bullet points, lists, or tables in main narrative\n3. Use continuous prose style (novel/essay-like paragraphs only)\n4. Tone: Friendly spoken Korean (~haeyo, ~imnida), NEVER formal (~handa)\n5. Structure: Hook (previous recap) → Analogy (detailed situational drama) → Concept (line-by-line explanation) → Code/Example (if applicable) → Checkpoint Q&A\n6. Include ONLY ONE core concept per session\n7. All scripts must be verbatim-readable by instructors\n8. Use 🗣️ for instructor scripts (1,500-2,000 chars), 🎙️ for lab guides\n9. Include detailed analogies with 'AI 시대의 서사' tone\n10. All outputs must be in Korean (except technical terms)"
+    },
     // Creative Tasks: Differentiation strategies, narrative design
     // Gemini 3.1 Pro — latest model for creative/artistic content
     "artistry": {
