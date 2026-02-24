@@ -33,6 +33,8 @@
 | `DECISION` | QA/승인 스텝 판정 시 | decision 필드에 approved/rejected |
 | `SESSION_START` | 세션 단위 병렬 실행 시작 | session_id, session_name 포함. Session-Parallel 모델 전용 |
 | `SESSION_END` | 세션 단위 병렬 실행 완료 | 세션 전체의 duration/bytes/cost + output_files 포함 |
+| `EXTERNAL_TOOL_START` | 외부 도구/API 호출 시작 | 도구명, 입력 파라미터, 타임스탬프 |
+| `EXTERNAL_TOOL_END` | 외부 도구/API 호출 완료 | 소요시간, 응답 크기, 상태 코드 |
 
 ---
 
@@ -83,6 +85,20 @@
 | `session_name` | string | O | 세션 표시명 | `"환경구축과 첫 API"` |
 | `total_slides` | number | — | 생성된 슬라이드 수 (해당 시) | `38` |
 | `output_files` | string[] | — | 생성된 파일 목록 (상대 경로) | `["슬라이드기획안.md", "Phase1_IR_Glossary.md"]` |
+
+### 3.5 EXTERNAL_TOOL 전용 필드 (EXTERNAL_TOOL_START / EXTERNAL_TOOL_END)
+
+| 필드 | 타입 | 필수 | 설명 | 예시 |
+|------|------|:----:|------|------|
+| `tool_name` | string | O | 도구/서비스명 | `"notebooklm"` / `"tavily-web"` / `"pdf-extract"` |
+| `tool_action` | string | O | 도구 내 액션 | `"ask_question"` / `"search"` / `"extract"` |
+| `tool_input_hash` | string | — | 입력 파라미터의 SHA256 해시 (민감정보 보호) | `"a1b2c3..."` |
+| `tool_input_bytes` | number | O | 입력 데이터 크기 (bytes) | `"질문 내용"의 UTF-8 바이트 수` |
+| `tool_output_bytes` | number | O | 응답 데이터 크기 (bytes) | `"응답 내용"의 UTF-8 바이트 수` |
+| `tool_duration_sec` | number | O | 도구 호출 소요 시간 | `15.3` |
+| `tool_status` | string | O | 호출 결과 상태 | `"success"` / `"timeout"` / `"error"` |
+| `tool_error` | string | — | 오류 메시지 (실패 시) | `"Notebook ID not found"` |
+| `notebook_id` | string | — | NotebookLM 사용 시 노트북 ID | `"28d70970-864a-485b-82e9-ebdd7c233c9a"` |
 
 ---
 
@@ -341,6 +357,103 @@ Sisyphus(또는 E2E 오케스트레이터)가 Session-Parallel 실행을 조율�
 2. 해당 파일의 `categories` 섹션에서 `category` 키로 `model` 값을 조회합니다.
 3. 매 step/session의 START/END/SESSION_START/SESSION_END 로그에 조회된 `model` 값을 기록합니다.
 4. 매핑 실패 시(config에 카테고리 없음) `"unknown"`을 기록합니다.
+
+### 9.7 외부 도구 호출 로깅 (EXTERNAL_TOOL)
+
+에이전트가 외부 도구(API, 스킬, 서비스)를 호출할 때는 **EXTERNAL_TOOL_START/END** 이벤트를 기록합니다.
+
+#### 9.7.1 로깅 대상 도구
+- **NotebookLM**: `ask_question`, `auth_manager` 등
+- **Tavily Web Search**: `search`, `extract`
+- **PDF 추출**: `pdf-official` 스킬
+- **Code Search**: `codesearch`, `grep_app`
+- **기타 외부 API**: Manus AI, Gemini API 등
+
+#### 9.7.2 로깅 타이밍
+```
+[EXTERNAL_TOOL_START] ──→ [도구 실행] ──→ [EXTERNAL_TOOL_END]
+     ↑                                        ↑
+   호출 직전                             완료/실패 직후
+```
+
+#### 9.7.3 구현 예시 (NotebookLM 쿼리)
+```python
+import json
+import time
+from datetime import datetime
+
+# run_id, workflow, step_id, agent 등은 상위 컨텍스트에서 전달받음
+
+def log_external_tool_start(tool_name, tool_action, notebook_id=None):
+    ts = datetime.now().isoformat()
+    log_entry = {
+        "run_id": run_id,
+        "ts": ts,
+        "status": "EXTERNAL_TOOL_START",
+        "workflow": workflow,
+        "step_id": step_id,
+        "agent": agent,
+        "category": category,
+        "model": model,
+        "action": action,
+        "tool_name": tool_name,
+        "tool_action": tool_action,
+        "tool_input_bytes": 0,
+        "notebook_id": notebook_id,
+        "retry": retry_count
+    }
+    with open(log_path, 'a', encoding='utf-8') as f:
+        f.write(json.dumps(log_entry, ensure_ascii=False) + '\n')
+    return time.time()
+
+def log_external_tool_end(start_time, tool_name, tool_action, output_bytes, 
+                          status="success", error=None, notebook_id=None):
+    duration = time.time() - start_time
+    ts = datetime.now().isoformat()
+    log_entry = {
+        "run_id": run_id,
+        "ts": ts,
+        "status": "EXTERNAL_TOOL_END",
+        "workflow": workflow,
+        "step_id": step_id,
+        "agent": agent,
+        "category": category,
+        "model": model,
+        "action": action,
+        "tool_name": tool_name,
+        "tool_action": tool_action,
+        "tool_input_bytes": 0,
+        "tool_output_bytes": output_bytes,
+        "tool_duration_sec": round(duration, 3),
+        "tool_status": status,
+        "tool_error": error,
+        "notebook_id": notebook_id,
+        "retry": retry_count
+    }
+    with open(log_path, 'a', encoding='utf-8') as f:
+        f.write(json.dumps(log_entry, ensure_ascii=False) + '\n')
+```
+
+#### 9.7.4 로그 분석 쿼리 (jq)
+```bash
+# NotebookLM 쿼리별 소요시간
+cat .agent/logs/*.jsonl | jq -s '
+  map(select(.status=="EXTERNAL_TOOL_END" and .tool_name=="notebooklm"))
+  | sort_by(-.tool_duration_sec)
+  | .[] | {notebook_id, tool_action, tool_duration_sec, tool_output_bytes}
+'
+
+# 외부 도구별 성공률
+cat .agent/logs/*.jsonl | jq -s '
+  map(select(.status=="EXTERNAL_TOOL_END"))
+  | group_by(.tool_name)
+  | map({
+      tool: .[0].tool_name,
+      total: length,
+      success: map(select(.tool_status=="success")) | length
+    })
+'
+```
 
 ---
 

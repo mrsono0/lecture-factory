@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "Reusable jq queries for EXTERNAL_TOOL log analysis",
+    "author": "Lecture Factory",
+    "created": "2026-02-24"
+  },
+  "queries": {
+    "tool_usage_summary": {
+      "description": "도구별 총 호출 횟수 및 성공률",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, calls: length, success_rate: (map(select(.tool_status==\"success\")) | length) / length * 100, failure_rate: (map(select(.tool_status==\"error\")) | length) / length * 100, timeout_rate: (map(select(.tool_status==\"timeout\")) | length) / length * 100}) | sort_by(-.calls)"
+    },
+    "tool_performance_stats": {
+      "description": "도구별 성능 통계 (평균/중간값/P95/P99/최대)",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, total_calls: length, avg_duration: (map(.tool_duration_sec) | add) / length, median_duration: (map(.tool_duration_sec) | sort | if length % 2 == 0 then (.[length/2 - 1] + .[length/2]) / 2 else .[(length-1)/2] end), p95_duration: (map(.tool_duration_sec) | sort | .[(length * 0.95 | floor)]), p99_duration: (map(.tool_duration_sec) | sort | .[(length * 0.99 | floor)]), max_duration: (map(.tool_duration_sec) | max), min_duration: (map(.tool_duration_sec) | min)}) | sort_by(-.avg_duration)"
+    },
+    "failure_analysis": {
+      "description": "실패/에러 패턴 분석",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\" and .tool_status!=\"success\")) | group_by(.tool_name, .tool_status) | map({tool: .[0].tool_name, status: .[0].tool_status, count: length, percentage: length / (map(select(.status==\"EXTERNAL_TOOL_END\")) | length) * 100}) | sort_by(-.count)"
+    },
+    "error_message_patterns": {
+      "description": "에러 메시지 패턴 Top N",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\" and .tool_status==\"error\" and .tool_error!=null)) | group_by(.tool_error) | map({error_message: .[0].tool_error, count: length}) | sort_by(-.count)"
+    },
+    "daily_trend": {
+      "description": "일별 호출량 및 에러 추이",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.ts | split(\"T\")[0]) | map({date: .[0].ts | split(\"T\")[0], total_calls: length, success_count: (map(select(.tool_status==\"success\")) | length), error_count: (map(select(.tool_status==\"error\")) | length), timeout_count: (map(select(.tool_status==\"timeout\")) | length), avg_duration: (map(.tool_duration_sec) | add) / length}) | sort_by(.date)"
+    },
+    "hourly_pattern": {
+      "description": "시간대별 호출 패턴",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.ts | split(\"T\")[1] | split(\":\")[0]) | map({hour: .[0].ts | split(\"T\")[1] | split(\":\")[0], calls: length, avg_duration: (map(.tool_duration_sec) | add) / length}) | sort_by(.hour)"
+    },
+    "workflow_analysis": {
+      "description": "워크플로우별 외부 도구 사용량",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.workflow) | map({workflow: .[0].workflow, total_calls: length, tools: (group_by(.tool_name) | map({tool: .[0].tool_name, calls: length}))}) | sort_by(-.total_calls)"
+    },
+    "agent_analysis": {
+      "description": "에이전트별 외부 도구 사용량",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.agent) | map({agent: .[0].agent, total_calls: length, avg_duration: (map(.tool_duration_sec) | add) / length, tools: (group_by(.tool_name) | map({tool: .[0].tool_name, calls: length}))}) | sort_by(-.total_calls)"
+    },
+    "data_transfer_volume": {
+      "description": "도구별 데이터 전송량",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, total_input_bytes: (map(.tool_input_bytes) | add), total_output_bytes: (map(.tool_output_bytes) | add), avg_input_bytes: (map(.tool_input_bytes) | add) / length, avg_output_bytes: (map(.tool_output_bytes) | add) / length}) | sort_by(-.total_input_bytes)"
+    },
+    "cost_estimation": {
+      "description": "API 비용 추정 (토큰 기반)",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, total_calls: length, total_input_tokens: (map(.tool_input_bytes) | add) / 3.3, total_output_tokens: (map(.tool_output_bytes) | add) / 3.3, est_input_cost_usd: (map(.tool_input_bytes) | add) / 3.3 * 0.015 / 1000, est_output_cost_usd: (map(.tool_output_bytes) | add) / 3.3 * 0.075 / 1000}) | map({tool, total_calls, total_input_tokens, total_output_tokens, est_total_cost_usd: (.est_input_cost_usd + .est_output_cost_usd)})"
+    },
+    "z_score_anomaly": {
+      "description": "Z-score 기반 이상치 탐지 (일별 호출량)",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.ts | split(\"T\")[0]) | map({date: .[0].ts | split(\"T\")[0], count: length}) | sort_by(.date) | . as $daily | ($daily | map(.count) | add) / ($daily | length) as $mean | ($daily | map(.count) | map(pow(. - $mean; 2)) | add / ($daily | length) | sqrt) as $std | $daily | map({date, count, z_score: ((.count - $mean) / $std), is_anomaly: (((.count - $mean) / $std) > 3 or ((.count - $mean) / $std) < -3)})"
+    },
+    "performance_regression": {
+      "description": "성능 저하 추이 (3일 이동 평균)",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.ts | split(\"T\")[0]) | map({date: .[0].ts | split(\"T\")[0], avg_duration: (map(.tool_duration_sec) | add) / length}) | sort_by(.date) | . as $trend | $trend | keys[] as $i | $trend[$i] | select($i >= 2) | {date, avg_duration, prev_avg: $trend[$i-1].avg_duration, change_pct: ((.avg_duration - $trend[$i-1].avg_duration) / $trend[$i-1].avg_duration * 100), trend_3day: ((.avg_duration - $trend[$i-2].avg_duration) / $trend[$i-2].avg_duration * 100)}"
+    },
+    "retry_analysis": {
+      "description": "재시도 패턴 분석",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.run_id, .step_id) | map({run_id: .[0].run_id, step_id: .[0].step_id, tool: .[0].tool_name, total_attempts: length, success_after_retry: (map(.tool_status) | index(\"success\")) as $idx | if $idx > 0 then true else false end, final_status: .[-1].tool_status}) | map(select(.total_attempts > 1))"
+    },
+    "pareto_analysis": {
+      "description": "병목 도구 식별 (Pareto 분석)",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, total_duration: (map(.tool_duration_sec) | add), calls: length}) | sort_by(-.total_duration) | . as $sorted | $sorted | to_entries | map({tool: .value.tool, total_duration: .value.total_duration, percentage: (.value.total_duration / ($sorted | map(.total_duration) | add) * 100), cumulative_percentage: (($sorted[0:.key+1] | map(.total_duration) | add) / ($sorted | map(.total_duration) | add) * 100)})"
+    },
+    "high_failure_tools": {
+      "description": "높은 실패율 도구 필터링",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, total: length, success: (map(select(.tool_status==\"success\")) | length), failed: (map(select(.tool_status==\"error\")) | length), timeout: (map(select(.tool_status==\"timeout\")) | length), failure_rate: ((map(select(.tool_status!=\"success\")) | length) / length * 100)}) | sort_by(-.failure_rate) | map(select(.failure_rate > 5))"
+    },
+    "slow_response_tools": {
+      "description": "느린 응답 도구 필터링",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) | map({tool: .[0].tool_name, avg_duration: (map(.tool_duration_sec) | add) / length, max_duration: (map(.tool_duration_sec) | max), p95_duration: (map(.tool_duration_sec) | sort | .[(length * 0.95 | floor)])}) | sort_by(-.avg_duration) | map(select(.avg_duration > 60))"
+    },
+    "outlier_detection": {
+      "description": "성능 이상치 탐지 (평균의 2배 이상)",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.tool_name) as $by_tool | $by_tool | map({tool: .[0].tool_name, avg: (map(.tool_duration_sec) | add) / length, outliers: map(select(.tool_duration_sec > ((map(.tool_duration_sec) | add) / length * 2)))}) | map({tool, avg_duration: .avg, outlier_count: (.outliers | length), outlier_rate: ((.outliers | length) / (. | length) * 100)})"
+    },
+    "correlated_failures": {
+      "description": "시간대별 연관된 실패 패턴",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\" and .tool_status!=\"success\")) | group_by(.ts | split(\"T\")[0] + \"T\" + (.ts | split(\"T\")[1] | split(\":\")[0])) | map({hour_bucket: .[0].ts | split(\"T\")[0] + \" \" + (.ts | split(\"T\")[1] | split(\":\")[0]) + \":00\", failures: length, tools: (group_by(.tool_name) | map({tool: .[0].tool_name, count: length}))}) | sort_by(-.failures)"
+    },
+    "run_summary": {
+      "description": "실행(run_id)별 요약",
+      "query": "map(select(.status==\"EXTERNAL_TOOL_END\")) | group_by(.run_id) | map({run_id: .[0].run_id, workflow: .[0].workflow, total_calls: length, total_duration: (map(.tool_duration_sec) | add), avg_duration: (map(.tool_duration_sec) | add) / length, success_rate: (map(select(.tool_status==\"success\")) | length) / length * 100, tools_used: (group_by(.tool_name) | map(.[0].tool_name))}) | sort_by(-.total_duration)"
+    }
+  },
+  "filters": {
+    "external_tool_only": "select(.status | startswith(\"EXTERNAL_TOOL\"))",
+    "success_only": "select(.tool_status==\"success\")",
+    "failure_only": "select(.tool_status!=\"success\")",
+    "by_tool": "group_by(.tool_name)",
+    "by_date": "group_by(.ts | split(\"T\")[0])",
+    "by_workflow": "group_by(.workflow)",
+    "by_agent": "group_by(.agent)"
+  }
+}

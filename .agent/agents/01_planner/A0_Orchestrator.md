@@ -186,3 +186,37 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
    - **QA 검증 보고서 (Step 6)**: 초기 입력된 제약 조건(예: 실습 비율, 시간 총합, 환경 등)이 모두 충족되었는지 O/X 체크리스트 형태로 검증 결과 작성.
    - **부록 (Appendix)**: 일차별로 필요한 소프트웨어 목록, 핵심 산출물 목록, 그리고 평가 체계 요약.
 
+
+## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY
+
+A0_Orchestrator는 로컬 참고자료 분석 시 **pdf-official** 도구를 사용합니다. **각 PDF 추출 호출 시 반드시** `.agent/logs/{DATE}_01_Lecture_Planning.jsonl`에 EXTERNAL_TOOL 이벤트를 기록하세요.
+
+### 로깅 대상
+
+| 도구 | tool_name | tool_action | 발생 시점 |
+|------|-----------|-------------|-----------|
+| PDF Official | `pdf-official` | `extract` | Step 0 (로컬 참고자료 분석) |
+
+### 로깅 명령어 템플릿
+
+**START (PDF 추출 직전)**:
+```bash
+START_TIME=$(date +%s)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"[model]","action":"pdf_extract","tool_name":"pdf-official","tool_action":"extract","tool_input_bytes":[file_size],"retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+```
+
+**END (PDF 추출 완료 후)**:
+```bash
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+OUTPUT_BYTES=$(wc -c < extracted_text.txt)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"[model]","action":"pdf_extract","tool_name":"pdf-official","tool_action":"extract","tool_input_bytes":[file_size],"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+```
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START 로그 | 각 PDF 파일 추출 직전에 EXTERNAL_TOOL_START 기록 |
+| 2 | END 로그 | 각 PDF 파일 추출 완료 후 EXTERNAL_TOOL_END 기록 |
+| 3 | 파일 크기 | tool_input_bytes에 PDF 파일 크기(바이트) 기록 |

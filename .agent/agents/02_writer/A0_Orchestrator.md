@@ -184,3 +184,37 @@ A3(Curriculum Architect)의 "오전/오후 분할 설계"(항목 7) 규칙과 �
 3. 하위에 `02_Material`, `02_Material/src`, `02_Material/images` 폴더를 생성합니다.
 4. **분할 판단**: 강의구성안의 일일 강의 시간을 확인하여 4시간 초과 여부를 판단하고, A3에게 AM/PM 분할 설계를 지시합니다.
 5. 모든 산출물은 해당 폴더 내에 저장하도록 팀원들에게 지시합니다.
+
+## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY
+
+A0_Orchestrator는 로컬 참고자료 분석 시 **pdf-official** 도구를 사용합니다. **각 PDF 추출 호출 시 반드시** `.agent/logs/{DATE}_02_Material_Writing.jsonl`에 EXTERNAL_TOOL 이벤트를 기록하세요.
+
+### 로깅 대상
+
+| 도구 | tool_name | tool_action | 발생 시점 |
+|------|-----------|-------------|-----------|
+| PDF Official | `pdf-official` | `extract` | 초기 (로컬 참고자료 분석) |
+
+### 로깅 명령어 템플릿
+
+**START (PDF 추출 직전)**:
+```bash
+START_TIME=$(date +%s)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"02_Material_Writing","step_id":"step_0_context_analysis","agent":"A0_Orchestrator","category":"unspecified-low","model":"[model]","action":"pdf_extract","tool_name":"pdf-official","tool_action":"extract","tool_input_bytes":[file_size],"retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
+```
+
+**END (PDF 추출 완료 후)**:
+```bash
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+OUTPUT_BYTES=$(wc -c < extracted_text.txt)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"02_Material_Writing","step_id":"step_0_context_analysis","agent":"A0_Orchestrator","category":"unspecified-low","model":"[model]","action":"pdf_extract","tool_name":"pdf-official","tool_action":"extract","tool_input_bytes":[file_size],"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
+```
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START 로그 | 각 PDF 파일 추출 직전에 EXTERNAL_TOOL_START 기록 |
+| 2 | END 로그 | 각 PDF 파일 추출 완료 후 EXTERNAL_TOOL_END 기록 |
+| 3 | 파일 크기 | tool_input_bytes에 PDF 파일 크기(바이트) 기록 |

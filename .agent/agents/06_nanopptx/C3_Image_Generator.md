@@ -113,3 +113,46 @@ python .agent/skills/imagen/scripts/generate_image.py \
 - **슬라이드 이미지**: `06_NanoPPTX/images/slide-01.png ~ slide-NN.png`
 - **생성 로그**: `06_NanoPPTX/generation_log.json` (각 슬라이드별 생성 시간, 재시도 횟수, 프롬프트 버전)
 - **생성 상태 리포트**: 성공/실패 슬라이드 목록
+
+## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY
+
+C3_Image_Generator는 **Gemini API (gemini-3-pro-image-preview)**를 호출하여 이미지를 생성합니다. **각 API 호출 시 반드시** `.agent/logs/{DATE}_06_NanoBanana_PPTX.jsonl`에 EXTERNAL_TOOL 이벤트를 기록하세요.
+
+### 로깅 대상
+
+| 도구 | tool_name | tool_action | 발생 시점 |
+|------|-----------|-------------|-----------|
+| Gemini API | `gemini-api` | `generate_image` | 이미지 생성 시 |
+
+### 로깅 명령어 템플릿
+
+**START (API 호출 직전)**:
+```bash
+START_TIME=$(date +%s)
+PROMPT_BYTES=$(echo -n "$PROMPT" | wc -c)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"06_NanoBanana_PPTX","step_id":"step_3_image_generation","agent":"C3_Image_Generator","category":"visual-engineering","model":"[model]","action":"generate_image","tool_name":"gemini-api","tool_action":"generate_image","tool_input_bytes":'"$PROMPT_BYTES"',"retry":0}' >> ".agent/logs/[DATE]_06_NanoBanana_PPTX.jsonl"
+```
+
+**END (API 호출 완료 후)**:
+```bash
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+# 이미지 파일 크기 (PNG)
+OUTPUT_BYTES=$(wc -c < "06_NanoPPTX/images/slide-XX.png")
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"06_NanoBanana_PPTX","step_id":"step_3_image_generation","agent":"C3_Image_Generator","category":"visual-engineering","model":"[model]","action":"generate_image","tool_name":"gemini-api","tool_action":"generate_image","tool_input_bytes":'"$PROMPT_BYTES"',"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_06_NanoBanana_PPTX.jsonl"
+```
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START 로그 | 각 Gemini API 호출 직전에 EXTERNAL_TOOL_START 기록 |
+| 2 | END 로그 | 각 API 응답 수신 후 EXTERNAL_TOOL_END 기록 |
+| 3 | 프롬프트 크기 | tool_input_bytes에 프롬프트 텍스트 크기(바이트) 기록 |
+| 4 | 이미지 크기 | tool_output_bytes에 생성된 PNG 파일 크기 기록 |
+| 5 | 소요 시간 | tool_duration_sec에 API 호출~응답 완료까지의 초 단위 시간 기록 |
+
+### 비용 추정
+Gemini API 이미지 생성 비용은 다음 공식으로 추정합니다:
+- Input: 프롬프트 토큰 × $0.015/1K tokens
+- Output: 이미지 생성 (고정 비용) ≈ $0.03~0.05 per image (2K)

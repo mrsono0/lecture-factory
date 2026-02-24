@@ -64,6 +64,11 @@ steps:
     output: "Slide PNG images (slide-01.png ~ slide-NN.png), Generation Log"
     description: "Nano Banana Pro(gemini-3-pro-image-preview)를 호출하여 각 슬라이드를 16:9 이미지로 생성합니다. generate_ppt.py 스크립트 또는 Gemini API 직접 호출을 사용합니다."
 
+    notes: |
+      📊 External Tool Logging: C3_Image_Generator must log each Gemini API call
+      (gemini-3-pro-image-preview) to .agent/logs/{DATE}_06_NanoBanana_PPTX.jsonl
+      using EXTERNAL_TOOL_START/END events. See C3_Image_Generator.md §외부 도구 호출 로깅.
+
   # Phase 5: PPTX 조립
   - id: step_6_pptx_build
     agent: "06_nanopptx/C4_PPTX_Builder"

@@ -110,3 +110,45 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **적용**:
   - `read_url_content`로 읽을 수 없는 로컬 PDF 문서의 내용을 파이썬으로 직접 추출합니다.
   - `.agent/skills/pdf-official/SKILL.md` 가이드 참조 (pdfplumber 등 활용)
+
+## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY
+
+A1_Source_Miner는 5가지 외부 도구를 사용합니다. **각 도구 호출 시 반드시** `.agent/logs/{DATE}_02_Material_Writing.jsonl`에 EXTERNAL_TOOL 이벤트를 기록하세요.
+
+### 지원 도구 및 action 매핑
+
+| 도구 | tool_name | tool_action | 발생 Step |
+|------|-----------|-------------|-----------|
+| NotebookLM | `notebooklm` | `ask_question` | Step 2 |
+| Deep Research | `deep-research` | `research` | Step 3 |
+| Context7 | `context7` | `auto_research` | Step 4 |
+| Firecrawl | `firecrawl` | `scrape` | Step 4 |
+| PDF Official | `pdf-official` | `extract` | Step 1 |
+
+### 로깅 명령어 템플릿
+
+**START (호출 직전)**:
+```bash
+START_TIME=$(date +%s)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"02_Material_Writing","step_id":"step_1_source_mining","agent":"A1_Source_Miner","category":"deep","model":"[model]","action":"[tool_action]","tool_name":"[tool_name]","tool_action":"[action]","tool_input_bytes":[bytes],"retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
+```
+
+**END (호출 완료 후)**:
+```bash
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+OUTPUT_BYTES=$(echo -n "$RESPONSE" | wc -c)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"02_Material_Writing","step_id":"step_1_source_mining","agent":"A1_Source_Miner","category":"deep","model":"[model]","action":"[tool_action]","tool_name":"[tool_name]","tool_action":"[action]","tool_input_bytes":[input_bytes],"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
+```
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 | 실패 시 |
+|---|-----------|------|---------|
+| 1 | START 로그 | 각 외부 도구 호출 직전에 EXTERNAL_TOOL_START 기록 | A0 반려 |
+| 2 | END 로그 | 각 외부 도구 완료 후 EXTERNAL_TOOL_END 기록 | A0 반려 |
+| 3 | 도구 식별 | tool_name이 위 표에 정의된 값 중 하나 | A0 반려 |
+| 4 | 상태 기록 | tool_status가 success/error 중 하나 | A0 경고 |
+
+### 미준수 시
+A0_Orchestrator가 "외부 도구 호출 로깅 누락"으로 반려하고 step_1_source_mining을 재실행합니다.

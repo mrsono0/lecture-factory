@@ -32,6 +32,12 @@ steps:
     action: "extract_facts"
     input: "Curriculum Plan, Source Materials, NotebookLM URL (Optional), Output Language: Korean"
     output: "Fact Packet"
+    
+    notes: |
+      📊 External Tool Logging: A1_Source_Miner must log all external tool calls
+      (notebooklm, deep-research, context7, firecrawl, pdf-official) to
+      .agent/logs/{DATE}_02_Material_Writing.jsonl using EXTERNAL_TOOL_START/END events.
+      See A1_Source_Miner.md §외부 도구 호출 로깅 for details.
 
   - id: step_2_traceability_setup
     agent: "02_writer/A2_Traceability_Curator"

@@ -38,6 +38,7 @@ steps:
       ⚠️ NotebookLM Execution: A1 must execute bash commands to run notebooklm queries.
       Verification: Check Trend_Report.md contains "Query 1/2/3" with actual stdout.
       On Failure: A0 must reject and retry step_1_trend_analysis (see A0_Orchestrator.md §🔴 A1 검증 프로토콜)
+      📊 External Tool Logging: A1 must log each NotebookLM query to .agent/logs/{DATE}_01_Lecture_Planning.jsonl using EXTERNAL_TOOL_START/END events (see logging-protocol.md §9.7)
     # Note: A1 uses Deep Research / NotebookLM skills here
 
   - id: step_2_learner_analysis

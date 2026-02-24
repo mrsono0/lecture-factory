@@ -116,3 +116,46 @@ D0에게 전달하는 **제출 결과 리포트**:
 - 장시간 실행이므로 백그라운드 실행을 권장합니다.
 - API 호출 비용이 발생합니다. `--dry-run`으로 먼저 확인하세요.
 - 파일 업로드 모드 실패 시 기존 방식으로 자동 폴백되므로, 별도 개입 없이 실행이 계속됩니다.
+
+## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY
+
+D3_Submission_Manager는 **Manus AI API**를 호출하여 PPTX 파일을 생성합니다. **각 API 호출(프로젝트 생성, 파일 업로드, 태스크 제출) 시 반드시** `.agent/logs/{DATE}_07_Manus_Slide.jsonl`에 EXTERNAL_TOOL 이벤트를 기록하세요.
+
+### 로깅 대상
+
+| 도구 | tool_name | tool_action | 발생 시점 |
+|------|-----------|-------------|-----------|
+| Manus AI | `manus-ai` | `create_project` | 프로젝트 생성 시 |
+| Manus AI | `manus-ai` | `upload_file` | 파일 업로드 시 |
+| Manus AI | `manus-ai` | `create_task` | 태스크 제출 시 |
+
+### 로깅 명령어 템플릿
+
+**START (API 호출 직전)**:
+```bash
+START_TIME=$(date +%s)
+INPUT_BYTES=$(wc -c < prompt_file.txt)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"07_Manus_Slide","step_id":"step_3_submission","agent":"D3_Submission_Manager","category":"quick","model":"[model]","action":"submit_task","tool_name":"manus-ai","tool_action":"[create_project|upload_file|create_task]","tool_input_bytes":'"$INPUT_BYTES"',"retry":0}' >> ".agent/logs/[DATE]_07_Manus_Slide.jsonl"
+```
+
+**END (API 호출 완료 후)**:
+```bash
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+# 응답 크기 (JSON)
+OUTPUT_BYTES=$(echo -n "$API_RESPONSE" | wc -c)
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"07_Manus_Slide","step_id":"step_3_submission","agent":"D3_Submission_Manager","category":"quick","model":"[model]","action":"submit_task","tool_name":"manus-ai","tool_action":"[create_project|upload_file|create_task]","tool_input_bytes":'"$INPUT_BYTES"',"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","tool_error":"[error_message]","retry":0}' >> ".agent/logs/[DATE]_07_Manus_Slide.jsonl"
+```
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START 로그 | 각 Manus API 호출 직전에 EXTERNAL_TOOL_START 기록 |
+| 2 | END 로그 | 각 API 응답 수신 후 EXTERNAL_TOOL_END 기록 |
+| 3 | 액션 구분 | tool_action이 create_project/upload_file/create_task 중 하나 |
+| 4 | 상태 기록 | tool_status가 success/error 중 하나 |
+| 5 | 에러 메시지 | 실패 시 tool_error에 에러 메시지 기록 |
+
+### 비용 관리 참고
+Manus API 호출은 파일당 3~15분 소요되며 비용이 발생합니다. 로그를 통해 파일당 평균 소요시간과 API 호출 빈도를 추적하여 비용 효율을 분석할 수 있습니다.

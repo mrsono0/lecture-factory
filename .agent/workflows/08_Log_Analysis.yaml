@@ -26,6 +26,12 @@ steps:
     depends_on: "step_0_scope"
     input: "Scope Definition, Script Path: .agent/scripts/analyze_logs.sh"
     output: "Data Packet (normalized JSON from script output)"
+    notes: |
+      🔧 New Analysis Scripts Available:
+      - analyze_external_tools.sh: 도구별 사용량/성능 분석
+      - detect_anomalies.sh: 실패율/응답시간 이상 감지
+      - analyze_api_costs.sh: API 비용 추정
+      These scripts are located in .agent/scripts/ and can be called by L1_Data_Collector.
 
   - id: step_2_validate
     agent: "08_log_analyzer/L1_Data_Collector"
