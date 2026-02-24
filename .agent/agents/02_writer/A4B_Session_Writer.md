@@ -63,9 +63,9 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - 브릿지 노트
 
 ## 입력
-- **세션 명세서**: `01_Planning/micro_sessions/세션-{번호}-{제목}.md` (A3B 제공)
+- **세션 명세서**: `01_Planning/micro_sessions/세션-{번호}-{제목}.md` (A3B 제공) — **📚 참고자료 매핑 섹션 반드시 확인**
 - **골격 패킷**: A3_Curriculum_Architect 제공
-- **팩트 패킷**: A1_Source_Miner 제공
+- **3-Source 팩트 패킷**: A1_Source_Miner 제공 (세션별 통합 팩트: local_excerpt + notebooklm + deep_research)
 - **추적성 패킷**: A2_Traceability_Curator 제공
 
 ## 산출물
@@ -239,6 +239,14 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **실행 가능성**: 모든 코드는 복사-붙여넣기로 실행 가능해야 함
 - **해설**: 코드는 한 줄씩 구두로 해설
 
+### 5. 📚 참고자료 활용 규칙 (3-Source Mandatory)
+- **세션 명세서 확인**: 세션 명세서의 `📚 참고자료 매핑` 섹션을 반드시 읽고 해당 참고자료를 교안에 반영합니다.
+- **3-Source 팩트 패킷 활용**: A1이 제공한 3-Source 팩트 패킷의 `local_excerpt`, `notebooklm`, `deep_research` 3개 소스를 모두 반영합니다.
+- **자체 생성 최소화**: 3개 소스에 없는 내용만 자체 생성하며, 자체 생성 시 `(자체 생성)` 출처를 명시합니다.
+- **출처 표기**: `> 💡 **강사 노트**` 섹션에 해당 내용의 참고자료 출처를 표기합니다.
+  - 예: `> 💡 **강사 노트**: 이 비유는 'AI 시대의 서사 v3' 참고자료에서 발췌하여 재구성했습니다.`
+- **소스 간 상충 처리**: 3개 소스 간 다른 정보가 있으면 팩트 패킷의 `synthesis`를 따르되, 강사 노트에 차이를 간략히 언급합니다.
+
 ## 금지 사항
 
 ### 작성 스타일
@@ -262,6 +270,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - ✅ 출력 분량 체크 (최소 3,000자)
 - ✅ Gemini 프롬프트 최적화 태그 확인
 - ✅ 선행/후속 세션 연결 정보 포함
+- ✅ 📚 참고자료 매핑 섹션 확인 및 반영
 
 ### 품질 검증
 - [ ] 3,000자 이상 분량 확인
@@ -269,11 +278,13 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - [ ] 비유와 스토리텔링 포함
 - [ ] 코드 실행 가능성 확인
 - [ ] 체크포인트 질문 포함
+- [ ] 3-Source 팩트 패킷 반영 확인
+- [ ] 참고자료 출처 표기 확인
 
 ## 입력
-- 세션 명세서: `01_Planning/micro_sessions/세션-{번호}-{제목}.md`
+- 세션 명세서: `01_Planning/micro_sessions/세션-{번호}-{제목}.md` (📚 참고자료 매핑 포함)
 - 골격 패킷: A3_Curriculum_Architect 제공
-- 팩트 패킷: A1_Source_Miner 제공
+- 3-Source 팩트 패킷: A1_Source_Miner 제공
 - 추적성 패킷: A2_Traceability_Curator 제공
 
 ## 산출물
