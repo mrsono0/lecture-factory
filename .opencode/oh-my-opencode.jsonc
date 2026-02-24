@@ -23,9 +23,9 @@
       "model": "anthropic/claude-sonnet-4-6"
     },
     // Reference Researcher: Technical docs, library lookups
-    // Cost-efficient for external search tasks
+    // Anthropic Sonnet 4.6 — superior document parsing & structured output quality
     "librarian": {
-      "model": "opencode/glm-5"
+      "model": "anthropic/claude-sonnet-4-6"
     },
     // Architecture Consultant: Curriculum/material structure review
     // Reasoning-specialized model for strategic decisions
