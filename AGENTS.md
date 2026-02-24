@@ -15,6 +15,59 @@ All agents MUST follow these instructions when executing tasks.
 4.  **Proceed** with the requested task only AFTER this analysis is complete.
 5.  **Confirm** to the user that you have analyzed the folder contents.
 
+### STOP & Replan Triggers
+
+**Stop immediately and re-plan if:**
+- Task scope changes mid-implementation
+- Discovery of conflicting existing patterns
+- 2+ consecutive failed fix attempts
+- User's design seems flawed or suboptimal
+
+**Then**: Raise concern concisely → Propose alternative → Wait for confirmation
+
+---
+
+## Plan Node Default (MANDATORY for Complex Tasks)
+
+**Before starting any task with 3+ steps or architectural decisions:**
+1. **Stop** and enter Plan Mode - write detailed spec first
+2. **Break down** into atomic, verifiable steps
+3. **Identify** dependencies, risks, and required tools
+4. **Get confirmation** on approach before implementation
+
+**DO NOT proceed to implementation until plan is approved.**
+
+When to plan:
+- 3+ steps required
+- Cross-module changes
+- New patterns or unfamiliar code
+- User explicitly asks for plan
+
+---
+
+## Task Management Protocol (MANDATORY)
+
+**Every multi-step task (2+ steps) MUST:**
+
+1. **Create todos IMMEDIATELY** upon receiving request
+   - Use atomic, actionable items
+   - Maximum ONE task `in_progress` at any time
+
+2. **Mark `in_progress`** before starting each step
+
+3. **Mark `completed`** immediately after finishing
+   - NEVER batch completions
+   - Real-time tracking is mandatory
+
+4. **Update on scope change** before proceeding
+
+### Anti-patterns (BLOCKING violations)
+- Skipping todos on multi-step tasks
+- Batch-completing multiple todos
+- Proceeding without marking `in_progress`
+- Finishing without completing todos
+
+
 ---
 
 ## Workflow Overview
@@ -67,22 +120,54 @@ YYYY-MM-DD_강의제목/
 
 ---
 
-## Agent Teams & Model Routing
+## Model Configuration
 
-> **상세 참조**: `.agent/AGENTS.md` — 8개 팀 구조, 에이전트 플로우, 모델 라우팅 테이블, 로깅 규칙
+> **모델 상세 설정**: `.opencode/oh-my-opencode.jsonc` — 에이전트별 모델 배정, 카테고리별 prompt_append, 품질 variant 설정
 
-8개 에이전트 팀 (총 58개 에이전트):
+에이전트 모델 라우팅은 oh-my-opencode 설정 파일이 담당합니다. AGENTS.md는 워크플로우 규칙만 다룹니다.
 
-| Team | 팀명 | 에이전트 수 |
-|------|------|:-----------:|
-| 01 | Planner | 7 |
-| 02 | Writer | 11 |
-| 03 | Visualizer | 11 |
-| 04 | Slide Prompt Generator | 5 |
-| 05 | PPTX Converter | 6 |
-| 06 | NanoBanana | 6 |
-| 07 | Manus Slide | 6 |
-| 08 | Log Analyzer | 6 |
+---
+
+## Continuous Improvement System
+
+### lessons.md (Project Memory)
+
+**위치**: 프로젝트 루트 또는 `.agent/lessons.md`
+
+**기록 내용**:
+- 수정받은 실수 및 피드백
+- 스타일 가이드 위반 사례
+- 반복되는 패턴과 교훈
+
+**사용 방법**:
+1. 세션 시작 시 `lessons.md` 자동 로드
+2. 이전 교훈을 현재 작업에 적용
+3. 새로운 교훈 지속적 추가
+
+### Self-Review Checklist
+
+완료 표시 전 반드시 자문:
+- [ ] 이 코드를 Staff Engineer가 승인할 수 있는가?
+- [ ] 남겨진 TODO나 임시방편이 있는가?
+- [ ] 최소한의 변경으로 목표를 달성했는가?
+- [ ] 근본 원인을 찾아 수정했는가?
+
+---
+
+## Verification Before Done
+
+**작업은 다음 조건을 만족할 때까지 완료되지 않음:**
+
+1. **모든 계획된 todo 항목**이 `[completed]`로 표시됨
+2. **변경된 파일에서 LSP diagnostics**가 깨끗함
+3. **빌드/테스트**가 통과함 (해당 시)
+4. **사용자의 원래 요청**이 완전히 충족됨
+5. **자체 검증**: "내가 Staff Engineer라면 이걸 승인할까?"
+
+**검증 실패 시:**
+1. 즉시 실패 원인 수정
+2. 사전 존재하던 문제는 수정하지 않음 (사용자 요청 시에만)
+3. 보고: "완료. 참고: N개의 사전 존재 문제는 이번 변경과 무관함"
 
 ---
 
