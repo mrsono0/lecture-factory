@@ -1,0 +1,172 @@
+{
+  "sessions": [
+    {
+      "id": "MS-PY101-065",
+      "title": "절차적 프로그래밍의 개념과 특징",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-064"],
+      "type": "narrative",
+      "complexity": "low"
+    },
+    {
+      "id": "MS-PY101-066",
+      "title": "AI 시대의 서사 복습: 구조적 프로그래밍으로의 여정",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-065"],
+      "type": "narrative",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-067",
+      "title": "고객 정보 관리 프로그램 PRD 복습 및 설계",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-066"],
+      "type": "narrative",
+      "complexity": "low"
+    },
+    {
+      "id": "MS-PY101-068",
+      "title": "CRUD 개념 이해 및 1차 프롬프트 작성 실습",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-067"],
+      "type": "lab",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-069",
+      "title": "데이터 저장 구조(전역 리스트, 딕셔너리) 이해",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-068"],
+      "type": "code",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-070",
+      "title": "절차적 Create, Read 기능 구현 및 테스트",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-069"],
+      "type": "lab",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-071",
+      "title": "절차적 Update, Delete 기능 구현 및 통합 테스트",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-070"],
+      "type": "lab",
+      "complexity": "high"
+    },
+    {
+      "id": "MS-PY101-072",
+      "title": "코드 리뷰: 전역 변수와 코드 중복의 한계점 발견",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-071"],
+      "type": "narrative",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-073",
+      "title": "절차적 코드의 구조적 리팩토링 프롬프트 작성",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-072"],
+      "type": "lab",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-074",
+      "title": "구조적 데이터 흐름(매개변수와 리턴)의 이해",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-073"],
+      "type": "code",
+      "complexity": "high"
+    },
+    {
+      "id": "MS-PY101-075",
+      "title": "절차적 vs 구조적 코드 나란히 비교 분석",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-074"],
+      "type": "narrative",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-076",
+      "title": "요구사항 추가를 통한 구조적 확장성 체험",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-075"],
+      "type": "lab",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-077",
+      "title": "테스트는 시승이다: 테스트 시나리오 3분류 이해",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-076"],
+      "type": "narrative",
+      "complexity": "low"
+    },
+    {
+      "id": "MS-PY101-078",
+      "title": "고객 관리 프로그램 테스트 시나리오 작성 실습",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-077"],
+      "type": "lab",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-079",
+      "title": "품질 검사관: 코드 리뷰 5대 체크포인트",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-078"],
+      "type": "narrative",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-080",
+      "title": "완벽한 리뷰 코멘트 작성 및 AI 피드백 실습",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-079"],
+      "type": "lab",
+      "complexity": "high"
+    },
+    {
+      "id": "MS-PY101-081",
+      "title": "Day 4 종합: 절차에서 구조로, 그리고 테스트까지",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-080"],
+      "type": "narrative",
+      "complexity": "low"
+    },
+    {
+      "id": "MS-PY101-082",
+      "title": "나만의 미니 프로젝트: 기획 및 절차적 코드 생성",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-081", "MS-PY101-068"],
+      "type": "lab",
+      "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-083",
+      "title": "미니 프로젝트: 구조적 리팩토링 및 퀄리티 체크",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-082", "MS-PY101-073"],
+      "type": "lab",
+      "complexity": "high"
+    },
+    {
+      "id": "MS-PY101-084",
+      "title": "미니 프로젝트: 극한의 테스트 시나리오 도출",
+      "duration_min": 20,
+      "prerequisites": ["MS-PY101-083", "MS-PY101-078"],
+      "type": "lab",
+      "complexity": "high"
+    },
+    {
+      "id": "MS-PY101-085",
+      "title": "미니 프로젝트: 코드 리뷰 기반 최종 완성 및 회고",
+      "duration_min": 25,
+      "prerequisites": ["MS-PY101-084", "MS-PY101-080"],
+      "type": "lab",
+      "complexity": "medium"
+    }
+  ]
+}
