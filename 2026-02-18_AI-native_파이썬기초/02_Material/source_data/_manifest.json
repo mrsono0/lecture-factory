@@ -1,0 +1,84 @@
+{
+  "run_id": "run_20260225_223500",
+  "collection_date": "2026-02-25",
+  "pipeline": "02_Material_Writing_v2 v4.0",
+  "step": "A1_Source_Miner",
+  "policy": "3_source_mandatory",
+  "course": "AI-native_파이썬기초",
+  "total_sessions": 106,
+  "day_boundaries": {
+    "day1": { "sessions": "001-022", "range": [1, 22] },
+    "day2": { "sessions": "023-043", "range": [23, 43] },
+    "day3": { "sessions": "044-064", "range": [44, 64] },
+    "day4": { "sessions": "065-085", "range": [65, 85] },
+    "day5": { "sessions": "086-106", "range": [86, 106] }
+  },
+  "sources": {
+    "A_local": {
+      "status": "collected",
+      "files_read": [
+        "참고자료/AI 시대의 서사 v3 - Claude.md",
+        "참고자료/3 프롤프트 엔지니어링.pdf",
+        "참고자료/7 기획.pdf",
+        "참고자료/8 코딩.pdf",
+        "참고자료/9 디 버깅, 테스트, 배포.pdf",
+        "참고자료/gemini-for-google-workspace-prompting-guide-101.pdf",
+        "참고자료/AI-native_파이썬기초.md"
+      ],
+      "notes": "AI 시대의 서사 full text read (806 lines). 5 PDFs extracted via look_at tool. Course spec MD read in previous session."
+    },
+    "B_notebooklm": {
+      "status": "collected",
+      "notebook_url": "https://notebooklm.google.com/notebook/28d70970-864a-485b-82e9-ebdd7c233c9a",
+      "queries_completed": 5,
+      "per_day_status": {
+        "day1": "collected (comprehensive, ~3000 words, citations)",
+        "day2": "collected (comprehensive, ~2500 words, citations)",
+        "day3": "collected (comprehensive, truncated in output)",
+        "day4": "collected (comprehensive, truncated in output)",
+        "day5": "collected (comprehensive, full response)"
+      }
+    },
+    "C_deep_research": {
+      "status": "collected",
+      "per_day_status": {
+        "day1": { "task_id": "bg_2612b843", "session_id": "ses_36f8059b0ffeM1cAV3eTevbP1Q", "duration": "5m 6s", "size": "~8000 words" },
+        "day2": { "task_id": "bg_b4a26965", "session_id": "ses_36f8029cbffeI4yBL4i9OCpYm9", "duration": "~5m", "size": "~7000 words" },
+        "day3": { "task_id": "bg_6f090fa2", "session_id": "ses_36f7ff1b5ffeaql8YH3YLk1AZ7", "duration": "3m 42s", "size": "~6000 words" },
+        "day4": { "task_id": "bg_1131b3df", "session_id": "ses_36f7fc728ffesr7G71zo1H1YVh", "duration": "4m 22s", "size": "~6000 words" },
+        "day5": { "task_id": "bg_68dd384a", "session_id": "ses_36f7fa8a1ffeIHzTvjKwC45Dx6", "duration": "3m 9s", "size": "~5000 words" }
+      }
+    }
+  },
+  "local_pdf_extracts": {
+    "3_프롬프트엔지니어링.pdf": {
+      "coverage": "Day 1-2",
+      "topics": ["프롬프트 4대 구성요소", "제로샷/퓨샷/CoT", "코드 생성 프롬프트", "Good vs Bad 프롬프트", "환각 감소 전략"]
+    },
+    "7_기획.pdf": {
+      "coverage": "Day 2",
+      "topics": ["요구사항 정의", "5W1H 스타버스팅", "PRD 구조", "FR/NFR", "사용자 시나리오", "페르소나", "TDD 패턴(GWT/AAA/SEVT)"]
+    },
+    "8_코딩.pdf": {
+      "coverage": "Day 3-5",
+      "topics": ["함수 작성 가이드", "OOP 개념", "AI 협업 워크플로우", "코드 리뷰", "리팩토링 기법", "데이터 변환", "API 통합"]
+    },
+    "9_디버깅테스트배포.pdf": {
+      "coverage": "Day 4",
+      "topics": ["구문/논리 오류", "단위 테스트", "테스트 시나리오(정상/경계/예외)", "에러 핸들링", "코드 리뷰 체크포인트", "CI/CD", "문서화"]
+    },
+    "gemini_prompting_guide.pdf": {
+      "coverage": "Day 1-2",
+      "topics": ["Persona/Task/Context/Format", "21-word rule", "iterative prompting", "constraints", "Google Workspace 활용"]
+    }
+  },
+  "fact_packet_files": [
+    "fact_packets/day1_fact_packet.md",
+    "fact_packets/day2_fact_packet.md",
+    "fact_packets/day3_fact_packet.md",
+    "fact_packets/day4_fact_packet.md",
+    "fact_packets/day5_fact_packet.md"
+  ],
+  "output_directory": "02_Material/sessions/",
+  "reference_mapping": "01_Planning/micro_sessions/_reference_mapping.json"
+}
