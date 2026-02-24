@@ -111,6 +111,54 @@ Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파
 2. `case` 문에 서브커맨드 등록
 3. `L1_Data_Collector.md`의 서브커맨드 테이블에 문서화
 
+### EXTERNAL_TOOL 로깅 아키텍처 (신규)
+
+2026년 2월 업데이트로 **외부 도구(API) 호출 추적** 기능이 추가되었습니다. NotebookLM, Deep Research, Gemini API, Manus AI 등 외부 서비스 호출을 개별적으로 추적합니다.
+
+**이벤트 흐름**:
+```
+[EXTERNAL_TOOL_START] → [API 호출] → [EXTERNAL_TOOL_END]
+     ↑                                     ↑
+   호출 직전                        완료/실패 직후
+```
+
+**핵심 필드**:
+| 필드 | 설명 | 예시 |
+|------|------|------|
+| `tool_name` | 도구 식별자 | `notebooklm`, `gemini-api`, `manus-ai` |
+| `tool_action` | 세부 액션 | `ask_question`, `generate_image`, `create_task` |
+| `tool_duration_sec` | API 호출 소요시간 | `14.2` |
+| `tool_input_bytes` | 요청 데이터 크기 | `2450` |
+| `tool_output_bytes` | 응답 데이터 크기 | `3200` |
+| `tool_status` | 성공/실패/타임아웃 | `success`, `error`, `timeout` |
+| `tool_error` | 에러 메시지 (실패 시) | `Notebook ID not found` |
+
+**적용된 에이전트**:
+- `01_planner/A1_Trend_Researcher`: NotebookLM, Deep Research
+- `02_writer/A1_Source_Miner`: NotebookLM, Deep Research, Context7, Firecrawl, pdf-official
+- `06_nanopptx/C3_Image_Generator`: Gemini API
+- `07_manus_slide/D3_Submission_Manager`: Manus AI API
+
+**새로운 분석 스크립트**:
+```bash
+# 도구별 사용량/성능 분석
+.agent/scripts/analyze_external_tools.sh -d 7
+
+# 이상 징후 자동 감지 (실패율>5%, 응답>60s)
+.agent/scripts/detect_anomalies.sh -d 1
+
+# API 비용 추정 (토큰 기반)
+.agent/scripts/analyze_api_costs.sh -d 7
+```
+
+**jq 쿼리 라이브러리**: `.agent/scripts/lib/jq_queries.json` (20개 재사용 쿼리)
+- 도구별 성공률, P95/P99 응답시간, Z-score 이상치 탐지 등
+
+**임계값 설정**: `.agent/scripts/lib/thresholds.conf`
+- 실패율 WARNING 5% / CRITICAL 15%
+- 응답시간 WARNING 60s / CRITICAL 120s
+- 토큰 추정: bytes ÷ 3.3 (한국어+코드 혼합)
+
 ---
 ## 아키텍처: Subagents 기반 실행 모델
 

@@ -420,3 +420,77 @@ Flowith Knowledge Garden에 업로드한 참고자료를 **RAG 기반으로 검�
 - **Pipeline 4 → 7 연계**: `/project:slide-prompt` → `/project:manus-slide` 순서로 실행하면 교안에서 최종 PPTX까지 자동화됩니다.
 - **Manus 파일 보존**: Manus에 업로드된 파일은 48시간 후 자동 삭제됩니다. 생성 즉시 다운로드하세요.
 - **E2E 통합 실행**: `/project:lecture-factory` 하나로 1, 2, 3, 4단계를 순차 자동 실행할 수 있습니다. (5·6·7단계 PPTX 생성은 별도 실행)
+
+---
+
+## 로그 분석 및 최적화 (Pipeline 08)
+
+파이프라인 실행 후 생성된 로그를 분석하여 비용, 성능, 안정성을 최적화할 수 있습니다.
+
+### 새로운 분석 스크립트 사용법
+
+터미널에서 직접 실행하여 외부 도구(API) 사용량과 비용을 확인합니다:
+
+```bash
+# 1. 외부 도구 사용량 분석 (최근 7일)
+.agent/scripts/analyze_external_tools.sh -d 7
+# → .agent/dashboard/analysis/tool_usage_YYYYMMDD.md 생성
+
+# 2. 이상 징후 자동 감지 (최근 1일)
+.agent/scripts/detect_anomalies.sh -d 1
+# → .agent/dashboard/alerts_YYYYMMDD.md 생성
+#    (실패율>5%, 응답>60s 감지)
+
+# 3. API 비용 추정 (최근 7일)
+.agent/scripts/analyze_api_costs.sh -d 7
+# → .agent/dashboard/analysis/cost_estimate_YYYYMMDD.md 생성
+```
+
+### 분석 결과 활용
+
+**생성된 리포트 위치**:
+- `.agent/dashboard/analysis/tool_usage_YYYYMMDD.md` — 도구별 호출, 성공률, 성능
+- `.agent/dashboard/alerts_YYYYMMDD.md` — ⚠️ 주의가 필요한 항목
+- `.agent/dashboard/analysis/cost_estimate_YYYYMMDD.md` — 💰 비용 분석 및 최적화 제안
+
+**주요 인사이트 예시**:
+| 항목 | 설명 | 조치 |
+|------|------|------|
+| 높은 실패율 (>5%) | 특정 도구 반복 실패 | 대체 도구 검토, API 키 확인 |
+| 느린 응답 (>60s) | Gemini/Manus API 지연 | 배치 시간 조정, 재시도 설정 |
+| 과도한 비용 | 특정 도구 비용 50% 이상 차지 | 캐싱 전략, 호출 빈도 조정 |
+| 성능 이상치 | 평균의 2배 소요된 호출 | 네트워크/서버 상태 확인 |
+
+### AI 에이전트 분석 파이프라인
+
+더 심층적인 분석이 필요할 때:
+
+```bash
+# 전체 분석 (auto 모드)
+/project:log-analysis
+
+# 비용 집중 분석
+/project:log-analysis --mode cost
+
+# 성능/보틀넥 집중
+/project:log-analysis --mode performance
+
+# 안정성/실패 집중
+/project:log-analysis --mode reliability
+```
+
+**산출물**: `.agent/dashboard/log_analysis_YYYYMMDD.md`
+- Executive Summary → 파이프라인 개요 → 인사이트 → 최적화 제안 → 에이전트 성과
+
+### 자동화 설정 (선택)
+
+정기적으로 분석하려면 cron에 등록:
+
+```bash
+# 매일 아침 9시: 전일 로그 분석
+0 9 * * * /bin/bash /path/to/.agent/scripts/daily_analysis.sh
+
+# 매주 월요일: 주간 종합 리포트
+0 9 * * 1 /bin/bash /path/to/.agent/scripts/weekly_report.sh
+```
+
