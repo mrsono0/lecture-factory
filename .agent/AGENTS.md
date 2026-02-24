@@ -2,8 +2,22 @@
 
 > 이 파일은 파이프라인 실행 시 에이전트 팀 구조, 모델 라우팅, 로깅 규칙의 상세 참조 문서입니다.
 > 전체 시스템 운영 규칙은 루트 `AGENTS.md`를 참조하세요.
+> 
+> **⚠️ 필수 참조 규칙 (루트 AGENTS.md에서 상속):**
+> - **3회 연속 실패 프로토콜**: 동일 작업 3회 실패 시 즉시 STOP → REVERT → CONSULT → ASK USER 순서로 진행
+> - **STOP & Replan**: 스코프 변경, 패턴 충돌, 설계 문제 발견 시 즉시 중단하고 재계획
+> - **Todo Protocol**: 즉시 생성 → `in_progress` 표시 → 완료 즉시 `completed` (batch 금지)
+> - **lessons.md 연계**: 팀별 실패/인사이트를 `.agent/lessons.md`에 지속적으로 기록
+> 
 
 ---
+
+
+### Subagent Delegation 원칙
+**One Task per Subagent**: 각 서브에이전트에게 **단 하나의 명확한 임무**만 부여합니다.
+- 메인 에이전트의 context 창 보존을 위해 보조 작업(리서치, 탐색)은 반드시 위임
+- 복잡한 작업은 여러 서브에이전트에 분할 위임하여 병렬 실행
+- 각 서브에이전트는 독립적인 context와 목표를 가지고 자율적으로 수행
 
 ## Agent Teams
 
@@ -79,7 +93,7 @@
 1. 오케스트레이터가 파이프라인 실행 시 `.agent/agents/{team}/config.json`을 읽습니다.
 2. 에이전트가 `agent_models`에 **있으면** → 지정된 카테고리의 모델 사용
 3. 에이전트가 `agent_models`에 **없으면** → `default_category`의 모델 사용
-4. 카테고리 → 모델 매핑은 `.Claude/oh-my-Claude.jsonc`의 `categories` 섹션 참조
+4. 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션 참조
 
 ### config.json 스키마
 
@@ -125,6 +139,8 @@
 | **P08** Log Analyzer | `deep` | L0 Orchestrator | `unspecified-low` |
 | | | L1 Data Collector | `quick` |
 | | | L3 Optimizer, L5 QA Auditor | `ultrabrain` |
+
+> **참조**: 전체 에이전트 목록은 각 팀의 `.agent/agents/{team}/config.json` 파일을 참조하세요. 위 표는 주요 오버라이드 에이전트만 요약합니다.
 
 ---
 

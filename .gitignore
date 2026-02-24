@@ -50,6 +50,8 @@ bun.lock
 .omc/
 .opencode/*
 !.opencode/oh-my-opencode.jsonc
+!.opencode/.gitignore
+!.opencode/package.json
 
 # ── Gemini CLI 스킬 런타임 데이터 (브라우저 상태, 인증) ──────
 .agent/skills/notebooklm/data/
