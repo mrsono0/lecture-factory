@@ -1,10 +1,1476 @@
 {
+  "metadata": {
+    "course_id": "PY101-2026",
+    "course_name": "AI-native 파이썬기초",
+    "total_sessions": 106,
+    "total_duration_minutes": 2305,
+    "avg_duration_minutes": 21.7,
+    "total_days": 5,
+    "hours_per_day": 8,
+    "version": "1.0",
+    "generated_at": "2026-02-24",
+    "id_format": "MS-PY101-{number:03d}",
+    "original_id_formats_normalized": [
+      "MS-Python",
+      "MS-AI-native_파이썬기초",
+      "MS-01",
+      "MS-PY101"
+    ]
+  },
+  "statistics": {
+    "sessions_per_day": {
+      "1": 22,
+      "2": 21,
+      "3": 21,
+      "4": 21,
+      "5": 21
+    },
+    "duration_per_day_minutes": {
+      "1": 465,
+      "2": 465,
+      "3": 455,
+      "4": 455,
+      "5": 465
+    },
+    "by_chunk_type": {
+      "code": 19,
+      "lab": 45,
+      "narrative": 42
+    },
+    "by_complexity": {
+      "high": 14,
+      "low": 32,
+      "medium": 60
+    }
+  },
+  "day_boundaries": {
+    "1": {
+      "start": "MS-PY101-001",
+      "end": "MS-PY101-022"
+    },
+    "2": {
+      "start": "MS-PY101-023",
+      "end": "MS-PY101-043"
+    },
+    "3": {
+      "start": "MS-PY101-044",
+      "end": "MS-PY101-064"
+    },
+    "4": {
+      "start": "MS-PY101-065",
+      "end": "MS-PY101-085"
+    },
+    "5": {
+      "start": "MS-PY101-086",
+      "end": "MS-PY101-106"
+    }
+  },
   "sessions": [
+    {
+      "id": "MS-PY101-001",
+      "number": 1,
+      "title": "과정 로드맵과 아이스브레이킹",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "로드맵, 네비게이션 비유, 과정 소개",
+      "learning_objective": "이 세션 종료 시 수강생은 5일간의 과정 로드맵 흐름을 이해하고 동기부여를 가질 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-002"
+      ],
+      "file_path": "micro_sessions/세션-001-과정_로드맵과_아이스브레이킹.md"
+    },
+    {
+      "id": "MS-PY101-002",
+      "number": 2,
+      "title": "AI 시대의 서사 핵심 복습",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "문제 정의, 패러다임 여정, AI의 역할, 메뉴 기획자",
+      "learning_objective": "이 세션 종료 시 수강생은 'AI 시대의 서사'의 3가지 핵심 개념과 '메뉴 기획자'로서의 역할을 복습하고 자신의 언어로 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-001"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-003"
+      ],
+      "file_path": "micro_sessions/세션-002-AI_시대의_서사_핵심_복습.md"
+    },
+    {
+      "id": "MS-PY101-003",
+      "number": 3,
+      "title": "학습 방법론과 SDD 미리보기",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "예측→검증→설명, SDD, 명세 주도 개발, 바이브 코딩",
+      "learning_objective": "이 세션 종료 시 수강생은 본 과정의 핵심 학습 사이클(예측→검증→설명)과 명세 주도 개발(SDD)의 기본 개념을 이해한다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-002"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-004"
+      ],
+      "file_path": "micro_sessions/세션-003-학습_방법론과_SDD_미리보기.md"
+    },
+    {
+      "id": "MS-PY101-004",
+      "number": 4,
+      "title": "Antigravity 설치와 시연",
+      "day": 1,
+      "duration_min": 25,
+      "estimated_chars": 4500,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "Antigravity IDE, 설치, 에디터",
+      "learning_objective": "이 세션 종료 시 수강생은 Windows 11 환경에 Antigravity IDE를 설치하고 정상적으로 실행할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-003"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-005"
+      ],
+      "file_path": "micro_sessions/세션-004-Antigravity_설치와_시연.md"
+    },
+    {
+      "id": "MS-PY101-005",
+      "number": 5,
+      "title": "Editor 뷰와 기본 조작",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "Editor 뷰, 파일 관리, 폴더 열기",
+      "learning_objective": "이 세션 종료 시 수강생은 Antigravity IDE의 Editor 뷰를 활용하여 프로젝트 폴더를 열고 새로운 파일을 생성, 저장할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-004"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-006"
+      ],
+      "file_path": "micro_sessions/세션-005-Editor_뷰와_기본_조작.md"
+    },
+    {
+      "id": "MS-PY101-006",
+      "number": 6,
+      "title": "Agent Manager와 첫 인사",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "Agent Manager, Gemini 3 Pro, 대화",
+      "learning_objective": "이 세션 종료 시 수강생은 Antigravity의 Agent Manager 창을 열고 Gemini 3 Pro와 기본 대화를 시작할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-005"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-007"
+      ],
+      "file_path": "micro_sessions/세션-006-Agent_Manager와_첫_인사.md"
+    },
+    {
+      "id": "MS-PY101-007",
+      "number": 7,
+      "title": "멀티에이전트 오케스트레이션 기초",
+      "day": 1,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "멀티에이전트, 병렬 작업, 오케스트레이션",
+      "learning_objective": "이 세션 종료 시 수강생은 Antigravity에서 두 개 이상의 에이전트 탭을 열어 동시에 서로 다른 작업을 지시하는 '멀티에이전트'의 개념을 체험할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-006"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-008"
+      ],
+      "file_path": "micro_sessions/세션-007-멀티에이전트_오케스트레이션_기초.md"
+    },
+    {
+      "id": "MS-PY101-008",
+      "number": 8,
+      "title": "프롬프트로 시스템 환경 확인",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "터미널, 환경 확인, 시스템 명령어",
+      "learning_objective": "이 세션 종료 시 수강생은 Antigravity 터미널을 열고 AI에게 프롬프트를 질문하여 자신의 시스템 환경(OS 및 Python 설치 여부)을 스스로 확인할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-007"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-009"
+      ],
+      "file_path": "micro_sessions/세션-008-프롬프트로_시스템_환경_확인.md"
+    },
+    {
+      "id": "MS-PY101-009",
+      "number": 9,
+      "title": "AI와 함께 Python 설치하기",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "파이썬 설치, 설치 마법사, 시스템 환경 변수",
+      "learning_objective": "이 세션 종료 시 수강생은 AI의 안내를 받아 Windows 11 환경에 Python 최신 버전을 다운로드하고 환경 변수를 포함하여 정상적으로 설치할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-008"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-010"
+      ],
+      "file_path": "micro_sessions/세션-009-AI와_함께_Python_설치하기.md"
+    },
+    {
+      "id": "MS-PY101-010",
+      "number": 10,
+      "title": "트러블슈팅과 5 Whys 기법",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "트러블슈팅, 5 Whys, 오류 메시지",
+      "learning_objective": "이 세션 종료 시 수강생은 에러가 발생했을 때 AI에게 '왜'라는 질문을 연속으로 던지는 '5 Whys 기법'을 사용하여 근본 원인을 파악하고 해결할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-009"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-011"
+      ],
+      "file_path": "micro_sessions/세션-010-트러블슈팅과_5Whys_기법.md"
+    },
+    {
+      "id": "MS-PY101-011",
+      "number": 11,
+      "title": "uv 패키지 매니저 소개와 설치",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "uv, 패키지 매니저, 설치",
+      "learning_objective": "이 세션 종료 시 수강생은 패키지 매니저의 개념을 이해하고, 터미널 명령어를 통해 최신 도구인 'uv'를 성공적으로 설치할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-010"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-012"
+      ],
+      "file_path": "micro_sessions/세션-011-uv_패키지_매니저_소개와_설치.md"
+    },
+    {
+      "id": "MS-PY101-012",
+      "number": 12,
+      "title": "가상환경의 필요성 이해",
+      "day": 1,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "가상환경, 의존성 격리, 프로젝트 관리",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬 개발에서 패키지 충돌을 방지하기 위한 '가상환경'의 개념과 그 필요성을 비유를 들어 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-011"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-013"
+      ],
+      "file_path": "micro_sessions/세션-012-가상환경의_필요성_이해.md"
+    },
+    {
+      "id": "MS-PY101-013",
+      "number": 13,
+      "title": "uv로 가상환경 생성 및 활성화",
+      "day": 1,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "가상환경, uv venv, 활성화(activate)",
+      "learning_objective": "이 세션 종료 시 수강생은 터미널에서 uv 명령어를 사용해 Python 가상환경을 생성하고 활성화 상태를 온오프(activate/deactivate) 할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-012"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-014"
+      ],
+      "file_path": "micro_sessions/세션-013-uv로_가상환경_생성_및_활성화.md"
+    },
+    {
+      "id": "MS-PY101-014",
+      "number": 14,
+      "title": "uv pip로 패키지 설치 체험",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "패키지 설치, uv pip install, 의존성",
+      "learning_objective": "이 세션 종료 시 수강생은 활성화된 가상환경 내에서 `uv pip install` 명령어를 사용해 외부 패키지를 성공적으로 설치할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-013"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-015"
+      ],
+      "file_path": "micro_sessions/세션-014-uv_pip로_패키지_설치_체험.md"
+    },
+    {
+      "id": "MS-PY101-015",
+      "number": 15,
+      "title": "프롬프트로 첫 파이썬 코드 생성",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "프롬프트, 코드 생성, 파이썬 스크립트",
+      "learning_objective": "이 세션 종료 시 수강생은 AI 비서에게 자연어 프롬프트를 입력하여 입출력 기능이 포함된 완전한 파이썬 스크립트 파일을 생성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-014"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-016"
+      ],
+      "file_path": "micro_sessions/세션-015-프롬프트로_첫_파이썬_코드_생성.md"
+    },
+    {
+      "id": "MS-PY101-016",
+      "number": 16,
+      "title": "코드 실행과 예측-검증-설명 경험",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "예측-검증-설명, 코드 실행, print, input",
+      "learning_objective": "이 세션 종료 시 수강생은 생성된 코드를 실행하기 전 결과를 예측하고, 실행하여 검증한 뒤, AI의 해설을 통해 동작 원리(input, print)를 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-015"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-017"
+      ],
+      "file_path": "micro_sessions/세션-016-코드_실행과_예측-검증-설명.md"
+    },
+    {
+      "id": "MS-PY101-017",
+      "number": 17,
+      "title": "프롬프트 변형으로 코드 변화 관찰하기",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "프롬프트 변형, 코드 관찰, 에러 수정",
+      "learning_objective": "이 세션 종료 시 수강생은 기존 프롬프트에 새로운 조건(\"나이 계산 추가\")을 덧붙여 재생성된 코드를 기존 코드와 비교하고 어떤 부분이 달라졌는지 관찰할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-016"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-018"
+      ],
+      "file_path": "micro_sessions/세션-017-프롬프트_변형으로_코드_변화_관찰하기.md"
+    },
+    {
+      "id": "MS-PY101-018",
+      "number": 18,
+      "title": "[종합 실습 1] 나만의 환경 구축부터 프로그램 실행까지",
+      "day": 1,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "high",
+      "keywords": "종합 실습, 독립 수행, 환경 구축",
+      "learning_objective": "이 세션 종료 시 수강생은 외부의 도움 없이 새 프로젝트 폴더를 만들고, 가상환경을 구성한 뒤, AI와 협력하여 간단한 계산기 프로그램을 실행하는 전체 사이클을 1회 이상 독립적으로 완수할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-017"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-019"
+      ],
+      "file_path": "micro_sessions/세션-018-종합_실습_1_나만의_환경_구축부터_프로그램_실행까지.md"
+    },
+    {
+      "id": "MS-PY101-019",
+      "number": 19,
+      "title": "[종합 실습 2] 미니 스펙 첫 경험: 고객 1명 관리 프로그램",
+      "day": 1,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "high",
+      "keywords": "미니 스펙, 관통 프로젝트, 요구사항",
+      "learning_objective": "이 세션 종료 시 수강생은 주어진 요구사항(미니 스펙)에 맞춰 고객 1명의 이름과 전화번호를 입력받아 출력하는 프로그램을 AI와 협력하여 구현할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-018"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-020"
+      ],
+      "file_path": "micro_sessions/세션-019-종합_실습_2_미니_스펙_첫_경험_고객_관리_프로그램.md"
+    },
+    {
+      "id": "MS-PY101-020",
+      "number": 20,
+      "title": "동료 학습과 자주 묻는 질문 해결",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "동료 학습, 오류 공유, 피드백",
+      "learning_objective": "이 세션 종료 시 수강생은 자신의 오류 해결 경험이나 작성한 프롬프트를 동료와 1가지 이상 공유하고 타인의 접근법을 비교할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-019"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-021"
+      ],
+      "file_path": "micro_sessions/세션-020-동료_학습과_자주_묻는_질문_해결.md"
+    },
+    {
+      "id": "MS-PY101-021",
+      "number": 21,
+      "title": "Day 1 핵심 정리 퀴즈와 QnA",
+      "day": 1,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "핵심 복습, 퀴즈, QnA",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 1에 다룬 핵심 개념 5가지(IDE, 가상환경, 패키지 매니저, 터미널, 예측-검증-설명)를 퀴즈를 통해 정확히 인지하고 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-022"
+      ],
+      "file_path": "micro_sessions/세션-021-Day_1_핵심_정리_퀴즈와_QnA.md"
+    },
+    {
+      "id": "MS-PY101-022",
+      "number": 22,
+      "title": "마무리 및 Day 2 예고",
+      "day": 1,
+      "duration_min": 15,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "마무리, 요구사항 명세, 프롬프트 엔지니어링",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 2에서 학습할 \"프롬프트 작성법과 PRD 설계\"의 필요성을 인지하고 다음 날 교육에 대한 기대감을 갖게 된다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-021"
+        ]
+      },
+      "next_sessions": [],
+      "file_path": "micro_sessions/세션-022-마무리_및_Day_2_예고.md"
+    },
+    {
+      "id": "MS-PY101-023",
+      "number": 23,
+      "title": "프롬프트의 본질",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "프롬프트, 업무 지시서, AI 대화",
+      "learning_objective": "이 세션 종료 시 수강생은 프롬프트를 '단순한 검색어'가 아닌 '업무 지시서'로 정의하고 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-022"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-024"
+      ],
+      "file_path": "micro_sessions/세션-023-프롬프트의_본질.md"
+    },
+    {
+      "id": "MS-PY101-024",
+      "number": 24,
+      "title": "프롬프트 구성 4요소 1 - Persona와 Task",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "Persona, Task, 역할 부여, 작업 지시",
+      "learning_objective": "이 세션 종료 시 수강생은 프롬프트의 4요소 중 Persona와 Task를 명확히 구분하여 작성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-023"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-025"
+      ],
+      "file_path": "micro_sessions/세션-024-프롬프트_구성_4요소_1_-_Persona와_Task.md"
+    },
+    {
+      "id": "MS-PY101-025",
+      "number": 25,
+      "title": "프롬프트 구성 4요소 2 - Context와 Format",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "Context, Format, 배경 상황, 출력 형식",
+      "learning_objective": "이 세션 종료 시 수강생은 프롬프트의 4요소 중 Context와 Format을 활용해 원하는 형태의 결과물을 얻어낼 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-024"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-026"
+      ],
+      "file_path": "micro_sessions/세션-025-프롬프트_구성_4요소_2_-_Context와_Format.md"
+    },
+    {
+      "id": "MS-PY101-026",
+      "number": 26,
+      "title": "좋은 프롬프트 vs 나쁜 프롬프트 비교 실험",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "프롬프트 비교, Antigravity, 결과 분석",
+      "learning_objective": "이 세션 종료 시 수강생은 Antigravity 환경에서 나쁜 프롬프트와 좋은 프롬프트의 출력 결과를 직접 비교하고 차이를 분석할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-025"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-027"
+      ],
+      "file_path": "micro_sessions/세션-026-좋은_프롬프트_vs_나쁜_프롬프트_비교_실험.md"
+    },
+    {
+      "id": "MS-PY101-027",
+      "number": 27,
+      "title": "코드 생성 특화 프롬프트: 5대 필수 항목",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "코드 생성, 5대 항목, 예외 처리",
+      "learning_objective": "이 세션 종료 시 수강생은 코드 생성을 요청할 때 필수적으로 포함해야 하는 5대 항목(기능, 입력, 출력, 제약, 예외)을 열거하고 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-026"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-028"
+      ],
+      "file_path": "micro_sessions/세션-027-코드_생성_특화_프롬프트_5대_필수_항목.md"
+    },
+    {
+      "id": "MS-PY101-028",
+      "number": 28,
+      "title": "점진적 개선(Iterative Refinement)의 이해",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "점진적 개선, Iterative Refinement, 단계적 접근",
+      "learning_objective": "이 세션 종료 시 수강생은 점진적 개선의 개념을 이해하고, 한 번에 완벽한 코드를 요구하는 대신 단계별로 코드를 발전시키는 이유를 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-027"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-029"
+      ],
+      "file_path": "micro_sessions/세션-028-점진적_개선(Iterative_Refinement)의_이해.md"
+    },
+    {
+      "id": "MS-PY101-029",
+      "number": 29,
+      "title": "프롬프트 고도화 실습: 비밀번호 검사기 만들기",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "실습, 비밀번호 강도, 점진적 개선",
+      "learning_objective": "이 세션 종료 시 수강생은 점진적 개선 기법을 활용하여 3단계에 걸쳐 비밀번호 강도 검사기 프로그램을 완성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-028"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-030"
+      ],
+      "file_path": "micro_sessions/세션-029-프롬프트_고도화_실습_비밀번호_검사기_만들기.md"
+    },
+    {
+      "id": "MS-PY101-030",
+      "number": 30,
+      "title": "고급 프롬프트 기법: CoT와 Few-shot",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "code",
+      "complexity": "high",
+      "keywords": "CoT, Few-shot, 생각의 사슬, 예시 제공",
+      "learning_objective": "이 세션 종료 시 수강생은 CoT와 Few-shot 프롬프팅 기법을 이해하고, 이를 적용해 AI의 추론 능력과 출력 정확도를 극대화할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-029"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-031"
+      ],
+      "file_path": "micro_sessions/세션-030-고급_프롬프트_기법_CoT와_Few-shot.md"
+    },
+    {
+      "id": "MS-PY101-031",
+      "number": 31,
+      "title": "요구사항(Requirements)의 본질: 여행 계획서",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "요구사항, Requirements, 소프트웨어 설계",
+      "learning_objective": "이 세션 종료 시 수강생은 소프트웨어 공학에서 '요구사항'의 개념과 그 중요성을 비유를 통해 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-030"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-032"
+      ],
+      "file_path": "micro_sessions/세션-031-요구사항(Requirements)의_본질_여행_계획서.md"
+    },
+    {
+      "id": "MS-PY101-032",
+      "number": 32,
+      "title": "체계적인 요구사항 도출: 5W1H 체크리스트",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "5W1H, 사용자 스토리, 기능/비기능",
+      "learning_objective": "이 세션 종료 시 수강생은 5W1H 방법론을 활용하여 추상적인 아이디어를 구체적인 요구사항 항목으로 세분화할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-031"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-033"
+      ],
+      "file_path": "micro_sessions/세션-032-체계적인_요구사항_도출_5W1H_체크리스트.md"
+    },
+    {
+      "id": "MS-PY101-033",
+      "number": 33,
+      "title": "SDD(Specification-Driven Development)의 이해",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "high",
+      "keywords": "SDD, 명세 주도 개발, 바이브 코딩 극복",
+      "learning_objective": "이 세션 종료 시 수강생은 SDD의 개념을 설명하고, 왜 AI 시대에 SDD가 핵심 개발 방법론인지 이해한다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-032"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-034"
+      ],
+      "file_path": "micro_sessions/세션-033-SDD(Specification-Driven_Development)의_이해.md"
+    },
+    {
+      "id": "MS-PY101-034",
+      "number": 34,
+      "title": "AI와 함께하는 요구사항 작성 실습",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "요구사항 초안, 고객 정보 관리, 실습",
+      "learning_objective": "이 세션 종료 시 수강생은 AI(Gemini)를 활용하여 자신의 초기 아이디어를 체계적인 요구사항 문서 초안으로 발전시킬 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-033"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-035"
+      ],
+      "file_path": "micro_sessions/세션-034-AI와_함께하는_요구사항_작성_실습.md"
+    },
+    {
+      "id": "MS-PY101-035",
+      "number": 35,
+      "title": "PRD(Product Requirements Document)란 무엇인가?",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "PRD, 제품 요구사항 문서, 기획 마스터",
+      "learning_objective": "이 세션 종료 시 수강생은 PRD의 정의를 이해하고, 단순한 기능 목록과 PRD의 차이점을 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-034"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-036"
+      ],
+      "file_path": "micro_sessions/세션-035-PRD(Product_Requirements_Document)란_무엇인가?.md"
+    },
+    {
+      "id": "MS-PY101-036",
+      "number": 36,
+      "title": "PRD의 핵심 구조와 기능 명세(FR) 작성법",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "FR, 기능 명세, 구조화",
+      "learning_objective": "이 세션 종료 시 수강생은 PRD의 표준 템플릿 구조를 파악하고, 각 기능을 식별자(FR-001 등)를 부여하여 체계적으로 명세할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-035"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-037"
+      ],
+      "file_path": "micro_sessions/세션-036-PRD의_핵심_구조와_기능_명세(FR)_작성법.md"
+    },
+    {
+      "id": "MS-PY101-037",
+      "number": 37,
+      "title": "사용자 시나리오와 성공 지표 정의",
+      "day": 2,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "사용자 시나리오, 성공 지표, User Story",
+      "learning_objective": "이 세션 종료 시 수강생은 시간의 흐름에 따른 사용자 시나리오를 작성하고, 프로그램의 성공 여부를 판단할 지표를 정의할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-036"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-038"
+      ],
+      "file_path": "micro_sessions/세션-037-사용자_시나리오와_성공_지표_정의.md"
+    },
+    {
+      "id": "MS-PY101-038",
+      "number": 38,
+      "title": "고객 정보 관리 프로그램 PRD 완성하기",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "PRD 완성, 문서화 실습, AI 협업",
+      "learning_objective": "이 세션 종료 시 수강생은 요구사항 초안을 바탕으로 AI와 협업하여 완전한 구조(개요, 기능명세, 시나리오 등)를 갖춘 PRD를 완성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-037"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-039"
+      ],
+      "file_path": "micro_sessions/세션-038-고객_정보_관리_프로그램_PRD_완성하기.md"
+    },
+    {
+      "id": "MS-PY101-039",
+      "number": 39,
+      "title": "미니 스펙 프로젝트: 주제 선정 및 요구사항",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "자유 주제, 기획 실습, 아이디어 발상",
+      "learning_objective": "이 세션 종료 시 수강생은 자신만의 자유 주제를 하나 선정하여 핵심 요구사항을 5W1H 기반으로 정의할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-038"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-040"
+      ],
+      "file_path": "micro_sessions/세션-039-미니_스펙_프로젝트_주제_선정_및_요구사항.md"
+    },
+    {
+      "id": "MS-PY101-040",
+      "number": 40,
+      "title": "미니 스펙 프로젝트: PRD 작성 및 프롬프트 준비",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "PRD, 프롬프트 5대 항목, 준비 완료",
+      "learning_objective": "이 세션 종료 시 수강생은 자신의 요구사항을 PRD로 변환하고, 이를 바탕으로 AI에게 코드를 요청할 1단계 프롬프트를 작성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-039"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-041"
+      ],
+      "file_path": "micro_sessions/세션-040-미니_스펙_프로젝트_PRD_작성_및_프롬프트_준비.md"
+    },
+    {
+      "id": "MS-PY101-041",
+      "number": 41,
+      "title": "미니 스펙 프로젝트: 코드 생성 및 실행 검증",
+      "day": 2,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "high",
+      "keywords": "코드 생성, 실행, POE 사이클, 점진적 개선",
+      "learning_objective": "이 세션 종료 시 수강생은 자신이 작성한 프롬프트로 코드를 생성하고, 점진적으로 기능을 추가하여 최종 프로그램을 실행 및 검증할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-040"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-042"
+      ],
+      "file_path": "micro_sessions/세션-041-미니_스펙_프로젝트_코드_생성_및_실행_검증.md"
+    },
+    {
+      "id": "MS-PY101-042",
+      "number": 42,
+      "title": "팀별 발표: '나는 이렇게 AI와 대화했다'",
+      "day": 2,
+      "duration_min": 15,
+      "estimated_chars": 2500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "발표, 프롬프트 공유, 동료 학습",
+      "learning_objective": "이 세션 종료 시 수강생은 자신이 프로그램을 만드는 과정에서 AI와 어떻게 상호작용했는지 문제 해결 과정을 동료들에게 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-041"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-043"
+      ],
+      "file_path": "micro_sessions/세션-042-팀별_발표_'나는_이렇게_AI와_대화했다'.md"
+    },
+    {
+      "id": "MS-PY101-043",
+      "number": 43,
+      "title": "Day 2 핵심 요약 및 프롬프트 포트폴리오 정리",
+      "day": 2,
+      "duration_min": 15,
+      "estimated_chars": 2500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "요약, 프롬프트 노트, Day 3 예고",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 2의 핵심 내용(4요소, 5항목, SDD)을 요약하고, 자신이 작성한 성공적인 프롬프트를 자산화하여 저장할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-042"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [],
+      "file_path": "micro_sessions/세션-043-Day_2_핵심_요약_및_프롬프트_포트폴리오_정리.md"
+    },
+    {
+      "id": "MS-PY101-044",
+      "number": 44,
+      "title": "변수의 개념과 이름표 상자 비유",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "변수, 이름표, 상자, 메모리, 값 저장",
+      "learning_objective": "이 세션 종료 시 수강생은 변수의 개념을 \"이름표가 붙은 상자\"로 이해하고, 변수를 선언하여 값을 저장하고 꺼내는 기본 동작을 수행할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-043"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-045"
+      ],
+      "file_path": "micro_sessions/세션-044-변수의_개념과_이름표_상자_비유.md"
+    },
+    {
+      "id": "MS-PY101-045",
+      "number": 45,
+      "title": "기본 데이터 타입 4가지",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "데이터 타입, int, float, str, bool",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 4가지 기본 데이터 타입(정수, 실수, 문자열, 불리언)을 구분하고 type() 함수로 확인할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-044"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-046"
+      ],
+      "file_path": "micro_sessions/세션-045-기본데이터타입.md"
+    },
+    {
+      "id": "MS-PY101-046",
+      "number": 46,
+      "title": "타입 변환과 f-string",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "code",
+      "complexity": "low",
+      "keywords": "타입 변환, 형변환, f-string",
+      "learning_objective": "이 세션 종료 시 수강생은 서로 다른 데이터 타입을 변환할 수 있으며, f-string을 활용해 문자열과 변수를 자유롭게 결합하여 출력할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-045"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-047"
+      ],
+      "file_path": "micro_sessions/세션-046-타입변환과fstring.md"
+    },
+    {
+      "id": "MS-PY101-047",
+      "number": 47,
+      "title": "기본 연산자와 실습",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "lab",
+      "complexity": "low",
+      "keywords": "산술 연산자, 비교 연산자, 복합 할당 연산자",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 산술 연산자와 비교 연산자를 활용하여 데이터를 가공하는 프롬프트를 작성하고 결과를 검증할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-046"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-048"
+      ],
+      "file_path": "micro_sessions/세션-047-기본연산자와실습.md"
+    },
+    {
+      "id": "MS-PY101-048",
+      "number": 48,
+      "title": "리스트의 이해와 기본 조작",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "리스트, 자료구조, append",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 리스트를 이해하고, 데이터를 추가/삭제/수정(CRUD)할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-047"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-049"
+      ],
+      "file_path": "micro_sessions/세션-048-리스트와기본조작.md"
+    },
+    {
+      "id": "MS-PY101-049",
+      "number": 49,
+      "title": "리스트 인덱싱과 슬라이싱",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "인덱싱, 슬라이싱, 제로 베이스",
+      "learning_objective": "이 세션 종료 시 수강생은 리스트의 인덱싱과 슬라이싱 문법을 이해하고 특정 위치의 데이터를 정확하게 추출할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-048"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-050"
+      ],
+      "file_path": "micro_sessions/세션-049-리스트인덱싱.md"
+    },
+    {
+      "id": "MS-PY101-050",
+      "number": 50,
+      "title": "딕셔너리의 이해",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "딕셔너리, 키-값, Dictionary",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 딕셔너리를 이해하고, 키(Key)를 활용해 값(Value)을 저장하고 접근할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-049"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-051"
+      ],
+      "file_path": "micro_sessions/세션-050-딕셔너리의이해.md"
+    },
+    {
+      "id": "MS-PY101-051",
+      "number": 51,
+      "title": "복합 자료구조",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "code",
+      "complexity": "high",
+      "keywords": "복합 구조, JSON 구조, 중첩",
+      "learning_objective": "이 세션 종료 시 수강생은 리스트 안에 딕셔너리를 포함하는 복합 자료구조를 이해하고 특정 데이터에 접근할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-050"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-052"
+      ],
+      "file_path": "micro_sessions/세션-051-복합자료구조.md"
+    },
+    {
+      "id": "MS-PY101-052",
+      "number": 52,
+      "title": "조건문 if/elif/else",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "조건문, if, else, 제어 흐름",
+      "learning_objective": "이 세션 종료 시 수강생은 if, elif, else를 사용하여 주어진 데이터의 조건에 따라 프로그램의 실행 흐름을 제어할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-047"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-053"
+      ],
+      "file_path": "micro_sessions/세션-052-조건문if_elif_else.md"
+    },
+    {
+      "id": "MS-PY101-053",
+      "number": 53,
+      "title": "반복문 for와 range",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "반복문, for, range, 순회",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 `for` 반복문과 `range()` 함수를 이용하여 리스트나 특정 횟수만큼 코드를 반복 실행할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-048"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-054"
+      ],
+      "file_path": "micro_sessions/세션-053-반복문for와range.md"
+    },
+    {
+      "id": "MS-PY101-054",
+      "number": 54,
+      "title": "반복문 while과 제어 흐름",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "반복문, while, break, continue",
+      "learning_objective": "이 세션 종료 시 수강생은 조건에 따라 반복하는 `while`문의 동작을 이해하고, `break`와 `continue`로 반복의 흐름을 제어할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-053"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-055"
+      ],
+      "file_path": "micro_sessions/세션-054-반복문while과제어.md"
+    },
+    {
+      "id": "MS-PY101-055",
+      "number": 55,
+      "title": "예외 처리 try/except",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "예외 처리, try, except, 에러 방어",
+      "learning_objective": "이 세션 종료 시 수강생은 실행 중 발생하는 예외(에러) 상황을 예측하고 `try/except` 블록을 사용해 프로그램이 강제 종료되지 않도록 방어 로직을 작성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-054"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-056"
+      ],
+      "file_path": "micro_sessions/세션-055-예외처리_try_except.md"
+    },
+    {
+      "id": "MS-PY101-056",
+      "number": 56,
+      "title": "함수의 개념과 정의",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "함수, def, 호출, 레시피",
+      "learning_objective": "이 세션 종료 시 수강생은 반복되는 로직을 재사용 가능한 함수로 정의(def)하고 호출하는 기본 문법을 이해할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-044"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-057"
+      ],
+      "file_path": "micro_sessions/세션-056-함수의개념과정의.md"
+    },
+    {
+      "id": "MS-PY101-057",
+      "number": 57,
+      "title": "함수의 매개변수와 반환값",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "매개변수, 인수, return, 함수 인터페이스",
+      "learning_objective": "이 세션 종료 시 수강생은 함수에 매개변수(Parameter)를 전달하고, 연산 결과를 반환(Return)받는 코드를 작성하고 동작을 예측할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-056"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-058"
+      ],
+      "file_path": "micro_sessions/세션-057-함수의매개변수와반환값.md"
+    },
+    {
+      "id": "MS-PY101-058",
+      "number": 58,
+      "title": "내장 함수 활용",
+      "day": 3,
+      "duration_min": 15,
+      "estimated_chars": 3000,
+      "chunk_type": "code",
+      "complexity": "low",
+      "keywords": "내장 함수, len, max, min, sorted",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬이 기본 제공하는 대표적인 내장 함수(len, max, min, sorted)를 활용하여 데이터를 손쉽게 가공할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-048"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-059"
+      ],
+      "file_path": "micro_sessions/세션-058-내장함수활용.md"
+    },
+    {
+      "id": "MS-PY101-059",
+      "number": 59,
+      "title": "리스트 컴프리헨션",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "code",
+      "complexity": "high",
+      "keywords": "리스트 컴프리헨션, 코드 압축, 코드 읽기",
+      "learning_objective": "이 세션 종료 시 수강생은 AI가 생성한 '리스트 컴프리헨션' 코드를 해석하고, 그 작동 원리를 일반 `for`문으로 풀어서 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-053"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-060"
+      ],
+      "file_path": "micro_sessions/세션-059-리스트컴프리헨션.md"
+    },
+    {
+      "id": "MS-PY101-060",
+      "number": 60,
+      "title": "[종합 실습 1] 학생 성적 관리 데이터 모델링",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "종합 실습, 데이터 모델링, 미니 스펙",
+      "learning_objective": "이 세션 종료 시 수강생은 요구사항(스펙)을 분석하여, 학생 성적 관리를 위한 적절한 변수와 복합 자료구조(리스트+딕셔너리)를 프롬프트로 설계할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-044"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-061"
+      ],
+      "file_path": "micro_sessions/세션-060-종합실습_데이터모델링.md"
+    },
+    {
+      "id": "MS-PY101-061",
+      "number": 61,
+      "title": "[종합 실습 2] 제어문과 함수로 로직 구현",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "lab",
+      "complexity": "high",
+      "keywords": "종합 실습, 함수 모듈화, 제어문 통합",
+      "learning_objective": "이 세션 종료 시 수강생은 준비된 데이터를 바탕으로 개별 로직을 처리하는 함수를 생성하고, 이를 반복문으로 연결하는 전체 프로그램 흐름을 구현할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-060"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-062"
+      ],
+      "file_path": "micro_sessions/세션-061-종합실습_로직구현.md"
+    },
+    {
+      "id": "MS-PY101-062",
+      "number": 62,
+      "title": "[종합 실습 3] 통계 분석기 추가",
+      "day": 3,
+      "duration_min": 25,
+      "estimated_chars": 3800,
+      "chunk_type": "lab",
+      "complexity": "high",
+      "keywords": "종합 실습, 통계 계산, 내장 함수 응용",
+      "learning_objective": "이 세션 종료 시 수강생은 리스트 컴프리헨션과 내장 함수(len, max, sum)를 결합하여 복합 데이터에서 전체 통계를 계산하는 기능을 구현할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-061"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-063"
+      ],
+      "file_path": "micro_sessions/세션-062-종합실습_통계분석.md"
+    },
+    {
+      "id": "MS-PY101-063",
+      "number": 63,
+      "title": "생성 코드 리뷰 게임",
+      "day": 3,
+      "duration_min": 20,
+      "estimated_chars": 3500,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "코드 리뷰, 메타인지, 구성 요소 찾기",
+      "learning_objective": "이 세션 종료 시 수강생은 완성된 프로그램 코드 내에서 변수, 리스트, 딕셔너리, 조건문, 반복문, 함수의 위치를 스스로 식별하고 타인에게 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-062"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-064"
+      ],
+      "file_path": "micro_sessions/세션-063-생성코드리뷰게임.md"
+    },
+    {
+      "id": "MS-PY101-064",
+      "number": 64,
+      "title": "Day 3 총정리",
+      "day": 3,
+      "duration_min": 15,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "총정리, 문법 요약, 회고",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 3에서 학습한 6가지 핵심 개념(변수, 자료구조, 제어문, 예외처리, 함수, 컴프리헨션)을 비유를 통해 요약 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-044"
+        ]
+      },
+      "next_sessions": [],
+      "file_path": "micro_sessions/세션-064-Day3_총정리.md"
+    },
     {
       "id": "MS-PY101-065",
       "title": "절차적 프로그래밍의 개념과 특징",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-064"],
+      "prerequisites": [
+        "MS-PY101-064"
+      ],
       "type": "narrative",
       "complexity": "low"
     },
@@ -12,7 +1478,9 @@
       "id": "MS-PY101-066",
       "title": "AI 시대의 서사 복습: 구조적 프로그래밍으로의 여정",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-065"],
+      "prerequisites": [
+        "MS-PY101-065"
+      ],
       "type": "narrative",
       "complexity": "medium"
     },
@@ -20,7 +1488,9 @@
       "id": "MS-PY101-067",
       "title": "고객 정보 관리 프로그램 PRD 복습 및 설계",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-066"],
+      "prerequisites": [
+        "MS-PY101-066"
+      ],
       "type": "narrative",
       "complexity": "low"
     },
@@ -28,7 +1498,9 @@
       "id": "MS-PY101-068",
       "title": "CRUD 개념 이해 및 1차 프롬프트 작성 실습",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-067"],
+      "prerequisites": [
+        "MS-PY101-067"
+      ],
       "type": "lab",
       "complexity": "medium"
     },
@@ -36,7 +1508,9 @@
       "id": "MS-PY101-069",
       "title": "데이터 저장 구조(전역 리스트, 딕셔너리) 이해",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-068"],
+      "prerequisites": [
+        "MS-PY101-068"
+      ],
       "type": "code",
       "complexity": "medium"
     },
@@ -44,7 +1518,9 @@
       "id": "MS-PY101-070",
       "title": "절차적 Create, Read 기능 구현 및 테스트",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-069"],
+      "prerequisites": [
+        "MS-PY101-069"
+      ],
       "type": "lab",
       "complexity": "medium"
     },
@@ -52,7 +1528,9 @@
       "id": "MS-PY101-071",
       "title": "절차적 Update, Delete 기능 구현 및 통합 테스트",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-070"],
+      "prerequisites": [
+        "MS-PY101-070"
+      ],
       "type": "lab",
       "complexity": "high"
     },
@@ -60,7 +1538,9 @@
       "id": "MS-PY101-072",
       "title": "코드 리뷰: 전역 변수와 코드 중복의 한계점 발견",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-071"],
+      "prerequisites": [
+        "MS-PY101-071"
+      ],
       "type": "narrative",
       "complexity": "medium"
     },
@@ -68,7 +1548,9 @@
       "id": "MS-PY101-073",
       "title": "절차적 코드의 구조적 리팩토링 프롬프트 작성",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-072"],
+      "prerequisites": [
+        "MS-PY101-072"
+      ],
       "type": "lab",
       "complexity": "medium"
     },
@@ -76,7 +1558,9 @@
       "id": "MS-PY101-074",
       "title": "구조적 데이터 흐름(매개변수와 리턴)의 이해",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-073"],
+      "prerequisites": [
+        "MS-PY101-073"
+      ],
       "type": "code",
       "complexity": "high"
     },
@@ -84,7 +1568,9 @@
       "id": "MS-PY101-075",
       "title": "절차적 vs 구조적 코드 나란히 비교 분석",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-074"],
+      "prerequisites": [
+        "MS-PY101-074"
+      ],
       "type": "narrative",
       "complexity": "medium"
     },
@@ -92,7 +1578,9 @@
       "id": "MS-PY101-076",
       "title": "요구사항 추가를 통한 구조적 확장성 체험",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-075"],
+      "prerequisites": [
+        "MS-PY101-075"
+      ],
       "type": "lab",
       "complexity": "medium"
     },
@@ -100,7 +1588,9 @@
       "id": "MS-PY101-077",
       "title": "테스트는 시승이다: 테스트 시나리오 3분류 이해",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-076"],
+      "prerequisites": [
+        "MS-PY101-076"
+      ],
       "type": "narrative",
       "complexity": "low"
     },
@@ -108,7 +1598,9 @@
       "id": "MS-PY101-078",
       "title": "고객 관리 프로그램 테스트 시나리오 작성 실습",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-077"],
+      "prerequisites": [
+        "MS-PY101-077"
+      ],
       "type": "lab",
       "complexity": "medium"
     },
@@ -116,7 +1608,9 @@
       "id": "MS-PY101-079",
       "title": "품질 검사관: 코드 리뷰 5대 체크포인트",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-078"],
+      "prerequisites": [
+        "MS-PY101-078"
+      ],
       "type": "narrative",
       "complexity": "medium"
     },
@@ -124,7 +1618,9 @@
       "id": "MS-PY101-080",
       "title": "완벽한 리뷰 코멘트 작성 및 AI 피드백 실습",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-079"],
+      "prerequisites": [
+        "MS-PY101-079"
+      ],
       "type": "lab",
       "complexity": "high"
     },
@@ -132,7 +1628,9 @@
       "id": "MS-PY101-081",
       "title": "Day 4 종합: 절차에서 구조로, 그리고 테스트까지",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-080"],
+      "prerequisites": [
+        "MS-PY101-080"
+      ],
       "type": "narrative",
       "complexity": "low"
     },
@@ -140,7 +1638,10 @@
       "id": "MS-PY101-082",
       "title": "나만의 미니 프로젝트: 기획 및 절차적 코드 생성",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-081", "MS-PY101-068"],
+      "prerequisites": [
+        "MS-PY101-081",
+        "MS-PY101-068"
+      ],
       "type": "lab",
       "complexity": "medium"
     },
@@ -148,7 +1649,10 @@
       "id": "MS-PY101-083",
       "title": "미니 프로젝트: 구조적 리팩토링 및 퀄리티 체크",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-082", "MS-PY101-073"],
+      "prerequisites": [
+        "MS-PY101-082",
+        "MS-PY101-073"
+      ],
       "type": "lab",
       "complexity": "high"
     },
@@ -156,7 +1660,10 @@
       "id": "MS-PY101-084",
       "title": "미니 프로젝트: 극한의 테스트 시나리오 도출",
       "duration_min": 20,
-      "prerequisites": ["MS-PY101-083", "MS-PY101-078"],
+      "prerequisites": [
+        "MS-PY101-083",
+        "MS-PY101-078"
+      ],
       "type": "lab",
       "complexity": "high"
     },
@@ -164,9 +1671,2297 @@
       "id": "MS-PY101-085",
       "title": "미니 프로젝트: 코드 리뷰 기반 최종 완성 및 회고",
       "duration_min": 25,
-      "prerequisites": ["MS-PY101-084", "MS-PY101-080"],
+      "prerequisites": [
+        "MS-PY101-084",
+        "MS-PY101-080"
+      ],
       "type": "lab",
       "complexity": "medium"
+    },
+    {
+      "id": "MS-PY101-086",
+      "number": 86,
+      "title": "클래스와 인스턴스의 개념",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "클래스, 인스턴스, 객체지향 프로그래밍",
+      "learning_objective": "이 세션 종료 시 수강생은 클래스와 인스턴스의 차이를 '붕어빵 틀과 붕어빵' 비유를 사용하여 정확히 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-085"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-087"
+      ],
+      "file_path": "micro_sessions/세션-086-클래스와_인스턴스의_개념.md"
+    },
+    {
+      "id": "MS-PY101-087",
+      "number": 87,
+      "title": "속성과 메서드, 그리고 __init__",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "속성, 메서드, `__init__`, self",
+      "learning_objective": "이 세션 종료 시 수강생은 `__init__` 메서드를 사용하여 클래스의 속성을 정의하고, `self`를 활용하여 속성을 출력하는 메서드를 작성할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-086"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-088"
+      ],
+      "file_path": "micro_sessions/세션-087-속성과_메서드_그리고_init.md"
+    },
+    {
+      "id": "MS-PY101-088",
+      "number": 88,
+      "title": "나만의 클래스 만들기 실습",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "클래스 실습, 인스턴스 생성, 메서드 호출",
+      "learning_objective": "이 세션 종료 시 수강생은 설계한 클래스(Customer, Student)를 바탕으로 여러 개의 인스턴스를 메모리에 생성하고, 각각의 메서드를 호출하여 독립적인 데이터를 관리할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-087"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-089"
+      ],
+      "file_path": "micro_sessions/세션-088-나만의_클래스_만들기_실습.md"
+    },
+    {
+      "id": "MS-PY101-089",
+      "number": 89,
+      "title": "데이터를 담는 특별한 그릇, @dataclass",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "`@dataclass`, 데이터 저장, 데코레이터",
+      "learning_objective": "이 세션 종료 시 수강생은 일반 클래스의 `__init__` 방식과 `@dataclass`를 비교하여, `@dataclass`가 데이터 중심 클래스 작성에 주는 이점을 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-088"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-090"
+      ],
+      "file_path": "micro_sessions/세션-089-데이터를_담는_특별한_그릇_dataclass.md"
+    },
+    {
+      "id": "MS-PY101-090",
+      "number": 90,
+      "title": "객체지향 리팩토링과 캡슐화 개념",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "OOP 리팩토링, 캡슐화, 메서드 책임",
+      "learning_objective": "이 세션 종료 시 수강생은 객체지향 리팩토링의 목적과 '캡슐화'의 개념을 '부서 조직 재편'과 '자동차 운전' 비유를 통해 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-085",
+          "MS-PY101-089"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-091"
+      ],
+      "file_path": "micro_sessions/세션-090-객체지향_리팩토링과_캡슐화_개념.md"
+    },
+    {
+      "id": "MS-PY101-091",
+      "number": 91,
+      "title": "고객관리 v3로의 진화 (OOP 적용)",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "OOP 리팩토링, Customer 클래스, CustomerManager 클래스",
+      "learning_objective": "이 세션 종료 시 수강생은 AI 프롬프트를 활용해 절차적 구조의 코드를 `Customer`와 `CustomerManager` 클래스로 분리된 객체지향 구조로 리팩토링하고, 두 코드의 차이점을 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-090"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-092"
+      ],
+      "file_path": "micro_sessions/세션-091-고객관리_v3로의_진화.md"
+    },
+    {
+      "id": "MS-PY101-092",
+      "number": 92,
+      "title": "데이터 검증 함수 추가",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "데이터 검증, 예외 처리, 정규표현식, 방어적 프로그래밍",
+      "learning_objective": "이 세션 종료 시 수강생은 AI 프롬프트를 활용하여 올바르지 않은 이메일과 전화번호 형식을 걸러내는 '데이터 검증 함수'를 생성하고 CustomerManager 클래스에 통합할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-091"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-093"
+      ],
+      "file_path": "micro_sessions/세션-092-데이터_검증_함수_추가.md"
+    },
+    {
+      "id": "MS-PY101-093",
+      "number": 93,
+      "title": "캡슐화 실습 및 v3 코드 리뷰",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "캡슐화, 접근 제어, 코드 리뷰, OOP",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 이름 장식(Name mangling, `__`)을 활용해 속성을 캡슐화하고, 5대 체크포인트에 맞춰 v3 코드를 최종 리뷰할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-092"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-094"
+      ],
+      "file_path": "micro_sessions/세션-093-캡슐화_실습_및_v3_코드_리뷰.md"
+    },
+    {
+      "id": "MS-PY101-094",
+      "number": 94,
+      "title": "상속의 개념과 필요성",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "상속, 부모 클래스, 자식 클래스, 재사용성",
+      "learning_objective": "이 세션 종료 시 수강생은 객체지향의 핵심 특징인 '상속'의 개념을 '유산 상속' 비유를 통해 설명하고, 코드 재사용의 이점을 이해할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-093"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-095"
+      ],
+      "file_path": "micro_sessions/세션-094-상속의_개념과_필요성.md"
+    },
+    {
+      "id": "MS-PY101-095",
+      "number": 95,
+      "title": "기존 클래스 확장하기 (VIPCustomer와 super)",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "클래스 확장, `super()`, 메서드 오버라이딩, 상속",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 `super()` 함수를 활용하여 부모 클래스(Customer)를 상속받는 자식 클래스(VIPCustomer)를 구현하고, 기존 메서드를 오버라이딩(Overriding)할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-094"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-096"
+      ],
+      "file_path": "micro_sessions/세션-095-기존_클래스_확장하기_VIPCustomer와_super.md"
+    },
+    {
+      "id": "MS-PY101-096",
+      "number": 96,
+      "title": "다형성 체험 (리모컨의 전원 버튼)",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "다형성(Polymorphism), 객체지향, 오버라이딩 활용",
+      "learning_objective": "이 세션 종료 시 수강생은 일반 고객과 VIP 고객 인스턴스가 섞여 있는 리스트에서 동일한 메서드(`print_info()`)를 호출했을 때 다르게 동작하는 현상을 통해 '다형성'의 개념을 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-095"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-097"
+      ],
+      "file_path": "micro_sessions/세션-096-다형성_체험.md"
+    },
+    {
+      "id": "MS-PY101-097",
+      "number": 97,
+      "title": "의존성 주입(DI) 개념",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "medium",
+      "keywords": "의존성 주입(DI), 인터페이스, 결합도, 유지보수",
+      "learning_objective": "이 세션 종료 시 수강생은 의존성 주입(DI)의 개념을 '교체 가능한 자동차 타이어' 비유를 통해 설명하고, 코드 결합도를 낮추는 이점을 이해할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": [
+          "MS-PY101-096"
+        ]
+      },
+      "next_sessions": [
+        "MS-PY101-098"
+      ],
+      "file_path": "micro_sessions/세션-097-의존성_주입_DI_개념.md"
+    },
+    {
+      "id": "MS-PY101-098",
+      "number": 98,
+      "title": "파일 저장 모듈(FileStorage) 구현",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "JSON 파일, `FileStorage`, 모듈 분리, 추상화",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬의 `json` 모듈을 활용하여 고객 데이터를 파일로 영구 저장하고 불러오는 `FileStorage` 클래스를 별도의 모듈 파일로 구현할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-097"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-099"
+      ],
+      "file_path": "micro_sessions/세션-098-파일_저장_모듈_FileStorage_구현.md"
+    },
+    {
+      "id": "MS-PY101-099",
+      "number": 99,
+      "title": "DB 저장 모듈(SQLiteStorage) 구현",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "code",
+      "complexity": "medium",
+      "keywords": "데이터베이스, SQLite, 저장소 모듈, `SQLiteStorage`",
+      "learning_objective": "이 세션 종료 시 수강생은 파이썬 내장 `sqlite3` 모듈을 활용하여, `FileStorage`와 동일한 메서드(`save`, `load`)를 가지는 `SQLiteStorage` 데이터베이스 저장 모듈을 구현할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-098"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-100"
+      ],
+      "file_path": "micro_sessions/세션-099-DB_저장_모듈_SQLiteStorage_구현.md"
+    },
+    {
+      "id": "MS-PY101-100",
+      "number": 100,
+      "title": "DI 적용 실습 (v4 저장소 교체 테스트)",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "의존성 주입(DI) 실습, v4 리팩토링, 코드 교체 테스트",
+      "learning_objective": "이 세션 종료 시 수강생은 CustomerManager(v4)가 외부에서 저장소 객체(FileStorage 또는 SQLiteStorage)를 주입받도록 코드를 수정하고, 단 한 줄의 변경으로 저장 방식을 교체하는 DI 패턴을 검증할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-098",
+          "MS-PY101-099"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-101"
+      ],
+      "file_path": "micro_sessions/세션-100-DI_적용_실습.md"
+    },
+    {
+      "id": "MS-PY101-101",
+      "number": 101,
+      "title": "고객관리 프로그램 진화 과정 총정리",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "절차적, 구조적, 객체지향, 의존성 주입, 총정리",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 4부터 Day 5까지 함께 개발한 고객관리 프로그램의 진화 과정(v1→v2→v3→v4)을 각 패러다임의 특징과 연결하여 요약 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-100"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-102"
+      ],
+      "file_path": "micro_sessions/세션-101-고객관리_프로그램_진화_과정_총정리.md"
+    },
+    {
+      "id": "MS-PY101-102",
+      "number": 102,
+      "title": "\"AI 시대의 서사\" 최종 연결 및 SDD 회고",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 4000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "AI 시대의 서사, 명세 주도 개발(SDD), 문제 해결자",
+      "learning_objective": "이 세션 종료 시 수강생은 Day 1에서 배운 'AI 시대의 서사(문제를 정의하고 AI와 협업하는 사람)'와 '명세 주도 개발(SDD)'이 지난 5일간의 실습에서 어떻게 구현되었는지 자신의 언어로 회고할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-101"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-103"
+      ],
+      "file_path": "micro_sessions/세션-102-AI_시대의_서사_최종_연결.md"
+    },
+    {
+      "id": "MS-PY101-103",
+      "number": 103,
+      "title": "수료 프로젝트 코드 리뷰 공유",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 4000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "수료 프로젝트, 코드 리뷰, 5대 체크포인트, 피드백",
+      "learning_objective": "이 세션 종료 시 수강생은 자신이 완성한 고객관리 프로그램 v4 코드를 AI와 동료에게 리뷰받고, '코드 리뷰 5대 체크포인트'를 기준으로 객관적인 품질을 평가할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-100",
+          "MS-PY101-076"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-104"
+      ],
+      "file_path": "micro_sessions/세션-103-수료_프로젝트_코드_리뷰_공유.md"
+    },
+    {
+      "id": "MS-PY101-104",
+      "number": 104,
+      "title": "파이썬 기초 전 과정 핵심 퀴즈",
+      "day": 5,
+      "duration_min": 25,
+      "estimated_chars": 3000,
+      "chunk_type": "lab",
+      "complexity": "medium",
+      "keywords": "총평가, 핵심 퀴즈, 복습, 역량 점검",
+      "learning_objective": "이 세션 종료 시 수강생은 5일간 다룬 파이썬 기초 문법과 AI 활용 명세 주도 개발(SDD)의 핵심 개념을 묻는 10개의 퀴즈를 풀고, 오답의 이유를 설명할 수 있다.",
+      "prerequisites": {
+        "mandatory": [],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-105"
+      ],
+      "file_path": "micro_sessions/세션-104-파이썬_기초_전_과정_핵심_퀴즈.md"
+    },
+    {
+      "id": "MS-PY101-105",
+      "number": 105,
+      "title": "수료 후 학습 로드맵 및 심화 학습 상담",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "학습 로드맵, 웹 개발, 데이터 분석, 업무 자동화",
+      "learning_objective": "이 세션 종료 시 수강생은 자신의 관심사(웹, 데이터, 자동화)에 맞춘 파이썬 심화 학습 로드맵을 선택하고, 다음 단계의 학습 방향을 설정할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-104"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [
+        "MS-PY101-106"
+      ],
+      "file_path": "micro_sessions/세션-105-수료_후_학습_로드맵_및_심화_학습_상담.md"
+    },
+    {
+      "id": "MS-PY101-106",
+      "number": 106,
+      "title": "최종 마무리 및 수료식",
+      "day": 5,
+      "duration_min": 20,
+      "estimated_chars": 3000,
+      "chunk_type": "narrative",
+      "complexity": "low",
+      "keywords": "수료식, 네트워킹, 격려, 과정 종료",
+      "learning_objective": "이 세션 종료 시 수강생은 5일간의 성취를 축하하며 수료증을 수여받고, 향후 학습을 위한 네트워킹 채널(오픈채팅/디스코드 등)에 참여할 수 있다.",
+      "prerequisites": {
+        "mandatory": [
+          "MS-PY101-105"
+        ],
+        "recommended": []
+      },
+      "next_sessions": [],
+      "file_path": "micro_sessions/세션-106-최종_마무리_및_수료식.md"
     }
-  ]
+  ],
+  "dependency_graph": {
+    "nodes": [
+      {
+        "id": "MS-PY101-001",
+        "title": "과정 로드맵과 아이스브레이킹",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-002",
+        "title": "AI 시대의 서사 핵심 복습",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-003",
+        "title": "학습 방법론과 SDD 미리보기",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-004",
+        "title": "Antigravity 설치와 시연",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-005",
+        "title": "Editor 뷰와 기본 조작",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-006",
+        "title": "Agent Manager와 첫 인사",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-007",
+        "title": "멀티에이전트 오케스트레이션 기초",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-008",
+        "title": "프롬프트로 시스템 환경 확인",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-009",
+        "title": "AI와 함께 Python 설치하기",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-010",
+        "title": "트러블슈팅과 5 Whys 기법",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-011",
+        "title": "uv 패키지 매니저 소개와 설치",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-012",
+        "title": "가상환경의 필요성 이해",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-013",
+        "title": "uv로 가상환경 생성 및 활성화",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-014",
+        "title": "uv pip로 패키지 설치 체험",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-015",
+        "title": "프롬프트로 첫 파이썬 코드 생성",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-016",
+        "title": "코드 실행과 예측-검증-설명 경험",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-017",
+        "title": "프롬프트 변형으로 코드 변화 관찰하기",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-018",
+        "title": "[종합 실습 1] 나만의 환경 구축부터 프로그램 실행까지",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-019",
+        "title": "[종합 실습 2] 미니 스펙 첫 경험: 고객 1명 관리 프로그램",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-020",
+        "title": "동료 학습과 자주 묻는 질문 해결",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-021",
+        "title": "Day 1 핵심 정리 퀴즈와 QnA",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-022",
+        "title": "마무리 및 Day 2 예고",
+        "day": 1
+      },
+      {
+        "id": "MS-PY101-023",
+        "title": "프롬프트의 본질",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-024",
+        "title": "프롬프트 구성 4요소 1 - Persona와 Task",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-025",
+        "title": "프롬프트 구성 4요소 2 - Context와 Format",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-026",
+        "title": "좋은 프롬프트 vs 나쁜 프롬프트 비교 실험",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-027",
+        "title": "코드 생성 특화 프롬프트: 5대 필수 항목",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-028",
+        "title": "점진적 개선(Iterative Refinement)의 이해",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-029",
+        "title": "프롬프트 고도화 실습: 비밀번호 검사기 만들기",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-030",
+        "title": "고급 프롬프트 기법: CoT와 Few-shot",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-031",
+        "title": "요구사항(Requirements)의 본질: 여행 계획서",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-032",
+        "title": "체계적인 요구사항 도출: 5W1H 체크리스트",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-033",
+        "title": "SDD(Specification-Driven Development)의 이해",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-034",
+        "title": "AI와 함께하는 요구사항 작성 실습",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-035",
+        "title": "PRD(Product Requirements Document)란 무엇인가?",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-036",
+        "title": "PRD의 핵심 구조와 기능 명세(FR) 작성법",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-037",
+        "title": "사용자 시나리오와 성공 지표 정의",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-038",
+        "title": "고객 정보 관리 프로그램 PRD 완성하기",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-039",
+        "title": "미니 스펙 프로젝트: 주제 선정 및 요구사항",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-040",
+        "title": "미니 스펙 프로젝트: PRD 작성 및 프롬프트 준비",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-041",
+        "title": "미니 스펙 프로젝트: 코드 생성 및 실행 검증",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-042",
+        "title": "팀별 발표: '나는 이렇게 AI와 대화했다'",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-043",
+        "title": "Day 2 핵심 요약 및 프롬프트 포트폴리오 정리",
+        "day": 2
+      },
+      {
+        "id": "MS-PY101-044",
+        "title": "변수의 개념과 이름표 상자 비유",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-045",
+        "title": "기본 데이터 타입 4가지",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-046",
+        "title": "타입 변환과 f-string",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-047",
+        "title": "기본 연산자와 실습",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-048",
+        "title": "리스트의 이해와 기본 조작",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-049",
+        "title": "리스트 인덱싱과 슬라이싱",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-050",
+        "title": "딕셔너리의 이해",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-051",
+        "title": "복합 자료구조",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-052",
+        "title": "조건문 if/elif/else",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-053",
+        "title": "반복문 for와 range",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-054",
+        "title": "반복문 while과 제어 흐름",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-055",
+        "title": "예외 처리 try/except",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-056",
+        "title": "함수의 개념과 정의",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-057",
+        "title": "함수의 매개변수와 반환값",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-058",
+        "title": "내장 함수 활용",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-059",
+        "title": "리스트 컴프리헨션",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-060",
+        "title": "[종합 실습 1] 학생 성적 관리 데이터 모델링",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-061",
+        "title": "[종합 실습 2] 제어문과 함수로 로직 구현",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-062",
+        "title": "[종합 실습 3] 통계 분석기 추가",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-063",
+        "title": "생성 코드 리뷰 게임",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-064",
+        "title": "Day 3 총정리",
+        "day": 3
+      },
+      {
+        "id": "MS-PY101-065",
+        "title": "절차적 프로그래밍의 개념과 특징",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-066",
+        "title": "AI 시대의 서사 복습: 구조적 프로그래밍으로의 여정",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-067",
+        "title": "고객 정보 관리 프로그램 PRD 복습 및 설계",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-068",
+        "title": "CRUD 개념 이해 및 1차 프롬프트 작성 실습",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-069",
+        "title": "데이터 저장 구조(전역 리스트, 딕셔너리) 이해",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-070",
+        "title": "절차적 Create, Read 기능 구현 및 테스트",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-071",
+        "title": "절차적 Update, Delete 기능 구현 및 통합 테스트",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-072",
+        "title": "코드 리뷰: 전역 변수와 코드 중복의 한계점 발견",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-073",
+        "title": "절차적 코드의 구조적 리팩토링 프롬프트 작성",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-074",
+        "title": "구조적 데이터 흐름(매개변수와 리턴)의 이해",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-075",
+        "title": "절차적 vs 구조적 코드 나란히 비교 분석",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-076",
+        "title": "요구사항 추가를 통한 구조적 확장성 체험",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-077",
+        "title": "테스트는 시승이다: 테스트 시나리오 3분류 이해",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-078",
+        "title": "고객 관리 프로그램 테스트 시나리오 작성 실습",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-079",
+        "title": "품질 검사관: 코드 리뷰 5대 체크포인트",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-080",
+        "title": "완벽한 리뷰 코멘트 작성 및 AI 피드백 실습",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-081",
+        "title": "Day 4 종합: 절차에서 구조로, 그리고 테스트까지",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-082",
+        "title": "나만의 미니 프로젝트: 기획 및 절차적 코드 생성",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-083",
+        "title": "미니 프로젝트: 구조적 리팩토링 및 퀄리티 체크",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-084",
+        "title": "미니 프로젝트: 극한의 테스트 시나리오 도출",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-085",
+        "title": "미니 프로젝트: 코드 리뷰 기반 최종 완성 및 회고",
+        "day": 4
+      },
+      {
+        "id": "MS-PY101-086",
+        "title": "클래스와 인스턴스의 개념",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-087",
+        "title": "속성과 메서드, 그리고 __init__",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-088",
+        "title": "나만의 클래스 만들기 실습",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-089",
+        "title": "데이터를 담는 특별한 그릇, @dataclass",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-090",
+        "title": "객체지향 리팩토링과 캡슐화 개념",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-091",
+        "title": "고객관리 v3로의 진화 (OOP 적용)",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-092",
+        "title": "데이터 검증 함수 추가",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-093",
+        "title": "캡슐화 실습 및 v3 코드 리뷰",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-094",
+        "title": "상속의 개념과 필요성",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-095",
+        "title": "기존 클래스 확장하기 (VIPCustomer와 super)",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-096",
+        "title": "다형성 체험 (리모컨의 전원 버튼)",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-097",
+        "title": "의존성 주입(DI) 개념",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-098",
+        "title": "파일 저장 모듈(FileStorage) 구현",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-099",
+        "title": "DB 저장 모듈(SQLiteStorage) 구현",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-100",
+        "title": "DI 적용 실습 (v4 저장소 교체 테스트)",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-101",
+        "title": "고객관리 프로그램 진화 과정 총정리",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-102",
+        "title": "\"AI 시대의 서사\" 최종 연결 및 SDD 회고",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-103",
+        "title": "수료 프로젝트 코드 리뷰 공유",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-104",
+        "title": "파이썬 기초 전 과정 핵심 퀴즈",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-105",
+        "title": "수료 후 학습 로드맵 및 심화 학습 상담",
+        "day": 5
+      },
+      {
+        "id": "MS-PY101-106",
+        "title": "최종 마무리 및 수료식",
+        "day": 5
+      }
+    ],
+    "edges": [
+      {
+        "from": "MS-PY101-001",
+        "to": "MS-PY101-002",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-001",
+        "to": "MS-PY101-002",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-002",
+        "to": "MS-PY101-003",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-002",
+        "to": "MS-PY101-003",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-003",
+        "to": "MS-PY101-004",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-003",
+        "to": "MS-PY101-004",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-004",
+        "to": "MS-PY101-005",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-004",
+        "to": "MS-PY101-005",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-005",
+        "to": "MS-PY101-006",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-005",
+        "to": "MS-PY101-006",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-006",
+        "to": "MS-PY101-007",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-006",
+        "to": "MS-PY101-007",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-007",
+        "to": "MS-PY101-008",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-007",
+        "to": "MS-PY101-008",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-008",
+        "to": "MS-PY101-009",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-008",
+        "to": "MS-PY101-009",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-009",
+        "to": "MS-PY101-010",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-009",
+        "to": "MS-PY101-010",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-010",
+        "to": "MS-PY101-011",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-010",
+        "to": "MS-PY101-011",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-011",
+        "to": "MS-PY101-012",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-011",
+        "to": "MS-PY101-012",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-012",
+        "to": "MS-PY101-013",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-012",
+        "to": "MS-PY101-013",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-013",
+        "to": "MS-PY101-014",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-013",
+        "to": "MS-PY101-014",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-014",
+        "to": "MS-PY101-015",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-014",
+        "to": "MS-PY101-015",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-015",
+        "to": "MS-PY101-016",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-015",
+        "to": "MS-PY101-016",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-016",
+        "to": "MS-PY101-017",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-016",
+        "to": "MS-PY101-017",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-017",
+        "to": "MS-PY101-018",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-017",
+        "to": "MS-PY101-018",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-018",
+        "to": "MS-PY101-019",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-018",
+        "to": "MS-PY101-019",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-019",
+        "to": "MS-PY101-020",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-019",
+        "to": "MS-PY101-020",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-020",
+        "to": "MS-PY101-021",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-021",
+        "to": "MS-PY101-022",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-021",
+        "to": "MS-PY101-022",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-022",
+        "to": "MS-PY101-023",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-023",
+        "to": "MS-PY101-024",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-023",
+        "to": "MS-PY101-024",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-024",
+        "to": "MS-PY101-025",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-024",
+        "to": "MS-PY101-025",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-025",
+        "to": "MS-PY101-026",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-025",
+        "to": "MS-PY101-026",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-026",
+        "to": "MS-PY101-027",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-026",
+        "to": "MS-PY101-027",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-027",
+        "to": "MS-PY101-028",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-027",
+        "to": "MS-PY101-028",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-028",
+        "to": "MS-PY101-029",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-028",
+        "to": "MS-PY101-029",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-029",
+        "to": "MS-PY101-030",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-029",
+        "to": "MS-PY101-030",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-030",
+        "to": "MS-PY101-031",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-030",
+        "to": "MS-PY101-031",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-031",
+        "to": "MS-PY101-032",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-031",
+        "to": "MS-PY101-032",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-032",
+        "to": "MS-PY101-033",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-032",
+        "to": "MS-PY101-033",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-033",
+        "to": "MS-PY101-034",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-033",
+        "to": "MS-PY101-034",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-034",
+        "to": "MS-PY101-035",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-034",
+        "to": "MS-PY101-035",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-035",
+        "to": "MS-PY101-036",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-035",
+        "to": "MS-PY101-036",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-036",
+        "to": "MS-PY101-037",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-036",
+        "to": "MS-PY101-037",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-037",
+        "to": "MS-PY101-038",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-037",
+        "to": "MS-PY101-038",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-038",
+        "to": "MS-PY101-039",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-038",
+        "to": "MS-PY101-039",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-039",
+        "to": "MS-PY101-040",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-039",
+        "to": "MS-PY101-040",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-040",
+        "to": "MS-PY101-041",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-040",
+        "to": "MS-PY101-041",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-041",
+        "to": "MS-PY101-042",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-041",
+        "to": "MS-PY101-042",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-042",
+        "to": "MS-PY101-043",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-042",
+        "to": "MS-PY101-043",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-043",
+        "to": "MS-PY101-044",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-044",
+        "to": "MS-PY101-045",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-044",
+        "to": "MS-PY101-045",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-045",
+        "to": "MS-PY101-046",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-045",
+        "to": "MS-PY101-046",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-046",
+        "to": "MS-PY101-047",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-046",
+        "to": "MS-PY101-047",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-047",
+        "to": "MS-PY101-048",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-047",
+        "to": "MS-PY101-048",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-048",
+        "to": "MS-PY101-049",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-048",
+        "to": "MS-PY101-049",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-049",
+        "to": "MS-PY101-050",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-049",
+        "to": "MS-PY101-050",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-050",
+        "to": "MS-PY101-051",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-050",
+        "to": "MS-PY101-051",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-051",
+        "to": "MS-PY101-052",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-047",
+        "to": "MS-PY101-052",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-052",
+        "to": "MS-PY101-053",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-048",
+        "to": "MS-PY101-053",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-053",
+        "to": "MS-PY101-054",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-053",
+        "to": "MS-PY101-054",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-054",
+        "to": "MS-PY101-055",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-054",
+        "to": "MS-PY101-055",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-055",
+        "to": "MS-PY101-056",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-044",
+        "to": "MS-PY101-056",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-056",
+        "to": "MS-PY101-057",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-056",
+        "to": "MS-PY101-057",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-057",
+        "to": "MS-PY101-058",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-048",
+        "to": "MS-PY101-058",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-058",
+        "to": "MS-PY101-059",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-053",
+        "to": "MS-PY101-059",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-059",
+        "to": "MS-PY101-060",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-044",
+        "to": "MS-PY101-060",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-060",
+        "to": "MS-PY101-061",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-060",
+        "to": "MS-PY101-061",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-061",
+        "to": "MS-PY101-062",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-061",
+        "to": "MS-PY101-062",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-062",
+        "to": "MS-PY101-063",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-062",
+        "to": "MS-PY101-063",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-063",
+        "to": "MS-PY101-064",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-044",
+        "to": "MS-PY101-064",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-064",
+        "to": "MS-PY101-065",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-065",
+        "to": "MS-PY101-066",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-065",
+        "to": "MS-PY101-066",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-066",
+        "to": "MS-PY101-067",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-066",
+        "to": "MS-PY101-067",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-067",
+        "to": "MS-PY101-068",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-067",
+        "to": "MS-PY101-068",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-068",
+        "to": "MS-PY101-069",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-068",
+        "to": "MS-PY101-069",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-069",
+        "to": "MS-PY101-070",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-069",
+        "to": "MS-PY101-070",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-070",
+        "to": "MS-PY101-071",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-070",
+        "to": "MS-PY101-071",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-071",
+        "to": "MS-PY101-072",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-071",
+        "to": "MS-PY101-072",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-072",
+        "to": "MS-PY101-073",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-072",
+        "to": "MS-PY101-073",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-073",
+        "to": "MS-PY101-074",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-073",
+        "to": "MS-PY101-074",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-074",
+        "to": "MS-PY101-075",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-074",
+        "to": "MS-PY101-075",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-075",
+        "to": "MS-PY101-076",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-075",
+        "to": "MS-PY101-076",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-076",
+        "to": "MS-PY101-077",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-076",
+        "to": "MS-PY101-077",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-077",
+        "to": "MS-PY101-078",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-077",
+        "to": "MS-PY101-078",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-078",
+        "to": "MS-PY101-079",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-078",
+        "to": "MS-PY101-079",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-079",
+        "to": "MS-PY101-080",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-079",
+        "to": "MS-PY101-080",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-080",
+        "to": "MS-PY101-081",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-080",
+        "to": "MS-PY101-081",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-081",
+        "to": "MS-PY101-082",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-081",
+        "to": "MS-PY101-082",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-082",
+        "to": "MS-PY101-083",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-082",
+        "to": "MS-PY101-083",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-083",
+        "to": "MS-PY101-084",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-083",
+        "to": "MS-PY101-084",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-084",
+        "to": "MS-PY101-085",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-084",
+        "to": "MS-PY101-085",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-085",
+        "to": "MS-PY101-086",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-085",
+        "to": "MS-PY101-086",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-086",
+        "to": "MS-PY101-087",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-086",
+        "to": "MS-PY101-087",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-087",
+        "to": "MS-PY101-088",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-087",
+        "to": "MS-PY101-088",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-088",
+        "to": "MS-PY101-089",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-088",
+        "to": "MS-PY101-089",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-089",
+        "to": "MS-PY101-090",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-085",
+        "to": "MS-PY101-090",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-089",
+        "to": "MS-PY101-090",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-090",
+        "to": "MS-PY101-091",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-090",
+        "to": "MS-PY101-091",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-091",
+        "to": "MS-PY101-092",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-091",
+        "to": "MS-PY101-092",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-092",
+        "to": "MS-PY101-093",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-092",
+        "to": "MS-PY101-093",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-093",
+        "to": "MS-PY101-094",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-093",
+        "to": "MS-PY101-094",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-094",
+        "to": "MS-PY101-095",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-094",
+        "to": "MS-PY101-095",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-095",
+        "to": "MS-PY101-096",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-095",
+        "to": "MS-PY101-096",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-096",
+        "to": "MS-PY101-097",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-096",
+        "to": "MS-PY101-097",
+        "type": "recommended"
+      },
+      {
+        "from": "MS-PY101-097",
+        "to": "MS-PY101-098",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-097",
+        "to": "MS-PY101-098",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-098",
+        "to": "MS-PY101-099",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-098",
+        "to": "MS-PY101-099",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-099",
+        "to": "MS-PY101-100",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-098",
+        "to": "MS-PY101-100",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-099",
+        "to": "MS-PY101-100",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-100",
+        "to": "MS-PY101-101",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-100",
+        "to": "MS-PY101-101",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-101",
+        "to": "MS-PY101-102",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-101",
+        "to": "MS-PY101-102",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-102",
+        "to": "MS-PY101-103",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-100",
+        "to": "MS-PY101-103",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-076",
+        "to": "MS-PY101-103",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-103",
+        "to": "MS-PY101-104",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-104",
+        "to": "MS-PY101-105",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-104",
+        "to": "MS-PY101-105",
+        "type": "mandatory"
+      },
+      {
+        "from": "MS-PY101-105",
+        "to": "MS-PY101-106",
+        "type": "sequential"
+      },
+      {
+        "from": "MS-PY101-105",
+        "to": "MS-PY101-106",
+        "type": "mandatory"
+      }
+    ]
+  },
+  "learning_paths": {
+    "default": [
+      "MS-PY101-001",
+      "MS-PY101-002",
+      "MS-PY101-003",
+      "MS-PY101-004",
+      "MS-PY101-005",
+      "MS-PY101-006",
+      "MS-PY101-007",
+      "MS-PY101-008",
+      "MS-PY101-009",
+      "MS-PY101-010",
+      "MS-PY101-011",
+      "MS-PY101-012",
+      "MS-PY101-013",
+      "MS-PY101-014",
+      "MS-PY101-015",
+      "MS-PY101-016",
+      "MS-PY101-017",
+      "MS-PY101-018",
+      "MS-PY101-019",
+      "MS-PY101-020",
+      "MS-PY101-021",
+      "MS-PY101-022",
+      "MS-PY101-023",
+      "MS-PY101-024",
+      "MS-PY101-025",
+      "MS-PY101-026",
+      "MS-PY101-027",
+      "MS-PY101-028",
+      "MS-PY101-029",
+      "MS-PY101-030",
+      "MS-PY101-031",
+      "MS-PY101-032",
+      "MS-PY101-033",
+      "MS-PY101-034",
+      "MS-PY101-035",
+      "MS-PY101-036",
+      "MS-PY101-037",
+      "MS-PY101-038",
+      "MS-PY101-039",
+      "MS-PY101-040",
+      "MS-PY101-041",
+      "MS-PY101-042",
+      "MS-PY101-043",
+      "MS-PY101-044",
+      "MS-PY101-045",
+      "MS-PY101-046",
+      "MS-PY101-047",
+      "MS-PY101-048",
+      "MS-PY101-049",
+      "MS-PY101-050",
+      "MS-PY101-051",
+      "MS-PY101-052",
+      "MS-PY101-053",
+      "MS-PY101-054",
+      "MS-PY101-055",
+      "MS-PY101-056",
+      "MS-PY101-057",
+      "MS-PY101-058",
+      "MS-PY101-059",
+      "MS-PY101-060",
+      "MS-PY101-061",
+      "MS-PY101-062",
+      "MS-PY101-063",
+      "MS-PY101-064",
+      "MS-PY101-065",
+      "MS-PY101-066",
+      "MS-PY101-067",
+      "MS-PY101-068",
+      "MS-PY101-069",
+      "MS-PY101-070",
+      "MS-PY101-071",
+      "MS-PY101-072",
+      "MS-PY101-073",
+      "MS-PY101-074",
+      "MS-PY101-075",
+      "MS-PY101-076",
+      "MS-PY101-077",
+      "MS-PY101-078",
+      "MS-PY101-079",
+      "MS-PY101-080",
+      "MS-PY101-081",
+      "MS-PY101-082",
+      "MS-PY101-083",
+      "MS-PY101-084",
+      "MS-PY101-085",
+      "MS-PY101-086",
+      "MS-PY101-087",
+      "MS-PY101-088",
+      "MS-PY101-089",
+      "MS-PY101-090",
+      "MS-PY101-091",
+      "MS-PY101-092",
+      "MS-PY101-093",
+      "MS-PY101-094",
+      "MS-PY101-095",
+      "MS-PY101-096",
+      "MS-PY101-097",
+      "MS-PY101-098",
+      "MS-PY101-099",
+      "MS-PY101-100",
+      "MS-PY101-101",
+      "MS-PY101-102",
+      "MS-PY101-103",
+      "MS-PY101-104",
+      "MS-PY101-105",
+      "MS-PY101-106"
+    ],
+    "accelerated": [
+      "MS-PY101-001",
+      "MS-PY101-003",
+      "MS-PY101-004",
+      "MS-PY101-005",
+      "MS-PY101-006",
+      "MS-PY101-007",
+      "MS-PY101-008",
+      "MS-PY101-009",
+      "MS-PY101-010",
+      "MS-PY101-011",
+      "MS-PY101-012",
+      "MS-PY101-013",
+      "MS-PY101-014",
+      "MS-PY101-015",
+      "MS-PY101-016",
+      "MS-PY101-017",
+      "MS-PY101-018",
+      "MS-PY101-019",
+      "MS-PY101-020",
+      "MS-PY101-023",
+      "MS-PY101-024",
+      "MS-PY101-025",
+      "MS-PY101-026",
+      "MS-PY101-027",
+      "MS-PY101-028",
+      "MS-PY101-029",
+      "MS-PY101-030",
+      "MS-PY101-031",
+      "MS-PY101-032",
+      "MS-PY101-033",
+      "MS-PY101-034",
+      "MS-PY101-035",
+      "MS-PY101-036",
+      "MS-PY101-037",
+      "MS-PY101-038",
+      "MS-PY101-039",
+      "MS-PY101-040",
+      "MS-PY101-041",
+      "MS-PY101-042",
+      "MS-PY101-044",
+      "MS-PY101-045",
+      "MS-PY101-046",
+      "MS-PY101-047",
+      "MS-PY101-048",
+      "MS-PY101-049",
+      "MS-PY101-050",
+      "MS-PY101-051",
+      "MS-PY101-052",
+      "MS-PY101-053",
+      "MS-PY101-054",
+      "MS-PY101-055",
+      "MS-PY101-056",
+      "MS-PY101-057",
+      "MS-PY101-058",
+      "MS-PY101-059",
+      "MS-PY101-060",
+      "MS-PY101-061",
+      "MS-PY101-062",
+      "MS-PY101-063",
+      "MS-PY101-065",
+      "MS-PY101-068",
+      "MS-PY101-069",
+      "MS-PY101-070",
+      "MS-PY101-071",
+      "MS-PY101-072",
+      "MS-PY101-073",
+      "MS-PY101-074",
+      "MS-PY101-075",
+      "MS-PY101-076",
+      "MS-PY101-077",
+      "MS-PY101-078",
+      "MS-PY101-079",
+      "MS-PY101-080",
+      "MS-PY101-081",
+      "MS-PY101-082",
+      "MS-PY101-083",
+      "MS-PY101-084",
+      "MS-PY101-086",
+      "MS-PY101-087",
+      "MS-PY101-088",
+      "MS-PY101-089",
+      "MS-PY101-090",
+      "MS-PY101-091",
+      "MS-PY101-092",
+      "MS-PY101-093",
+      "MS-PY101-094",
+      "MS-PY101-095",
+      "MS-PY101-096",
+      "MS-PY101-097",
+      "MS-PY101-098",
+      "MS-PY101-099",
+      "MS-PY101-100",
+      "MS-PY101-103",
+      "MS-PY101-105"
+    ],
+    "supplementary": {
+      "프롬프트_엔지니어링": [
+        "MS-PY101-023",
+        "MS-PY101-026",
+        "MS-PY101-030",
+        "MS-PY101-040",
+        "MS-PY101-042",
+        "MS-PY101-043"
+      ],
+      "데이터_구조": [
+        "MS-PY101-048",
+        "MS-PY101-050",
+        "MS-PY101-059",
+        "MS-PY101-069"
+      ],
+      "객체지향": [
+        "MS-PY101-086",
+        "MS-PY101-088",
+        "MS-PY101-090",
+        "MS-PY101-091",
+        "MS-PY101-093",
+        "MS-PY101-094",
+        "MS-PY101-095",
+        "MS-PY101-096",
+        "MS-PY101-101"
+      ],
+      "테스트_품질": [
+        "MS-PY101-063",
+        "MS-PY101-071",
+        "MS-PY101-072",
+        "MS-PY101-077",
+        "MS-PY101-078",
+        "MS-PY101-079",
+        "MS-PY101-080",
+        "MS-PY101-081",
+        "MS-PY101-083",
+        "MS-PY101-084",
+        "MS-PY101-093",
+        "MS-PY101-100",
+        "MS-PY101-103"
+      ]
+    }
+  }
 }
