@@ -1,0 +1,252 @@
+name: "Lecture Planning Pipeline v2 - Micro Session Chunking"
+description: "Gemini 최적화된 15~25분 마이크로 세션 청킹 기반 강의 기획 워크플로우 (Planner Team v2) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "3.0"
+
+output_path: "{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md"
+max_retries: 2  # step_9 반려 시 step_4부터 재실행 최대 횟수
+
+# ── 마이크로 세션 청킹 정책 ──────────────────────────────────────────
+# Gemini 3.1 Pro 출력 토큰 최적화를 위해 15~25분 단위로 세분화
+micro_session_policy:
+  enabled: true
+  chunk_size: "15-25min"  # 분량 단위
+  estimated_chars: "3000-4500"  # 예상 교안 분량 (공백 포함)
+  min_chars_per_session: 1500  # 강사 대본 최소 분량
+  max_chars_per_session: 2000  # 강사 대본 최대 분량
+  chunk_types: ["narrative", "code", "diagram", "lab"]
+  
+  output_structure:
+    index_file: "01_Planning/micro_sessions/_index.json"
+    flow_file: "01_Planning/micro_sessions/_flow.md"
+    dependency_file: "01_Planning/micro_sessions/_dependency.mmd"
+    session_dir: "01_Planning/micro_sessions/"
+    session_pattern: "세션-{번호:03d}-{제목}.md"
+  
+  rules:
+    - "단일 개념 원칙: 각 마이크로 세션은 단 1개의 핵심 학습 목표만 다룸"
+    - "출력 한계 고려: Gemini 3.1 Pro의 출력 토큰 한계(3,000~4,500자) 내에서 완결성 확보"
+    - "연속성 설계: 각 세션은 선행/후행 세션과 명확히 연결"
+    - "독립 파일화: 각 세션은 개별 파일로 저장하여 검색/수정 용이"
+
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
+  path: ".agent/logs/{YYYY-MM-DD}_01_Lecture_Planning_v2.jsonl"
+  format: "jsonl"
+
+steps:
+  # Phase 1: 순차 실행 — 스코프 정의 → 트렌드 리서치 → 학습자 분석 → 커리큘럼 설계
+  
+  # ⚠️ Note on NotebookLM Execution (Critical)
+  # Step 1 (A1_Trend_Researcher) requires NotebookLM URL execution.
+  # Due to subagent limitations (skill() tool not accessible), the NotebookLM 
+  # queries should be executed by the Main Agent before delegating to A1, 
+  # OR A1 must use bash() tool to execute commands directly.
+  # See: .agent/agents/01_planner/A1_Trend_Researcher.md §🔴 CRITICAL
+  - id: step_0_scope
+    agent: "01_planner/A0_Orchestrator"
+    action: "analyze_request"
+    input: "User Prompt, Lecture Topic File, NotebookLM URL (Optional), Output Language: Korean"
+    output: "Scope Definition & Agent Task Beliefs"
+    notes: |
+      마이크로 세션 v2 워크플로우임을 명시하고, Gemini 최적화된 15~25분 청킹 전략을 설명합니다.
+
+  - id: step_1_trend_analysis
+    agent: "01_planner/A1_Trend_Researcher"
+    action: "research_trend"
+    depends_on: "step_0_scope"
+    input: "Scope Definition, Output Language: Korean"
+    output: "Trend Report & Fact Packet (01_Planning/Trend_Report.md)"
+    notes: |
+      ⚠️ NotebookLM Execution: A1 must execute bash commands to run notebooklm queries.
+      Verification: Check Trend_Report.md contains "Query 1/2/3" with actual stdout.
+      On Failure: A0 must reject and retry step_1_trend_analysis (see A0_Orchestrator.md §🔴 A1 검증 프로토콜)
+      📊 External Tool Logging: A1 must log each NotebookLM query to .agent/logs/{DATE}_01_Lecture_Planning_v2.jsonl using EXTERNAL_TOOL_START/END events (see logging-protocol.md §9.7)
+
+  - id: step_2_learner_analysis
+    agent: "01_planner/A5B_Learner_Analyst"
+    action: "analyze_learner"
+    depends_on: "step_1_trend_analysis"
+    input: "Scope Definition, Trend Report, Output Language: Korean"
+    output: "Learner Persona & Pain Points (01_Planning/강의구성안.md 내 학습자 분석 섹션)"
+
+  - id: step_3_curriculum_design
+    agent: "01_planner/A3_Curriculum_Architect"
+    action: "design_structure"
+    depends_on: "step_2_learner_analysis"
+    input: "Learner Persona, Scope Definition, Trend Report, Output Language: Korean"
+    output: "Curriculum Structure (Skeleton)"
+    notes: |
+      기존 60~90분 단위 세션으로 초안 설계. A3B에서 마이크로 세션으로 세분화.
+
+  # Phase 2: 마이크로 세션 청킹 (Gemini 최적화)
+  # NEW: A3B가 기존 세션을 15~25분 마이크로 세션으로 세분화
+  - id: step_4_micro_chunking
+    agent: "01_planner/A3B_MicroSession_Specifier"
+    action: "design_micro_sessions"
+    depends_on: "step_3_curriculum_design"
+    parallel_mode: "session_batch"  # 세션별 병렬 청킹
+    batch_size: 5  # 한 번에 처리할 세션 수
+    input: 
+      - "Curriculum Structure (Skeleton)"
+      - "Learner Persona"
+      - "Trend Report"
+      - "micro_session_policy"
+      - "Output Language: Korean"
+    output: "Micro Session Specifications (01_Planning/micro_sessions/세션-*.md)"
+    notes: |
+      🎯 핵심: 기존 60~90분 세션을 15~25분 마이크로 세션으로 세분화
+      📁 산출물: 각 마이크로 세션별 개별 .md 파일 + 메타데이터 태그
+      🏷️ 태그: chunk_type (narrative|code|diagram|lab), complexity, estimated_chars
+      📏 분량: 각 세션 3,000~4,500자 분량으로 설계 (Gemini 출력 한계 고려)
+      ⚠️ 반드시 개별 파일로 저장하여 downstream에서 세션별 집필 가능하도록 함
+
+  # Phase 2.5: 세션 인덱싱 및 흐름 설계
+  # NEW: A3C가 마이크로 세션 간 의존성과 학습 경로 설계
+  - id: step_5_session_indexing
+    agent: "01_planner/A3C_Session_Indexer"
+    action: "create_flow_index"
+    depends_on: "step_4_micro_chunking"
+    input: 
+      - "Micro Session Specifications (All .md files)"
+      - "Curriculum Structure"
+      - "Output Language: Korean"
+    output: 
+      - "Master Index (01_Planning/micro_sessions/_index.json)"
+      - "Flow Document (01_Planning/micro_sessions/_flow.md)"
+      - "Dependency Graph (01_Planning/micro_sessions/_dependency.mmd)"
+    notes: |
+      🗺️ 의존성 그래프: Mermaid 다이어그램으로 전체 세션 흐름 시각화
+      🛤️ 학습 경로: 기본/보충/단축 경로 설계
+      📊 난이도 곡선: 전체 커리큘럼의 난이도 진행 시각화
+      🔗 브릿지 노트: 세션 간 전환 멘트 예시 모음
+
+  # Phase 3: 병렬 실행 — A2와 A7은 서로 의존성 없이 동시 실행 가능
+  - id: step_6_instructional_design
+    agent: "01_planner/A2_Instructional_Designer"
+    action: "design_activities"
+    parallel: true  # ← A7과 병렬 실행
+    depends_on: "step_5_session_indexing"
+    input: 
+      - "Curriculum Structure"
+      - "Micro Session Index"
+      - "Learner Persona"
+      - "Output Language: Korean"
+    output: "Learning Activities & Assessment Plan (per micro-session)"
+    notes: |
+      각 마이크로 세션별 학습 활동 설계. 개별 세션 파일에 활동 정보 추가.
+
+  - id: step_7_differentiation
+    agent: "01_planner/A7_Differentiation_Advisor"
+    action: "identify_usp"
+    parallel: true  # ← A2와 병렬 실행
+    depends_on: "step_5_session_indexing"
+    input: 
+      - "Curriculum Structure"
+      - "Micro Session Index"
+      - "Trend Report"
+      - "Output Language: Korean"
+    output: "Differentiation Strategy (USP) per micro-session"
+
+  # Phase 3.5: 통합 — A3가 A2+A7 산출물을 커리큘럼에 병합
+  - id: step_8_integration
+    agent: "01_planner/A3_Curriculum_Architect"
+    action: "integrate_outputs_v2"
+    depends_on:
+      - "step_6_instructional_design"
+      - "step_7_differentiation"
+    input: 
+      - "Curriculum Structure (Skeleton)"
+      - "Micro Session Index"
+      - "Learning Activities (A2)"
+      - "Differentiation Strategy (A7)"
+      - "Output Language: Korean"
+    output: "Integrated Curriculum Plan with Micro Sessions (Complete)"
+    notes: |
+      모든 마이크로 세션 정보를 통합하여 최종 강의구성안 완성.
+      마이크로 세션 링크와 의존성 그래프를 메인 문서에 포함.
+
+  # Phase 4: QA — 통합된 커리큘럼 검증
+  - id: step_9_qa_review
+    agent: "01_planner/A5A_QA_Manager"
+    action: "verify_plan_v2"
+    depends_on: "step_8_integration"
+    input: 
+      - "Integrated Curriculum Plan"
+      - "Micro Session Index"
+      - "Dependency Graph"
+      - "Output Language: Korean"
+    output: "QA Report & Final Curriculum Plan"
+    qa_criteria:
+      - "마이크로 세션당 단일 개념 준수 여부"
+      - "15~25분 시간 범위 준수 여부"
+      - "3,000~4,500자 분량 적절성"
+      - "선행/후행 세션 연결성"
+      - "chunk_type 태그 적절성"
+      - "의존성 그래프 완결성"
+    notes: |
+      마이크로 세션 v2 특화 QA 항목 검증:
+      1. 각 세션이 단 1개의 개념만 다루는가?
+      2. 시간/분량이 Gemini 출력 한계 내에 있는가?
+      3. 의존성 그래프에 고립/순환 의존성이 없는가?
+
+  # Phase 5: 최종 승인/반려
+  - id: step_10_final_approval
+    agent: "01_planner/A0_Orchestrator"
+    action: "approve_deliverable_v2"
+    depends_on: "step_9_qa_review"
+    input: 
+      - "Final Curriculum Plan"
+      - "Micro Session Index"
+      - "Dependency Graph"
+      - "QA Report"
+      - "Output Language: Korean"
+    output: "Approved Lecture Plan with Micro Sessions"
+    decision:
+      approved: 
+        action: "Finish"
+        save_targets:
+          - "01_Planning/강의구성안.md"
+          - "01_Planning/micro_sessions/_index.json"
+          - "01_Planning/micro_sessions/_flow.md"
+          - "01_Planning/micro_sessions/_dependency.mmd"
+          - "01_Planning/micro_sessions/세션-*.md"
+      rejected: 
+        action: "Retry from step_4_micro_chunking"
+        max_retries: 2
+        notes: "반려 시 A3B_MicroSession_Specifier부터 재실행"
+
+# ── 모델 라우팅 설정 ──────────────────────────────────────────
+model_routing:
+  # 마이크로 세션 청킹: Gemini 3.1 Pro (1M context, 출력 품질 최적화)
+  A3B_MicroSession_Specifier:
+    category: "curriculum-chunking"
+    note: "15~25min 마이크로 세션 설계 및 Gemini 최적화 태그 부여"
+  
+  # 세션 인덱싱: Gemini 3.1 Pro (의존성 그래프 및 흐름 설계)
+  A3C_Session_Indexer:
+    category: "curriculum-chunking"
+    note: "의존성 그래프 및 학습 경로 설계"
+  
+  # 기존 에이전트는 기본 카테고리 유지
+  A3_Curriculum_Architect:
+    category: "ultrabrain"
+    note: "커리큘럼 구조 설계 (기존 설정 유지)"
+  
+  A7_Differentiation_Advisor:
+    category: "artistry"
+    note: "차별화 전략 설계 (기존 설정 유지)"
+
+# ── 다운스트림 연동 ──────────────────────────────────────────
+downstream_integration:
+  # 02_Material_Writing_v2 연동
+  material_writing:
+    input_format: "micro_session_based"
+    session_files: "01_Planning/micro_sessions/세션-*.md"
+    index_file: "01_Planning/micro_sessions/_index.json"
+    flow_file: "01_Planning/micro_sessions/_flow.md"
+    
+    notes: |
+      02_Material_Writing_v2는 마이크로 세션별 개별 교안 작성 후 취합하는 방식.
+      각 세션 파일은 독립적으로 처리되며, A4C_Material_Aggregator가 최종 통합.

@@ -1,0 +1,297 @@
+name: "Material Writing Pipeline v2 - Session-Based Aggregation"
+description: "마이크로 세션별 개별 집필 후 취합하는 Gemini 최적화 교안 작성 워크플로우 (Writer Team v2) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "3.0"
+
+output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
+max_retries: 2
+
+# ── 세션 기반 집필 정책 ──────────────────────────────────────────
+session_writing_policy:
+  enabled: true
+  input_format: "micro_session_based"
+  
+  # 입력 파일 위치
+  input_sources:
+    session_specs: "01_Planning/micro_sessions/세션-*.md"
+    session_index: "01_Planning/micro_sessions/_index.json"
+    session_flow: "01_Planning/micro_sessions/_flow.md"
+    dependency_graph: "01_Planning/micro_sessions/_dependency.mmd"
+  
+  # 출력 구조
+  output_structure:
+    individual_sessions: "02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md"
+    aggregated_material: "02_Material/강의교안_v1.0.md"
+    visual_specs: "02_Material/visual_specs/"
+    src_dir: "02_Material/src/"
+  
+  # Gemini 최적화 설정
+  gemini_optimized:
+    chunk_size: "15-25min"
+    estimated_chars: "3000-4500"
+    min_chars_per_session: 3000
+    max_chars_per_session: 4500
+    writing_style: "continuous_prose"  # 개조식 금지, 서술형 필수
+    tone: "friendly_spoken_korean"   # ~해요, ~입니다
+    
+  rules:
+    - "단일 세션 집중: 각 에이전트는 1개의 마이크로 세션만 처리"
+    - "개별 파일 출력: 각 세션은 독립된 완성된 교안 파일로 저장"
+    - "출력 한계 준수: 3,000~4,500자 내에서 완결성 확보"
+    - "서술형 강제: 개조식 요약 금지, 긴 줄글 서술형 필수"
+    - "브릿지 노트: 세션 간 연결성을 위한 전환 멘트 포함"
+
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
+  path: ".agent/logs/{YYYY-MM-DD}_02_Material_Writing_v2.jsonl"
+  format: "jsonl"
+
+steps:
+  # Phase 1: 소스 분석 및 구조화 (기존과 동일)
+  - id: step_1_source_mining
+    agent: "02_writer/A1_Source_Miner"
+    action: "extract_facts"
+    input: 
+      - "Micro Session Specs (01_Planning/micro_sessions/)"
+      - "Source Materials"
+      - "NotebookLM URL (Optional)"
+      - "Output Language: Korean"
+    output: "Fact Packet"
+    notes: |
+      📊 External Tool Logging: A1_Source_Miner must log all external tool calls
+      (notebooklm, deep-research, context7, firecrawl, pdf-official) to
+      .agent/logs/{DATE}_02_Material_Writing_v2.jsonl using EXTERNAL_TOOL_START/END events.
+
+  - id: step_2_traceability_setup
+    agent: "02_writer/A2_Traceability_Curator"
+    action: "setup_tracking"
+    depends_on: "step_1_source_mining"
+    input: 
+      - "Fact Packet"
+      - "Source Materials"
+      - "Output Language: Korean"
+    output: "Traceability Packet (Initial)"
+
+  - id: step_3_skeleton_design
+    agent: "02_writer/A3_Curriculum_Architect"
+    action: "create_skeleton"
+    depends_on: "step_2_traceability_setup"
+    input: 
+      - "Fact Packet"
+      - "Micro Session Index"
+      - "Output Language: Korean"
+    output: "Skeleton Packet (per session)"
+
+  # Phase 2: 마이크로 세션별 개별 집필 (Gemini 최적화)
+  # NEW: A4B가 각 마이크로 세션을 개별적으로 집필 (병렬 실행)
+  - id: step_4_session_writing
+    agent: "02_writer/A4B_Session_Writer"
+    action: "write_session_material"
+    depends_on: "step_3_skeleton_design"
+    parallel_mode: "foreach_session"  # 각 마이크로 세션별 독립 실행
+    batch_size: 3  # 한 번에 처리할 세션 수 (Gemini API rate limit 고려)
+    input: 
+      - "Session Spec (from 01_Planning)"
+      - "Skeleton Packet"
+      - "Fact Packet"
+      - "Traceability Packet"
+      - "Output Language: Korean"
+    output: "Session Material Files (02_Material/sessions/세션-*.md)"
+    notes: |
+      🎯 핵심: 각 마이크로 세션(15~25분)을 개별 파일로 집필
+      📝 출력 규칙:
+        - 공백 포함 3,000~4,500자 (Gemini 출력 한계 준수)
+        - 서술형 긴 줄글 (개조식 요약 금지)
+        - 친근한 구어체 (~해요, ~입니다)
+        - 🗣️ 강사 대본 + 🎙️ 실습 가이드 포함
+        - 비유 및 스토리텔링 ('AI 시대의 서사' 톤)
+      📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md
+      ⚠️ 각 세션은 독립적으로 완결성을 가져야 함 (중간에 끊기지 않음)
+
+  # Phase 3: 시각화 및 표 설계 (병렬)
+  - id: step_5_code_validation
+    agent: "02_writer/A5_Code_Validator"
+    action: "verify_code"
+    depends_on: "step_4_session_writing"
+    parallel_group: "phase3_enhancement"
+    input: 
+      - "Session Material Files"
+      - "Output Language: Korean"
+    output: "Verified Code Blocks & Tech Report"
+
+  - id: step_6_visualization_design
+    agent: "02_writer/A6_Visualization_Designer"
+    action: "design_diagrams"
+    depends_on: "step_4_session_writing"
+    parallel_group: "phase3_enhancement"
+    input: 
+      - "Session Material Files"
+      - "Fact Packet"
+      - "Output Language: Korean"
+    output: "Visualization Packet (Mermaid Diagrams)"
+
+  # NEW: A11이 표 및 시각화 명세 설계
+  - id: step_7_chart_specification
+    agent: "02_writer/A11_Chart_Specifier"
+    action: "design_tables"
+    depends_on: "step_4_session_writing"
+    parallel_group: "phase3_enhancement"
+    input: 
+      - "Session Material Files"
+      - "chunk_type per session"
+      - "Output Language: Korean"
+    output: "Table & Chart Specifications (02_Material/visual_specs/)"
+    notes: |
+      📊 표 설계: 비교 표, 요약 표, 단계별 표
+      📈 다이어그램: Mermaid flowchart, sequenceDiagram, classDiagram
+      🎯 청크 타입별 최적화: narrative/code/diagram/lab별 적절한 시각화
+
+  - id: step_8_learner_experience
+    agent: "02_writer/A7_Learner_Experience_Designer"
+    action: "design_labs"
+    depends_on: "step_4_session_writing"
+    parallel_group: "phase3_enhancement"
+    input: 
+      - "Session Material Files"
+      - "Learner Persona"
+      - "Output Language: Korean"
+    output: "Lab Packet & Example Sets"
+
+  - id: step_9_instructor_support
+    agent: "02_writer/A9_Instructor_Support_Designer"
+    action: "create_guide"
+    depends_on: "step_4_session_writing"
+    parallel_group: "phase3_enhancement"
+    input: 
+      - "Session Material Files"
+      - "Lab Packet"
+      - "Output Language: Korean"
+    output: "Instructor Support Packet"
+
+  - id: step_10_differentiation
+    agent: "02_writer/A10_Differentiation_Strategist"
+    action: "enhance_content"
+    depends_on: "step_4_session_writing"
+    parallel_group: "phase3_enhancement"
+    input: 
+      - "Session Material Files"
+      - "Output Language: Korean"
+    output: "Differentiation Strategy (USP) per session"
+
+  # Phase 4: 시각화 삽입 (세션별)
+  - id: step_11_visual_insertion
+    agent: "02_writer/A4B_Session_Writer"
+    action: "insert_visualizations"
+    depends_on:
+      - "step_6_visualization_design"
+      - "step_7_chart_specification"
+    input: 
+      - "Session Material Files"
+      - "Visualization Packet"
+      - "Table Specifications"
+      - "Output Language: Korean"
+    output: "Enhanced Session Materials (with tables & diagrams)"
+
+  # Phase 5: 취합 및 통합 (NEW)
+  # NEW: A4C가 개별 세션 파일들을 취합하여 최종 교안 생성
+  - id: step_12_aggregation
+    agent: "02_writer/A4C_Material_Aggregator"
+    action: "aggregate_sessions"
+    depends_on:
+      - "step_5_code_validation"
+      - "step_11_visual_insertion"
+      - "step_8_learner_experience"
+      - "step_9_instructor_support"
+      - "step_10_differentiation"
+    input: 
+      - "All Session Material Files"
+      - "Session Index"
+      - "Dependency Graph"
+      - "Flow Document"
+      - "Output Language: Korean"
+    output: "Aggregated Material Draft (v1.0)"
+    notes: |
+      🎯 핵심: 개별 세션 파일들을 검증하고 통합
+      🔗 연결성 검증: 의존성 그래프 기반 세션 연결 확인
+      📝 브릿지 노트: 세션 간 전환 멘트 삽입
+      📋 최종 구조:
+        - 헤더 및 메타데이터
+        - 목차 및 네비게이션
+        - 의존성 그래프 (Mermaid)
+        - 개별 세션 내용 통합
+        - 부록 (요약, 참고자료, 로드맵)
+
+  # Phase 6: 최종 QA
+  - id: step_13_final_qa
+    agent: "02_writer/A8_QA_Editor"
+    action: "quality_assurance_v2"
+    depends_on: "step_12_aggregation"
+    input: 
+      - "Aggregated Material (v1.0)"
+      - "Fact Packet"
+      - "Traceability Packet"
+      - "Output Language: Korean"
+    output: "QA Report & Final Material"
+    qa_criteria:
+      - "5대 원칙: 완전성, 명확성, 재현성, 추적성, 원본유지"
+      - "세션별 독립성 + 전체 일관성"
+      - "브릿지 노트 적절성"
+      - "용어 및 비유 일관성"
+      - "난이도 곡선 부드러움"
+      - "시각화 적절성 (표/다이어그램)"
+    decision:
+      approved: "Finish"
+      rejected: "Go to step_4_session_writing"
+
+# ── 모델 라우팅 설정 ──────────────────────────────────────────
+model_routing:
+  # 세션별 집필: Gemini 3.1 Pro (1M context, 긴 교안 작성에 최적)
+  A4B_Session_Writer:
+    category: "micro-writing"
+    note: "단일 마이크로 세션(3,000~4,500자) 집필 - Gemini 3.1 Pro 사용"
+  
+  # 취합 및 통합: Gemini 3.1 Pro (의존성 분석 및 통합)
+  A4C_Material_Aggregator:
+    category: "micro-writing"
+    note: "세션 취합 및 브릿지 노트 삽입 - Gemini 3.1 Pro 사용"
+  
+  # 표 및 시각화: visual-engineering 카테고리
+  A11_Chart_Specifier:
+    category: "visual-engineering"
+    note: "표 및 Mermaid 다이어그램 설계"
+  
+  # 기존 에이전트는 기본 카테고리 유지
+  A6_Visualization_Designer:
+    category: "visual-engineering"
+    note: "시각화 설계 (기존 설정 유지)"
+  
+  A8_QA_Editor:
+    category: "ultrabrain"
+    note: "최종 QA (기존 설정 유지)"
+
+# ── 업스트림/다운스트림 연동 ──────────────────────────────────────────
+upstream_integration:
+  # 01_Lecture_Planning_v2 연동
+  lecture_planning:
+    required_inputs:
+      - "01_Planning/micro_sessions/세션-*.md"
+      - "01_Planning/micro_sessions/_index.json"
+      - "01_Planning/micro_sessions/_flow.md"
+      - "01_Planning/micro_sessions/_dependency.mmd"
+    notes: |
+      v2 워크플로우는 마이크로 세션별 개별 파일을 입력으로 받음.
+      각 세션 파일은 독립적으로 처리되며, A4C가 최종 통합.
+
+downstream_integration:
+  # 03_Visualizer 연동
+  visualizer:
+    input_format: "session_based"
+    session_files: "02_Material/sessions/세션-*.md"
+    aggregated_material: "02_Material/강의교안_v1.0.md"
+    
+  # 04_Prompt_Generator 연동
+  prompt_generator:
+    input_format: "session_based"
+    notes: |
+      슬라이드 프롬프트 생성 시 마이크로 세션별로 개별 프롬프트 파일 생성.
