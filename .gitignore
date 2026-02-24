@@ -43,6 +43,8 @@ yarn.lock
 bun.lock
 .npm/
 .yarn/
+package.json
+bun.lock
 
 # ── AI 에이전트 런타임 / IDE 상태 ────────────────────────────
 .omc/
@@ -57,6 +59,7 @@ bun.lock
 *.pptx
 */05_PPTX/**/html/
 */06_NanoPPTX/**/images/
+Specification/
 
 # ── 참고자료 바이너리 (PDF, ZIP 등) ──────────────────────────
 *.pdf
