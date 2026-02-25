@@ -24,7 +24,8 @@ session_writing_policy:
     individual_sessions: "02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md"
     aggregated_material: "02_Material/강의교안_v1.0.md"
     visual_specs: "02_Material/visual_specs/"
-    src_dir: "02_Material/src/"
+    packets: "02_Material/packets/"
+    reports: "02_Material/reports/"
   
   # Gemini 최적화 설정
   gemini_optimized:

@@ -88,7 +88,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ├── Day5_AM_{주제}.md    ← 신규
 ├── Day5_PM_{주제}.md    ← 신규
 ├── sessions/ (개별 세션 파일들 - 그대로 유지)
-└── src/ (코드 예제 모음)
+├── packets/ (보조 패킷 6개)
+└── reports/ (QA 리포트, 코드 검증 리포트 등)
 ```
 
 ### 2. 강의교안_v2.1.md 구조
