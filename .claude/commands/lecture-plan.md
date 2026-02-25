@@ -15,7 +15,10 @@ $ARGUMENTS
    ```
    - 파싱된 입력 파일, NotebookLM URL, 로컬 폴더 경로를 prompt에 모두 포함하세요.
    - 서브에이전트가 `AGENTS.md`, 워크플로우 YAML, 에이전트 프롬프트를 자체 로드하여 파이프라인을 실행합니다.
-3. 서브에이전트 완료 후 산출물이 `{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md`에 저장되었는지 확인하세요.
+3. 서브에이전트 완료 후 산출물 검증:
+   - `{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md` 존재 확인
+   - `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/` 디렉토리 존재 확인 (마이크로 세션 명세서, 인덱스, 의존성 그래프)
+   - 최소 검증 대상: `_index.json`, `_flow.md`, `_dependency.mmd`, `세션-*.md` (1개 이상)
 
 
 ## 로깅 (MANDATORY)

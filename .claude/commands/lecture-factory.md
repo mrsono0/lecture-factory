@@ -17,7 +17,7 @@ $ARGUMENTS
    - **Phase 1: 기획 (`/project:lecture-plan`)**
      - 입력: 사용자가 제공한 초기 파일 및 URL, 로컬 폴더를 **반드시** `$ARGUMENTS` 형태로 전달하세요. (예: `/project:lecture-plan 입력 파일은 파이썬기초.md 이고 로컬 폴더는 참고자료, NotebookLM은 https://... 야.`)
      - 지시: "딥리서치를 필수로 수행하여 강의 구성안 작성"
-     - 대기: `01_Planning/강의구성안.md`가 생성되었는지 확인
+      - 대기: `01_Planning/강의구성안.md` **및** `01_Planning/micro_sessions/_index.json` 존재 확인 (마이크로 세션 청킹 산출물 포함 검증)
    
    - **Phase 2: 집필 (`/project:material-write`)**
      - 입력: Phase 1에서 생성된 `01_Planning/강의구성안.md` 및 **초기 사용자가 제공한 URL과 로컬 폴더 정보를 유실하지 말고 반드시 포함해서 전달하세요.** (예: `/project:material-write 입력 파일은 01_Planning/강의구성안.md 이고 로컬 폴더는 참고자료, NotebookLM은 https://... 야.`)
