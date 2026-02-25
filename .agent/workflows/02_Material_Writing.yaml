@@ -224,7 +224,6 @@ steps:
     parallel_group: "phase3_enhancement"
     input: 
       - "Session Material Files"
-      - "Lab Packet"
       - "Output Language: Korean"
     output: "Instructor Support Packet"
 
@@ -375,7 +374,7 @@ model_routing:
 
 # ── 업스트림/다운스트림 연동 ──────────────────────────────────────────
 upstream_integration:
-  # 01_Lecture_Planning_v2 연동
+  # 01_Lecture_Planning 연동
   lecture_planning:
     required_inputs:
       - "01_Planning/micro_sessions/세션-*.md"
