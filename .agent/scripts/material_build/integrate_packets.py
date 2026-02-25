@@ -22,7 +22,7 @@ SESSIONS_DIR = os.path.join(BASE, "sessions")
 # 1. lab_packet.md 파싱 → {session_id: content_block}
 # ──────────────────────────────────────────
 def parse_lab_packet():
-    path = os.path.join(BASE, "lab_packet.md")
+    path = os.path.join(BASE, "packets", "lab_packet.md")
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
     # Split by ### 세션 NNN:
@@ -64,7 +64,7 @@ def parse_visualization_packet():
         104: "프로그램 아키텍처 진화 (Evolution v1 → v4)",
     }
 
-    path = os.path.join(BASE, "visualization_packet.md")
+    path = os.path.join(BASE, "packets", "visualization_packet.md")
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
 
@@ -162,7 +162,7 @@ def parse_visual_specs():
 # ──────────────────────────────────────────
 def parse_instructor_support():
     """Extract per-session instructor notes from cue sheets."""
-    path = os.path.join(BASE, "instructor_support_packet.md")
+    path = os.path.join(BASE, "packets", "instructor_support_packet.md")
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
 

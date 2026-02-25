@@ -27,7 +27,7 @@ sessions_meta = {s["number"]: s for s in index["sessions"]}
 dep_graph = (PLANNING_DIR / "_dependency.mmd").read_text(encoding="utf-8")
 
 # Load visualization packet
-viz_packet = (MATERIAL_DIR / "visualization_packet.md").read_text(encoding="utf-8")
+viz_packet = (MATERIAL_DIR / "packets" / "visualization_packet.md").read_text(encoding="utf-8")
 
 # Load visual specs (tables) per day
 visual_specs = {}
