@@ -1,0 +1,126 @@
+name: "Material Writing Pipeline"
+description: "확정된 커리큘럼을 바탕으로 교안 본문과 코드를 작성하는 개발 단계 워크플로우 (Writer Team - 11 Agents) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "2.2"
+output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
+max_retries: 2
+# ── AM/PM 분할 출력 정책 ──────────────────────────────────────────
+# A3(Curriculum Architect)의 "오전/오후 분할 설계" 규칙(항목 7)과 연동.
+# 1일 강의 시간이 4시간을 초과하면 최종 산출물을 일자별 AM/PM 파일로 분할 출력한다.
+output_policy:
+  split_threshold: "1일 4시간 초과"
+  split_unit: "반일(AM/PM)"
+  file_naming: "Day{N}_{AM|PM}.md"
+  output_dir: "{YYYY-MM-DD_강의제목}/02_Material/"
+  rules:
+    - "A3 골격 패킷에 AM/PM 분할 플래그가 있으면 A4는 반일 단위로 독립 파일을 작성한다"
+    - "각 파일은 독립적으로 읽을 수 있는 완전한 교안이어야 한다 (헤더, 학습목표, 브릿지노트 포함)"
+    - "A8 QA는 파일별 독립성 + 파일간 교차 일관성을 모두 검증한다"
+    - "파일명 패턴은 다운스트림 03_visualizer의 Day{N}_{AM|PM} 입력 규칙과 일치시킨다"
+  fallback: "4시간 이하인 경우 기존 단일 파일(강의교안_v1.0.md) 출력"
+
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
+  path: ".agent/logs/{YYYY-MM-DD}_02_Material_Writing.jsonl"
+  format: "jsonl"
+
+steps:
+  # Phase 1: 소스 분석 및 구조화
+  - id: step_1_source_mining
+    agent: "02_writer/A1_Source_Miner"
+    action: "extract_facts"
+    input: "Curriculum Plan, Source Materials, NotebookLM URL (Optional), Output Language: Korean"
+    output: "Fact Packet"
+    
+    notes: |
+      📊 External Tool Logging: A1_Source_Miner must log all external tool calls
+      (notebooklm, deep-research, context7, firecrawl, pdf-official) to
+      .agent/logs/{DATE}_02_Material_Writing.jsonl using EXTERNAL_TOOL_START/END events.
+      See A1_Source_Miner.md §외부 도구 호출 로깅 for details.
+
+  - id: step_2_traceability_setup
+    agent: "02_writer/A2_Traceability_Curator"
+    action: "setup_tracking"
+    depends_on: "step_1_source_mining"
+    input: "Fact Packet, Source Materials, Output Language: Korean"
+    output: "Traceability Packet (Initial)"
+
+  # Phase 2: 골격 및 초안 작성
+  - id: step_3_skeleton_design
+    agent: "02_writer/A3_Curriculum_Architect"
+    action: "create_skeleton"
+    depends_on: "step_2_traceability_setup"
+    input: "Fact Packet, Curriculum Plan, Output Language: Korean"
+    output: "Skeleton Packet"
+
+  - id: step_4_drafting
+    agent: "02_writer/A4_Technical_Writer"
+    action: "write_draft"
+    depends_on: "step_3_skeleton_design"
+    input: "Skeleton Packet, Fact Packet, Traceability Packet, Output Language: Korean"
+    output: "Material Draft (v0.5)"
+
+  # Phase 3: 상세 설계 및 검증 (5개 병렬 실행)
+  - id: step_5_code_validation
+    agent: "02_writer/A5_Code_Validator"
+    action: "verify_code"
+    depends_on: "step_4_drafting"
+    parallel_group: "phase3"
+    input: "Material Draft, Output Language: Korean"
+    output: "Verified Code Blocks & Tech Report"
+
+  - id: step_6_visualization_design
+    agent: "02_writer/A6_Visualization_Designer"
+    action: "design_diagrams"
+    depends_on: "step_4_drafting"
+    parallel_group: "phase3"
+    input: "Material Draft, Fact Packet, Output Language: Korean"
+    output: "Visualization Packet (Mermaid/Tables)"
+
+  - id: step_7_learner_experience
+    agent: "02_writer/A7_Learner_Experience_Designer"
+    action: "design_labs"
+    depends_on: "step_4_drafting"
+    parallel_group: "phase3"
+    input: "Material Draft, Learner Persona, Output Language: Korean"
+    output: "Lab Packet & Example Sets"
+
+  - id: step_8_instructor_support
+    agent: "02_writer/A9_Instructor_Support_Designer"
+    action: "create_guide"
+    depends_on: "step_4_drafting"
+    parallel_group: "phase3"
+    input: "Material Draft, Lab Packet, Output Language: Korean"
+    output: "Instructor Support Packet"
+
+  - id: step_9_differentiation
+    agent: "02_writer/A10_Differentiation_Strategist"
+    action: "enhance_content"
+    depends_on: "step_4_drafting"
+    parallel_group: "phase3"
+    input: "Material Draft, Output Language: Korean"
+    output: "Differentiation Strategy (USP)"
+
+  # Phase 4: 통합 및 최종 QA
+  - id: step_10_integration
+    agent: "02_writer/A4_Technical_Writer"
+    action: "finalize_draft"
+    depends_on:
+      - "step_5_code_validation"
+      - "step_6_visualization_design"
+      - "step_7_learner_experience"
+      - "step_8_instructor_support"
+      - "step_9_differentiation"
+    input: "Material Draft, Verified Code, Visualization Packet, Lab Packet, Instructor Support Packet, Differentiation Strategy, Output Language: Korean"
+    output: "Integrated Draft (v1.0)"
+
+  - id: step_11_final_qa
+    agent: "02_writer/A8_QA_Editor"
+    action: "quality_assurance"
+    depends_on: "step_10_integration"
+    input: "Integrated Draft, Fact Packet, Traceability Packet, Output Language: Korean"
+    output: "QA Report & Final Material"
+    decision:
+      approved: "Finish"
+      rejected: "Go to step_4_drafting"

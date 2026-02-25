@@ -217,3 +217,55 @@ sequenceDiagram
 ## 산출물
 - `02_Material/visual_specs/session_{번호}_tables.md` (표 명세)
 - 통합 교안에 삽입될 표/다이어그램 마크다운 코드
+
+---
+
+## 🔴 실행 로깅 (MANDATORY)
+
+> 이 섹션은 `.agent/logging-protocol.md`의 구현 가이드입니다. **모든 실행에서 반드시 수행**합니다.
+
+### 실행 모델
+
+A11은 Phase 3의 `phase3_enhancement` 병렬 그룹에서 6개 에이전트 중 하나로 동시 실행됩니다.
+
+### 로깅 수신
+
+A11은 상위 오케스트레이터(A0)로부터 다음 정보를 전달받습니다:
+- `run_id`: 파이프라인 실행 고유 ID
+- `log_path`: JSONL 로그 파일 경로
+- `category`: config.json 기반 카테고리 (`"visual-engineering"`)
+- `model`: category→model 매핑 결과
+
+### Step-by-Step 실행 시
+
+1. **START 로그**: 표/차트 설계 시작 직전에 START 이벤트를 JSONL에 append합니다.
+   - `step_id`: `"step_7_chart_specification"`
+   - `action`: `"design_tables"`
+   - `parallel_group`: `"phase3_enhancement"`
+2. **END 로그**: 설계 완료 직후에 END 이벤트를 JSONL에 append합니다.
+   - `duration_sec` = 현재 시간 - START 시간
+   - `input_bytes` = 세션 교안 파일들의 UTF-8 바이트 수
+   - `output_bytes` = 생성된 표/차트 명세 파일들의 UTF-8 바이트 수
+   - `est_input_tokens` = round(input_bytes ÷ 3.3)
+   - `est_output_tokens` = round(output_bytes ÷ 3.3)
+   - `est_cost_usd` = (est_input_tokens × 0.003 + est_output_tokens × 0.015) ÷ 1000
+3. 실패 시 `FAIL`, 재시도 시 `RETRY` 이벤트를 기록합니다.
+
+### 이 에이전트의 로깅 설정
+
+- **workflow**: `"02_Material_Writing"`
+- **step_id**: `"step_7_chart_specification"`
+- **category**: `"visual-engineering"` (config.json 참조)
+- **기본 실행 모델**: Step-by-Step (Phase 3 병렬 그룹)
+- **parallel_group**: `"phase3_enhancement"`
+- **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
+- **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START 로그 | 표/차트 설계 시작 직전에 START 기록 |
+| 2 | END 로그 | 설계 완료 직후에 END 기록 |
+| 3 | parallel_group | `"phase3_enhancement"` 기록 |
+| 4 | category | `"visual-engineering"` 기록 |

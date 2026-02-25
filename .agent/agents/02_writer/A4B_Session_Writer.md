@@ -312,3 +312,62 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ## 산출물
 - `02_Material/sessions/세션-{번호}-{제목}_v1.0.md` (세션별 개별 교안)
+
+---
+
+## 🔴 실행 로깅 (MANDATORY)
+
+> 이 섹션은 `.agent/logging-protocol.md`의 구현 가이드입니다. **모든 실행에서 반드시 수행**합니다.
+
+### 실행 모델
+
+A4B는 `foreach_session` 병렬 모드로 실행됩니다. 각 세션은 독립적인 병렬 태스크로 실행되며, `batch_size: 3` 제한에 따라 배치 단위로 스폰됩니다.
+
+### 로깅 수신
+
+A4B는 상위 오케스트레이터(A0)로부터 다음 정보를 전달받습니다:
+- `run_id`: 파이프라인 실행 고유 ID
+- `log_path`: JSONL 로그 파일 경로
+- `category`: config.json 기반 카테고리 (`"deep"`)
+- `model`: category→model 매핑 결과
+
+### Step-by-Step 실행 시 (단일 세션 처리)
+
+1. **START 로그**: 세션 집필 시작 직전에 START 이벤트를 JSONL에 append합니다.
+   - `step_id`: `"step_4_session_writing"` (워크플로우 YAML의 step id)
+   - `parallel_group`: 배치 그룹 (예: `"batch_1"`, `"batch_2"`)
+2. **END 로그**: 세션 집필 완료 직후에 END 이벤트를 JSONL에 append합니다.
+   - `duration_sec` = 현재 시간 - START 시간
+   - `input_bytes` = 세션 명세서 + 골격 패킷 + 팩트 패킷의 UTF-8 바이트 수
+   - `output_bytes` = 생성된 세션 교안 파일의 UTF-8 바이트 수
+   - `est_input_tokens` = round(input_bytes ÷ 3.3)
+   - `est_output_tokens` = round(output_bytes ÷ 3.3)
+   - `est_cost_usd` = (est_input_tokens × 0.003 + est_output_tokens × 0.015) ÷ 1000
+3. 실패 시 `FAIL`, 재시도 시 `RETRY` 이벤트를 기록합니다.
+
+### Session-Parallel 실행 시 (세션 단위 위임을 받은 경우)
+
+1. 세션 처리 **시작** 시 `SESSION_START` 이벤트를 기록합니다.
+   - `session_id`: 세션 식별자 (예: `"세션-001"`)
+   - `session_name`: 세션 제목
+2. 세션 처리 **완료** 시 `SESSION_END` 이벤트를 기록합니다.
+   - END 전용 필드(duration_sec, input/output_bytes, est_tokens, est_cost) + output_files
+3. 실패 시 `FAIL` 이벤트를 기록합니다 (`step_id`: `"session_{session_id}"`)
+
+### 이 에이전트의 로깅 설정
+
+- **workflow**: `"02_Material_Writing"`
+- **step_id**: `"step_4_session_writing"`
+- **category**: `"deep"` (config.json 참조)
+- **기본 실행 모델**: Step-by-Step (foreach_session 병렬 배치)
+- **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
+- **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START 로그 | 각 세션 집필 시작 직전에 START 기록 |
+| 2 | END 로그 | 각 세션 집필 완료 직후에 END 기록 |
+| 3 | 입출력 크기 | input_bytes에 세션 명세서+팩트패킷 크기, output_bytes에 생성된 교안 크기 기록 |
+| 4 | 배치 그룹 | parallel_group에 배치 번호(batch_1, batch_2 등) 기록 |

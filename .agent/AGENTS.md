@@ -31,14 +31,16 @@
  A2∥A7 병렬 완료 후 A3가 양쪽 산출물 + 마이크로 세션 인덱스를 커리큐럼에 통합 (Integration Hub)
  반려 시 step_4(A3B)부터 재실행
 
-### Team 2: Writer (02_writer) — 11 agents
+### Team 2: Writer (02_writer) — 14 agents
 **팀 공통 원칙**: 초보 강사가 교안만 읽고 막힘 없이 설명할 수 있어야 합니다.
 **대본 시스템**: 모든 주요 개념에 🗣️ 강사 대본, 실습에 🎙️ 실습 가이드 대본을 포함합니다.
 **Flow**:
-- Phase 1: A1 → A2 (소스 분석)
-- Phase 2: A3 → A4 (골격 및 초안)
-- Phase 3: A5(기술 검증) + A6 + A7(학습 경험 설계) + A9 + A10 (병렬)
-- Phase 4: A4 (통합) → A8 (최종 QA)
+- Phase 1: A1 → A2 (3-Source 소스 수집 및 구조화)
+- Phase 2: A3 → A4B (골격 설계 + 마이크로 세션별 집필, foreach_session 병렬)
+- Phase 3: A5 + A6 + A11 + A7 + A9 + A10 (6개 보조 패킷 병렬 생성)
+- Phase 4: A4C (보조 패킷 인라인 통합 + AM/PM 분할)
+- Phase 5: A4C (최종 취합)
+- Phase 6: A8 (최종 QA)
 
 ### Team 3: Visualizer (03_visualizer) — 11 agents
 **Flow**:
@@ -120,7 +122,7 @@
 | | | A3B MicroSession Specifier, A3C Session Indexer | `curriculum-chunking` |
 | | | A7 Differentiation Advisor | `artistry` |
 | **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
-| | | A6 Visualization Designer | `visual-engineering` |
+| | | A6 Visualization Designer, A11 Chart Specifier | `visual-engineering` |
 | | | A8 QA Editor | `ultrabrain` |
 | | | A10 Differentiation Strategist | `artistry` |
 | **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |

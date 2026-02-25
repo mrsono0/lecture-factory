@@ -27,48 +27,57 @@ model: opus
 | 1 | A1 Source Miner | `.agent/agents/02_writer/A1_Source_Miner.md` |
 | 2 | A2 Traceability Curator | `.agent/agents/02_writer/A2_Traceability_Curator.md` |
 | 3 | A3 Curriculum Architect | `.agent/agents/02_writer/A3_Curriculum_Architect.md` |
-| 4, 10 | A4 Technical Writer | `.agent/agents/02_writer/A4_Technical_Writer.md` |
+| 4 | A4B Session Writer | `.agent/agents/02_writer/A4B_Session_Writer.md` |
 | 5 | A5 Code Validator | `.agent/agents/02_writer/A5_Code_Validator.md` |
 | 6 | A6 Visualization Designer | `.agent/agents/02_writer/A6_Visualization_Designer.md` |
-| 7 | A7 Learner Experience Designer | `.agent/agents/02_writer/A7_Learner_Experience_Designer.md` |
-| 8 | A9 Instructor Support Designer | `.agent/agents/02_writer/A9_Instructor_Support_Designer.md` |
-| 9 | A10 Differentiation Strategist | `.agent/agents/02_writer/A10_Differentiation_Strategist.md` |
-| 11 | A8 QA Editor | `.agent/agents/02_writer/A8_QA_Editor.md` |
+| 7 | A11 Chart Specifier | `.agent/agents/02_writer/A11_Chart_Specifier.md` |
+| 8 | A7 Learner Experience Designer | `.agent/agents/02_writer/A7_Learner_Experience_Designer.md` |
+| 9 | A9 Instructor Support Designer | `.agent/agents/02_writer/A9_Instructor_Support_Designer.md` |
+| 10 | A10 Differentiation Strategist | `.agent/agents/02_writer/A10_Differentiation_Strategist.md` |
+| 11-13 | A4C Material Aggregator | `.agent/agents/02_writer/A4C_Material_Aggregator.md` |
+| 14 | A8 QA Editor | `.agent/agents/02_writer/A8_QA_Editor.md` |
 
 ## 파이프라인 실행 순서
 
 ```
-Phase 1 (순차):
-  Step 1: A1 — 팩트 추출
+Phase 1 (순차): 3-Source Mandatory 소스 수집
+  Step 1: A1 — 3-Source 팩트 추출
   Step 2: A2 — 추적성 설정
 
-Phase 2 (순차):
+Phase 2 (순차 + foreach_session 병렬): 골격 및 세션별 집필
   Step 3: A3 — 골격 설계
-  Step 4: A4 — 초안 작성
+  Step 4: A4B — 마이크로 세션별 집필 (foreach_session 병렬, batch_size: 3)
 
-Phase 3 (5개 병렬):
-  Step 5: A5 — 코드 검증        ┐
-  Step 6: A6 — 시각화 설계      │
-  Step 7: A7 — 학습 경험 설계   ├─ 병렬 (run_in_background)
-  Step 8: A9 — 강사 지원 설계   │
-  Step 9: A10 — 차별화 전략     ┘
+Phase 3 (6개 병렬): 보조 패킷 생성
+  Step 5: A5 — 코드 검증           ┐
+  Step 6: A6 — 시각화 설계         │
+  Step 7: A11 — 표·차트 설계       ├─ 병렬 (run_in_background)
+  Step 8: A7 — 학습 경험 설계      │
+  Step 9: A9 — 강사 지원 설계      │
+  Step 10: A10 — 차별화 전략       ┘
 
-Phase 4 (순차):
-  Step 10: A4 — 통합 (Phase 3 전체 결과 수집 후)
-  Step 11: A8 — 최종 QA
+Phase 4 (순차): 보조 패킷 통합 + AM/PM 분할
+  Step 11: A4C — 보조 패킷 인라인 통합 (Phase 3 결과 수집 후)
+  Step 12: A4C — AM/PM 분할 파일 생성
+
+Phase 5 (순차): 최종 취합
+  Step 13: A4C — 세션 파일 최종 취합
+
+Phase 6 (순차): 최종 QA
+  Step 14: A8 — 최종 QA (7섹션 구조 + 보조 패킷 통합 검증)
 ```
 
 ## Phase 3 병렬 실행 전략
 
-Step 5~9는 모두 Step 4(초안)의 결과에만 의존하므로 독립적으로 실행 가능합니다.
-Task 도구로 5개를 `run_in_background: true`로 동시 스폰합니다.
-모든 백그라운드 태스크 완료 후 결과를 수집하여 Step 10(A4 통합)에 전달합니다.
+Step 5~10은 모두 Step 4(A4B 세션별 집필)의 결과에만 의존하므로 독립적으로 실행 가능합니다.
+Task 도구로 6개를 `run_in_background: true`로 동시 스폰합니다.
+모든 백그라운드 태스크 완료 후 결과를 수집하여 Step 11(A4C 보조 패킷 통합)에 전달합니다.
 
 ## 승인/반려 루프
 
-Step 11에서 A8이 5대 원칙(완전성, 명확성, 재현성, 추적성, 원본유지) 기반으로 판단합니다:
+Step 14에서 A8이 5대 원칙(완전성, 명확성, 재현성, 추적성, 원본유지) 기반으로 판단합니다:
 - **승인(Approved)**: 산출물을 `02_Material/강의교안_v1.0.md`로 저장하고 완료
-- **반려(Critical Issues)**: 반려 사유를 분석하여 Step 4(A4)부터 재실행 (최대 2회)
+- **반려(Critical Issues)**: 반려 사유를 분석하여 Step 4(A4B)부터 재실행 (최대 2회)
 
 ## 팀 공통 기준
 

@@ -304,3 +304,73 @@ mindmap
 ## 산출물
 - `02_Material/강의교안_v2.1.md` (통합된 최종 교안)
 - `02_Material/Day{1-5}_{AM|PM}_{주제}.md` (AM/PM 분할 파일 10개)
+
+---
+
+## 🔴 실행 로깅 (MANDATORY)
+
+> 이 섹션은 `.agent/logging-protocol.md`의 구현 가이드입니다. **모든 실행에서 반드시 수행**합니다.
+
+### 실행 모델
+
+A4C는 워크플로우에서 3개 step을 순차적으로 수행합니다:
+1. `step_11_enrich_sessions` — 보조 패킷 인라인 통합
+2. `step_12_ampm_split` — AM/PM 분할 파일 생성
+3. `step_13_aggregation` — 최종 교안 취합
+
+각 step별로 독립적인 START/END 로그를 기록합니다.
+
+### 로깅 수신
+
+A4C는 상위 오케스트레이터(A0)로부터 다음 정보를 전달받습니다:
+- `run_id`: 파이프라인 실행 고유 ID
+- `log_path`: JSONL 로그 파일 경로
+- `category`: config.json 기반 카테고리 (`"deep"`)
+- `model`: category→model 매핑 결과
+
+### Step-by-Step 실행 시
+
+각 action 실행 전후로 로그를 기록합니다:
+
+**step_11_enrich_sessions (보조 패킷 통합)**:
+1. **START 로그**: `step_id: "step_11_enrich_sessions"`, `action: "enrich_sessions_with_packets"`
+2. **END 로그**:
+   - `input_bytes` = 세션 파일 + 6개 보조 패킷의 UTF-8 바이트 수 합계
+   - `output_bytes` = 보강된 세션 파일들의 UTF-8 바이트 수 합계
+
+**step_12_ampm_split (AM/PM 분할)**:
+1. **START 로그**: `step_id: "step_12_ampm_split"`, `action: "generate_ampm_files"`
+2. **END 로그**:
+   - `output_bytes` = 생성된 10개 AM/PM 파일의 UTF-8 바이트 수 합계
+
+**step_13_aggregation (최종 취합)**:
+1. **START 로그**: `step_id: "step_13_aggregation"`, `action: "aggregate_sessions"`
+2. **END 로그**:
+   - `output_bytes` = 최종 강의교안 파일의 UTF-8 바이트 수
+
+공통 필드:
+- `duration_sec` = 현재 시간 - START 시간
+- `est_input_tokens` = round(input_bytes ÷ 3.3)
+- `est_output_tokens` = round(output_bytes ÷ 3.3)
+- `est_cost_usd` = (est_input_tokens × 0.003 + est_output_tokens × 0.015) ÷ 1000
+
+실패 시 `FAIL`, 재시도 시 `RETRY` 이벤트를 기록합니다.
+
+### 이 에이전트의 로깅 설정
+
+- **workflow**: `"02_Material_Writing"`
+- **step_ids**: `"step_11_enrich_sessions"`, `"step_12_ampm_split"`, `"step_13_aggregation"`
+- **category**: `"deep"` (config.json 참조)
+- **기본 실행 모델**: Step-by-Step (3개 step 순차 실행)
+- **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
+- **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
+
+### 검증 체크포인트
+
+| # | 검증 항목 | 기준 |
+|---|-----------|------|
+| 1 | START/END 쌍 | 3개 step 각각에 START/END 쌍이 존재 |
+| 2 | step_id 정합성 | YAML의 step id와 정확히 일치 |
+| 3 | 보조 패킷 크기 | step_11의 input_bytes에 6개 보조 패킷 크기가 합산 |
+| 4 | AM/PM 파일 수 | step_12의 output에 생성된 파일 수 기록 |
+| 5 | 최종 교안 크기 | step_13의 output_bytes에 통합 교안 크기 기록 |
