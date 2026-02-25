@@ -176,7 +176,7 @@ Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파
   │       ├─ AGENTS.md 로드
   │       ├─ 01_Lecture_Planning.yaml 스텝 순서 파악
   │       ├─ .agent/agents/01_planner/*.md 참조하며 순차 실행
-  │       ├─ Step 4∥5: run_in_background 병렬
+  │       ├─ Step 6∥7: A2+A7 run_in_background 병렬
   │       └─ 승인/반려 루프 → 01_Planning/강의구성안.md
   │
   ├─ /project:material-write
@@ -225,7 +225,7 @@ Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파
 
 | 에이전트 | 파일 위치 | 모델 | 병렬 실행 |
 |---|---|---|---|
-| `lecture-planner` | `.claude/agents/lecture-planner.md` | opus | Step 4∥5 (2개) |
+| `lecture-planner` | `.claude/agents/lecture-planner.md` | opus | Step 6∥7 (2개) |
 | `material-writer` | `.claude/agents/material-writer.md` | opus | Phase 3 (5개 bg) |
 | `slide-generator` | `.claude/agents/slide-generator.md` | sonnet | Phase 3 (3개 bg) |
 | `slide-prompt-gen` | `.claude/agents/slide-prompt-gen.md` | sonnet | Phase B (2개 bg) |
@@ -241,11 +241,12 @@ Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파
 
 **팀 공통 원칙**: 기획 산출물(강의구성안)만으로 교안 작성 팀이 막힘 없이 집필을 시작할 수 있어야 합니다.
 
-**파이프라인 플로우**: A0 → A1 → A5B → A3 → A2∥A7 → A3(통합) → A5A → A0 (승인/반려)
+**파이프라인 플로우 (11 Steps, 9 Agents)**: A0 → A1 → A5B → A3 → A3B → A3C → A2∥A7 → A3(통합) → A5A → A0 (승인/반려)
 
  A5B(학습자 분석) → A3(커리큐럼 설계): A5B 산출물을 A3의 입력으로 참조
- A2∥A7 병렬 완료 후 A3가 양쪽 산출물을 커리큐럼에 통합 (Integration Hub)
- 1일 4시간 초과 시 AM/PM 분할 설계, 60~90분 단위 하위 세션 세분화
+ A3 → A3B(마이크로 세션 청킹, 15~25분) → A3C(세션 인덱싱, 의존성 그래프): Gemini 최적화 세분화
+ A2∥A7 병렬 완료 후 A3가 양쪽 산출물 + 마이크로 세션 인덱스를 커리큐럼에 통합 (Integration Hub)
+ 반려 시 step_4(A3B)부터 재실행 (최대 2회)
 
 ### 2단계: Writing
 
@@ -360,7 +361,13 @@ P04 프롬프트 파일이 대용량인 경우, Manus AI의 최적 처리를 위
 YYYY-MM-DD_강의제목/
 ├── 01_Planning/
 │   ├── 강의구성안.md
-│   └── Trend_Report.md
+│   ├── Trend_Report.md
+│   └── micro_sessions/
+│       ├── _index.json
+│       ├── _flow.md
+│       ├── _dependency.mmd
+│       ├── _reference_mapping.json
+│       └── 세션-*.md
 ├── 02_Material/
 │   ├── 강의교안_v1.0.md
 │   ├── src/                 (예제 소스코드)
