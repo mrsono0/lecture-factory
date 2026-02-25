@@ -20,6 +20,9 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 4. **★ 통합자 역할 (Integration Hub)**: 
    - A2(교수설계자)가 병렬로 설계한 "Learning Activities"를 각 세션에 매핑 및 통합
    - A7(차별화 어드바이저)가 병렬로 설계한 "Differentiation Strategy(USP)"를 커리큘럼 전반에 반영
+   - A3B(마이크로 세션 스펙)가 설계한 "Micro Session Specifications"를 커리큘럼에 통합
+   - A3C(세션 인덱서)가 생성한 "Session Index, Dependency Graph"를 강의구성안에 링크
+   - 마이크로 세션 링크와 의존성 그래프를 메인 문서에 포함
    - 통합된 완결본을 A5A(QA 매니저)에게 전달 (→ A5A는 이 통합본을 검증)
 5. **오전/오후 분할 설계**: 강의 시간이 1일 4시간을 초과하는 경우, 오전(AM)과 오후(PM) 세션을 구분하되, **반드시 각 반일(4시간)을 60~90분 단위의 하위 세션(예: 세션 1-1, 세션 1-2) 2~3개로 잘게 쪼개어** 총 20개 이상의 세션으로 세분화하세요. 세션 사이에는 15분의 쉬는 시간을 명시하세요.
 
@@ -27,6 +30,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - 강의 주제 및 대상 (A0 제공)
 - 트렌드 리포트 (A1 제공)
 - 학습자 페르소나 및 Pain Points (A5B 제공)
+- Micro Session Index (`01_Planning/micro_sessions/_index.json`, A3C 제공)
+- Dependency Graph (`01_Planning/micro_sessions/_dependency.mmd`, A3C 제공)
 
 ## 산출물
 - 커리큘럼 구조도 (`01_Planning/강의구성안.md` 내 커리큘럼 섹션)

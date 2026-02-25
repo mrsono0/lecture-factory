@@ -154,7 +154,8 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
 ### 이 파이프라인의 로깅 설정
 - **workflow**: `"01_Lecture_Planning"`
 - **워크플로우 YAML**: `.agent/workflows/01_Lecture_Planning.yaml`
-- **기본 실행 모델**: Step-by-Step
+- **기본 실행 모델**: Step-by-Step (11 steps: step_0 ~ step_10)
+- **step_4/step_5**: A3B(MicroSession Specifier), A3C(Session Indexer) — category `curriculum-chunking`으로 START/END 로깅
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
@@ -171,7 +172,7 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
 1. **워크플로우 메타 정보 (서두)**: 문서 시작 부분에 다음 3가지 핵심 메타 데이터를 반드시 요약하여 포함하세요.
    - **Step 0 & 1 (스코프 및 트렌드 요약)**: 과정 개요와 A1이 분석한 핵심 트렌드 (예: AI-First 교육 패러다임, 특정 IDE/툴의 장점 등).
    - **Step 2 (학습자 페르소나 및 Pain Points)**: A5B가 분석한 타겟 학습자의 특성, 예상되는 어려움과 그 대응 전략.
-   - **Step 5 (차별화 전략 USP)**: A7이 도출한 이 강의만의 고유한 차별화 포인트 3~5가지.
+   - **Step 7 (차별화 전략 USP)**: A7이 도출한 이 강의만의 고유한 차별화 포인트 3~5가지.
 2. **세션 상세표 마크다운 양식 강제**: 각 세션의 상세 내용은 절대 단순 줄글(Bullet points)이나 짧은 요약으로 나열하지 마세요. **반드시 아래의 마크다운 표(Table) 양식을 100% 사용하여 렌더링하되, 표 양식만 덩그러니 쓰지 말고, 표 전후로 '세션 간의 연결 고리'나 '쉬는 시간' 등의 맥락을 마크다운 인용구(`>`)로 자유롭게 추가하세요. 활동 내역은 최소 5줄 이상 아주 상세한 강사 대본/액션을 포함하여 길게 작성하세요.**
    ```markdown
    | 항목 | 내용 |
@@ -183,8 +184,12 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
    | **산출물** | [해당 세션 종료 시 결과물] |
    ```
 3. **부록 및 QA 검증 (하단)**: 문서 하단에 다음 2가지를 반드시 포함하세요.
-   - **QA 검증 보고서 (Step 6)**: 초기 입력된 제약 조건(예: 실습 비율, 시간 총합, 환경 등)이 모두 충족되었는지 O/X 체크리스트 형태로 검증 결과 작성.
+   - **QA 검증 보고서 (Step 9)**: 초기 입력된 제약 조건(예: 실습 비율, 시간 총합, 환경 등)이 모두 충족되었는지 O/X 체크리스트 형태로 검증 결과 작성. 마이크로 세션 전용 QA 항목(단일 개념 준수, 15~25분 범위, 분량, 연결성, chunk_type, 의존성 그래프)도 포함.
    - **부록 (Appendix)**: 일차별로 필요한 소프트웨어 목록, 핵심 산출물 목록, 그리고 평가 체계 요약.
+4. **마이크로 세션 인덱스 (Step 4~5 산출물)**: 마이크로 세션 청킹 결과를 문서에 반드시 포함하세요.
+   - **`micro_sessions/` 디렉토리 구조**: `_index.json`, `_flow.md`, `_dependency.mmd`, `_reference_mapping.json`, 세션별 `.md` 파일 링크
+   - **의존성 그래프**: `_dependency.mmd`를 Mermaid 코드 블록으로 삽입하거나 파일 링크 제공
+   - **학습 경로 요약**: 기본 경로(Default Path), 보충 경로(Supplementary), 단축 경로(Accelerated)의 세션 ID 나열
 
 
 ## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY

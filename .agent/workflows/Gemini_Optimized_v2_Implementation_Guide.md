@@ -20,7 +20,7 @@
 
 ## 새로운 워크플로우 아키텍처
 
-### 01_Lecture_Planning_v2
+### 01_Lecture_Planning
 
 #### 핵심 변경사항
 

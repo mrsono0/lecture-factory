@@ -482,7 +482,7 @@ cat .agent/logs/*.jsonl | jq -s '
 
 | Pipeline | 기본 모델 | 세션 분할 기준 | 이벤트 패턴 |
 |----------|----------|---------------|------------|
-| 01 Lecture Planning | Step-by-Step | 단일 실행 (세션 없음) | 9 steps × (START+END) |
+| 01 Lecture Planning | Step-by-Step | 단일 실행 (세션 없음) | 11 steps × (START+END) |
 | 02 Material Writing | Step-by-Step | 일자별 AM/PM 분할 가능 | 11 agents × (START+END) |
 | 03 Slide Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
 | 04 SlidePrompt Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |

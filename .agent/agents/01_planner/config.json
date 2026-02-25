@@ -6,6 +6,8 @@
     "agent_models": {
         "A0_Orchestrator":           { "category": "unspecified-low", "note": "참고자료 충분성 판단·골든 템플릿 조립·품질 게이트 — Sonnet 수준" },
         "A3_Curriculum_Architect":   { "category": "ultrabrain", "note": "커리큘럼 구조 설계 — 복잡한 의존성 매핑" },
+        "A3B_MicroSession_Specifier":{ "category": "curriculum-chunking", "note": "15~25min 마이크로 세션 설계 및 Gemini 최적화 태그 부여" },
+        "A3C_Session_Indexer":       { "category": "curriculum-chunking", "note": "의존성 그래프 및 학습 경로 설계" },
         "A7_Differentiation_Advisor":{ "category": "artistry",   "note": "USP·차별화 전략 — 창의적 접근" },
         "A5A_QA_Manager":           { "category": "ultrabrain",  "note": "★ 최종 방어선 — 다기준 결함 탐지, P02~P06 전파 방지" }
     }
