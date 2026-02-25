@@ -43,17 +43,19 @@ steps:
     agent: "05_pptx_converter/B3_Asset_Generator"
     action: "generate_assets"
     depends_on: "step_3_parsing"
-    parallel_group: "phase2_parallel"
     input: "Asset Request List, Design Tokens, Output Language: Korean"
     output: "Asset PNG files, Asset Manifest"
     description: "아이콘, 그래디언트 배경, 다이어그램을 PNG로 사전 렌더링합니다. (Sharp + react-icons)"
 
   # Phase 3: HTML 렌더링 및 PPTX 빌드
+  # ⚠️ step_5는 step_4의 Asset Manifest를 입력으로 사용하므로 반드시 step_4 완료 후 실행
+  # 데이터 흐름: step_3(파싱) → step_4(에셋 생성) → step_5(HTML 렌더링) [순차]
   - id: step_5_html_rendering
     agent: "05_pptx_converter/B2_HTML_Renderer"
     action: "render_html"
-    depends_on: "step_3_parsing"
-    parallel_group: "phase2_parallel"
+    depends_on:
+      - "step_3_parsing"
+      - "step_4_asset_generation"
     input: "Structured Slide Data (JSON), Asset Manifest, Design Tokens, Output Language: Korean"
     output: "HTML slide files (slide_000.html ~ slide_NNN.html)"
     description: "구조화된 슬라이드 데이터를 html2pptx.js 호환 HTML 파일로 변환합니다. 슬라이드 유형별 템플릿(T-COVER, T-BRIDGE, T-CONCEPT, T-CODE, T-LAB, T-SUMMARY) 적용."
@@ -87,6 +89,8 @@ steps:
       approved: "step_9_finalize"
       conditional: "step_9_finalize (노트 포함 저장)"
       rejected: "step_5_html_rendering (최대 2회 재실행)"
+    # ⚠️ Rejection 재진입점: step_5(B2). B3 에셋 수정이 필요한 경우 B0가 step_4(B3)도 선행 재실행을 지시합니다.
+    # 재실행 흐름: B0 → (필요시 step_4/B3) → step_5/B2 → step_6/B4 → step_7/B5 → step_8/B0
     description: "QA 리포트를 분석하여 수정이 필요한 슬라이드를 식별하고, 해당 에이전트(B2/B3)에게 수정을 지시합니다. 반려 시 step_5로 되돌아갑니다."
 
   # Phase 5: 최종 산출물
