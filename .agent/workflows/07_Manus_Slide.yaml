@@ -46,12 +46,11 @@ steps:
     action: "submit_and_download"
     depends_on: "step_3_chunk_splitting"
     input: "Chunk Manifest, Chunk files (or original files), MANUS_API_KEY, Output Language: Korean"
-    output: "Submission Log, Downloaded PPTX files (07_ManusSlides/)
-    
+    output: "Submission Log, Downloaded PPTX files (07_ManusSlides/)"
     notes: |
       📊 External Tool Logging: D3_Submission_Manager must log each Manus AI API call
       (create_project, upload_file, create_task) to .agent/logs/{DATE}_07_Manus_Slide.jsonl
-      using EXTERNAL_TOOL_START/END events. See D3_Submission_Manager.md §외부 도구 호출 로깅."
+      using EXTERNAL_TOOL_START/END events. See D3_Submission_Manager.md §외부 도구 호출 로깅.
     description: "manus_slide.py를 실행하여 각 청크(또는 원본)를 Manus AI에 순차 제출합니다. 30초 간격 폴링으로 완료를 감지하고, PPTX 파일을 07_ManusSlides/에 다운로드합니다. 실패 시 1회 자동 재시도합니다."
 
   # Phase 4: 후처리 + 품질 검증

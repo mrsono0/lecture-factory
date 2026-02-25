@@ -135,7 +135,7 @@ D3_Submission_Manager는 **Manus AI API**를 호출하여 PPTX 파일을 생성�
 ```bash
 START_TIME=$(date +%s)
 INPUT_BYTES=$(wc -c < prompt_file.txt)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"07_Manus_Slide","step_id":"step_3_submission","agent":"D3_Submission_Manager","category":"quick","model":"[model]","action":"submit_task","tool_name":"manus-ai","tool_action":"[create_project|upload_file|create_task]","tool_input_bytes":'"$INPUT_BYTES"',"retry":0}' >> ".agent/logs/[DATE]_07_Manus_Slide.jsonl"
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"07_Manus_Slide","step_id":"step_4_manus_submission","agent":"D3_Submission_Manager","category":"quick","model":"[model]","action":"submit_task","tool_name":"manus-ai","tool_action":"[create_project|upload_file|create_task]","tool_input_bytes":'"$INPUT_BYTES"',"retry":0}' >> ".agent/logs/[DATE]_07_Manus_Slide.jsonl"
 ```
 
 **END (API 호출 완료 후)**:
@@ -144,7 +144,7 @@ END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 # 응답 크기 (JSON)
 OUTPUT_BYTES=$(echo -n "$API_RESPONSE" | wc -c)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"07_Manus_Slide","step_id":"step_3_submission","agent":"D3_Submission_Manager","category":"quick","model":"[model]","action":"submit_task","tool_name":"manus-ai","tool_action":"[create_project|upload_file|create_task]","tool_input_bytes":'"$INPUT_BYTES"',"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","tool_error":"[error_message]","retry":0}' >> ".agent/logs/[DATE]_07_Manus_Slide.jsonl"
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"07_Manus_Slide","step_id":"step_4_manus_submission","agent":"D3_Submission_Manager","category":"quick","model":"[model]","action":"submit_task","tool_name":"manus-ai","tool_action":"[create_project|upload_file|create_task]","tool_input_bytes":'"$INPUT_BYTES"',"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","tool_error":"[error_message]","retry":0}' >> ".agent/logs/[DATE]_07_Manus_Slide.jsonl"
 ```
 
 ### 검증 체크포인트
