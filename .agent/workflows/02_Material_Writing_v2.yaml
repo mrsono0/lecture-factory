@@ -29,16 +29,18 @@ session_writing_policy:
   # Gemini 최적화 설정
   gemini_optimized:
     chunk_size: "15-25min"
-    estimated_chars: "3000-4500"
-    min_chars_per_session: 3000
-    max_chars_per_session: 4500
+    estimated_chars: "no_limit"
+    min_chars_per_session: null
+    max_chars_per_session: null
+    structure: "7_section_mandatory"
     writing_style: "continuous_prose"  # 개조식 금지, 서술형 필수
     tone: "friendly_spoken_korean"   # ~해요, ~입니다
     
   rules:
     - "단일 세션 집중: 각 에이전트는 1개의 마이크로 세션만 처리"
     - "개별 파일 출력: 각 세션은 독립된 완성된 교안 파일로 저장"
-    - "출력 한계 준수: 3,000~4,500자 내에서 완결성 확보"
+    - "7섹션 구조 필수: 모든 세션은 A0이 정의한 7섹션 구조를 완전히 준수"
+    - "분량 무제한: 교육적 완결성이 최우선, 글자 수 제한 없음"
     - "서술형 강제: 개조식 요약 금지, 긴 줄글 서술형 필수"
     - "브릿지 노트: 세션 간 연결성을 위한 전환 멘트 포함"
 
@@ -141,18 +143,28 @@ steps:
     output: "Session Material Files (02_Material/sessions/세션-*.md)"
     notes: |
       🎯 핵심: 각 마이크로 세션(15~25분)을 개별 파일로 집필
+      📐 필수 구조: A0이 정의한 7섹션 구조를 완전히 준수
+        - ① 도입부 (강사 대본 포함)
+        - ② 핵심 개념 설명 (서술형 + 비유/스토리텔링)
+        - ③ 코드 예제 및 실습 (🎙️ 실습 가이드 대본)
+        - ④ 시각화 자료 (표, 다이어그램, Mermaid)
+        - ⑤ 실습 가이드 (단계별 표 + 트러블슈팅 FAQ + 전체 코드 모음)
+        - ⑥ 마무리 및 브릿지 (요약 + 다음 세션 연결)
+        - ⑦ 강사 노트 (타이밍, 난이도 조절 팁, 출처)
       📝 출력 규칙:
-        - 공백 포함 3,000~4,500자 (Gemini 출력 한계 준수)
+        - 분량 제한 없음. 교육적 완결성이 최우선
         - 서술형 긴 줄글 (개조식 요약 금지)
         - 친근한 구어체 (~해요, ~입니다)
         - 🗣️ 강사 대본 + 🎙️ 실습 가이드 포함
         - 비유 및 스토리텔링 ('AI 시대의 서사' 톤)
+        - 표 허용: 실습 가이드 표, 비교 표, 요약 표 적극 활용
       📚 참고자료 활용 규칙:
         - 세션 명세서의 📚 참고자료 매핑 섹션을 반드시 확인
         - 3-Source 팩트 패킷의 local_excerpt, notebooklm, deep_research 모두 반영
         - 3개 소스에 없는 내용만 자체 생성 (출처 명시)
         - 💡 강사 노트에 참고자료 출처 표기
-      📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md
+      🔄 기존 v2.0 세션 파일을 입력으로 활용하여 7섹션 구조로 확장
+      📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v2.1.md
       ⚠️ 각 세션은 독립적으로 완결성을 가져야 함 (중간에 끊기지 않음)
 
   # Phase 3: 시각화 및 표 설계 (병렬)
@@ -225,56 +237,94 @@ steps:
       - "Output Language: Korean"
     output: "Differentiation Strategy (USP) per session"
 
-  # Phase 4: 시각화 삽입 (세션별)
-  - id: step_11_visual_insertion
-    agent: "02_writer/A4B_Session_Writer"
-    action: "insert_visualizations"
-    depends_on:
-      - "step_6_visualization_design"
-      - "step_7_chart_specification"
-    input: 
-      - "Session Material Files"
-      - "Visualization Packet"
-      - "Table Specifications"
-      - "Output Language: Korean"
-    output: "Enhanced Session Materials (with tables & diagrams)"
-
-  # Phase 5: 취합 및 통합 (NEW)
-  # NEW: A4C가 개별 세션 파일들을 취합하여 최종 교안 생성
-  - id: step_12_aggregation
+  # Phase 4: 보조 패킷 통합 (세션별)
+  # CHANGED: A4B(시각화 삽입) → A4C(보조 패킷 인라인 통합)
+  - id: step_11_enrich_sessions
     agent: "02_writer/A4C_Material_Aggregator"
-    action: "aggregate_sessions"
+    action: "enrich_sessions_with_packets"
     depends_on:
       - "step_5_code_validation"
-      - "step_11_visual_insertion"
+      - "step_6_visualization_design"
+      - "step_7_chart_specification"
       - "step_8_learner_experience"
       - "step_9_instructor_support"
       - "step_10_differentiation"
     input: 
-      - "All Session Material Files"
+      - "Session Material Files (7섹션 구조)"
+      - "Verified Code Blocks & Tech Report"
+      - "Visualization Packet"
+      - "Table & Chart Specifications"
+      - "Lab Packet & Example Sets"
+      - "Instructor Support Packet"
+      - "Differentiation Strategy"
+      - "Output Language: Korean"
+    output: "Enriched Session Materials (보조 패킷 통합 완료)"
+    notes: |
+      🎯 핵심: Phase 3에서 생성된 6개 보조 패킷을 세션 본문에 인라인 통합
+      📦 통합 대상 보조 패킷 6개:
+        - A5: 검증된 코드 블록 → ③ 코드 예제 및 실습 섹션에 삽입
+        - A6: Mermaid 다이어그램 → ④ 시각화 자료 섹션에 삽입
+        - A7: 실습 설계 → ⑤ 실습 가이드 섹션에 삽입
+        - A9: 강사 지원 자료 → ⑦ 강사 노트 섹션에 삽입
+        - A10: 차별화 전략 → ② 핵심 개념 설명에 USP 반영
+        - A11: 표/차트 명세 → ④ 시각화 자료 섹션에 삽입
+      ⚠️ 삽입 후 7섹션 구조가 유지되는지 검증 필수
+      📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v2.1.md (덮어쓰기)
+
+  # Phase 4.5: AM/PM 분할 파일 생성 (NEW)
+  - id: step_12_ampm_split
+    agent: "02_writer/A4C_Material_Aggregator"
+    action: "generate_ampm_files"
+    depends_on: "step_11_enrich_sessions"
+    input:
+      - "Enriched Session Materials (전체 106개 세션)"
+      - "Day-Session 경계표"
+      - "Output Language: Korean"
+    output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_*.md)"
+    notes: |
+      🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 10개 생성
+      📋 Day-Session 경계표:
+        - Day1 AM: 세션 001-011, PM: 세션 012-022
+        - Day2 AM: 세션 023-033, PM: 세션 034-043
+        - Day3 AM: 세션 044-054, PM: 세션 055-064
+        - Day4 AM: 세션 065-075, PM: 세션 076-085
+        - Day5 AM: 세션 086-096, PM: 세션 097-106
+      📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
+      📁 산출물: 02_Material/Day{N}_{AM|PM}_세션목록_v2.1.md (총 10개)
+
+  # Phase 5: 취합 및 통합
+  # A4C가 개별 세션 파일들을 취합하여 최종 교안 생성
+  - id: step_13_aggregation
+    agent: "02_writer/A4C_Material_Aggregator"
+    action: "aggregate_sessions"
+    depends_on: "step_12_ampm_split"
+    input: 
+      - "All Enriched Session Materials"
+      - "AM/PM Split Files"
       - "Session Index"
       - "Dependency Graph"
       - "Flow Document"
       - "Output Language: Korean"
-    output: "Aggregated Material Draft (v1.0)"
+    output: "Aggregated Material Draft (v2.1)"
     notes: |
-      🎯 핵심: 개별 세션 파일들을 검증하고 통합
+      🎯 핵심: 보조 패킷 통합 완료된 세션 파일들을 최종 취합
       🔗 연결성 검증: 의존성 그래프 기반 세션 연결 확인
       📝 브릿지 노트: 세션 간 전환 멘트 삽입
       📋 최종 구조:
         - 헤더 및 메타데이터
         - 목차 및 네비게이션
         - 의존성 그래프 (Mermaid)
-        - 개별 세션 내용 통합
+        - 개별 세션 내용 통합 (7섹션 구조 유지)
         - 부록 (요약, 참고자료, 로드맵)
+      📁 산출물: 02_Material/강의교안_v2.1.md
 
   # Phase 6: 최종 QA
-  - id: step_13_final_qa
+  - id: step_14_final_qa
     agent: "02_writer/A8_QA_Editor"
     action: "quality_assurance_v2"
-    depends_on: "step_12_aggregation"
+    depends_on: "step_13_aggregation"
     input: 
-      - "Aggregated Material (v1.0)"
+      - "Aggregated Material (v2.1)"
       - "3-Source Fact Packet"
       - "Traceability Packet"
       - "Output Language: Korean"
@@ -288,21 +338,24 @@ steps:
       - "시각화 적절성 (표/다이어그램)"
       - "참고자료 활용도: 📚 참고자료 매핑 대비 실제 반영률 70% 이상"
       - "3-Source 교차 검증: 팩트 패킷의 3개 소스가 교안에 균형 있게 반영"
+      - "7섹션 구조 준수: 모든 세션이 7섹션 구조를 완전히 따르는지 검증"
+      - "보조 패킷 통합 검증: 6개 보조 패킷이 세션 본문에 인라인 반영되었는지 확인"
+      - "AM/PM 분할 정합성: Day-Session 경계표 기반 분할이 정확한지 검증"
     decision:
       approved: "Finish"
       rejected: "Go to step_4_session_writing"
 
 # ── 모델 라우팅 설정 ──────────────────────────────────────────
 model_routing:
-  # 세션별 집필: Gemini 3.1 Pro (1M context, 긴 교안 작성에 최적)
+  # 세션별 집필: deep 카테고리 (7섹션 구조 + 분량 무제한 → 고품질 모델 필요)
   A4B_Session_Writer:
-    category: "micro-writing"
-    note: "단일 마이크로 세션(3,000~4,500자) 집필 - Gemini 3.1 Pro 사용"
+    category: "deep"
+    note: "7섹션 구조 세션 집필 (분량 무제한) - 고품질 모델 사용"
   
-  # 취합 및 통합: Gemini 3.1 Pro (의존성 분석 및 통합)
+  # 취합 및 통합: deep 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
   A4C_Material_Aggregator:
-    category: "micro-writing"
-    note: "세션 취합 및 브릿지 노트 삽입 - Gemini 3.1 Pro 사용"
+    category: "deep"
+    note: "보조 패킷 통합, AM/PM 분할, 최종 취합 - 고품질 모델 사용"
   
   # 표 및 시각화: visual-engineering 카테고리
   A11_Chart_Specifier:
