@@ -238,7 +238,8 @@ downstream_integration:
     session_files: "01_Planning/micro_sessions/세션-*.md"
     index_file: "01_Planning/micro_sessions/_index.json"
     flow_file: "01_Planning/micro_sessions/_flow.md"
-    
+    dependency_file: "01_Planning/micro_sessions/_dependency.mmd"
+    reference_mapping_file: "01_Planning/micro_sessions/_reference_mapping.json"
     notes: |
       02_Material_Writing은 마이크로 세션별 개별 교안 작성 후 취합하는 방식.
       각 세션 파일은 독립적으로 처리되며, A4C_Material_Aggregator가 최종 통합.
