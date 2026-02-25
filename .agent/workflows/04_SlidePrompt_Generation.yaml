@@ -103,13 +103,15 @@ steps:
 
   # ═══════════════════════════════════════════════════════════
   # Phase C: 슬라이드 단위 명세 생성
+  # Note: step_3(P3) 의존성은 P2 자체가 아닌, step_5(P0 조립)의 전이적 접근을
+  #   보장하기 위함. P2는 P1 산출물만 직접 사용하나, Phase B 완료 경계를 보장.
   # ═══════════════════════════════════════════════════════════
   - id: step_4_slide_blueprint
     agent: "04_prompt_generator/P2_Slide_Prompt_Architect"
     action: "generate_slide_specs"
     depends_on:
       - "step_2_education_structure"
-      - "step_3_visual_spec"
+      - "step_3_visual_spec"    # P2는 P3 산출물을 직접 사용하지 않으나, Phase B 완료 경계 보장 + step_5 전이적 접근
     input: >
       교안별 교육 메타 + 교시별 학습요소 맵 (P1 산출물),
       교안 원문 (×N),
@@ -166,6 +168,7 @@ steps:
     decision:
       approved: "step_7_finalize"
       partial_rejected: "step_4_slide_blueprint (리젝된 파일의 에이전트만 재실행, 파일당 최대 2회)"
+      # Note: P1 재추출이 필요한 경우 P0가 step_2(P1)부터 재실행 후 step_4(P2)를 연쇄 실행함
     description: >
       각 교안별 프롬프트 파일을 독립적으로 검증합니다.
       6개 필수 섹션 존재, 슬라이드 필드 완결성, 교시 커버리지 100%,
