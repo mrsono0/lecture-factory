@@ -24,6 +24,14 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - [ ] **일관성**: 용어, 어조, 포맷이 문서 전체에서 일관된가?
 - [ ] **완결성**: 외부 링크 없이 이 문서만으로 교안 작성이 가능한가?
 
+### 마이크로 세션 검증 항목 (Micro Session Checklist)
+- [ ] **단일 개념 준수**: 각 마이크로 세션이 단 1개의 핵심 학습 목표만 다루는가?
+- [ ] **시간 범위**: 모든 마이크로 세션이 15~25분 범위 내인가?
+- [ ] **분량 적절성**: 각 세션의 예상 교안 분량이 3,000~4,500자 범위 내인가?
+- [ ] **세션 연결성**: 모든 세션에 선행/후행 세션 연결이 명확히 정의되었는가?
+- [ ] **chunk_type 태그**: 각 세션에 적절한 chunk_type (narrative|code|diagram|lab) 태그가 부여되었는가?
+- [ ] **의존성 그래프 완결성**: 그래프에 고립 노드(orphan)나 순환 의존성(circular dependency)이 없는가?
+
 ## 산출물
 - QA 결함 리포트 (`01_Planning/강의구성안.md` 하단 QA 검증 섹션)
 - 수정 요청서 (Change Request)

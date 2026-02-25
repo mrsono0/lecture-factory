@@ -36,6 +36,11 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **난이도 곡선**: 전체 커리큘럼의 난이도 진행 시각화
 - **체크포인트 설계**: 주요 학습 완료 지점 및 평가 포인트
 
+### 5. 참고자료 매핑 (Reference Mapping)
+- **세션-참고자료 교차 분석**: 각 마이크로 세션에서 참조해야 할 `참고자료/` 폴더 내 파일을 매핑
+- **키워드 기반 매칭**: 세션 명세서의 핵심 키워드와 참고자료의 내용을 교차 분석하여 자동 매핑
+- **다운스트림 활용**: 02_Material_Writing에서 세션별 타겟 추출에 `_reference_mapping.json` 사용
+
 ## 입력
 - 마이크로 세션 명세서들 (A3B_MicroSession_Specifier 제공, `micro_sessions/세션-*.md`)
 - 커리큘럼 구조 (A3_Curriculum_Architect 제공)
@@ -255,3 +260,4 @@ xychart-beta
 - `01_Planning/micro_sessions/_flow.md` (학습 흐름 및 경로 문서)
 - `01_Planning/micro_sessions/_dependency.mmd` (Mermaid 의존성 그래프)
 - 통합된 `01_Planning/강의구성안.md` (흐름도 및 인덱스 링크 포함)
+- `01_Planning/micro_sessions/_reference_mapping.json` (세션-참고자료 매핑)

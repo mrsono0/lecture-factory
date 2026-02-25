@@ -23,12 +23,13 @@
 
 각 에이전트의 상세 역할은 `.agent/agents/{team}/` 프롬프트 파일에 정의되어 있습니다.
 
-### Team 1: Planner (01_planner) — 7 agents
+### Team 1: Planner (01_planner) — 9 agents
 **팀 공통 원칙**: 기획 산출물(강의구성안)만으로 교안 작성 팀이 막힘 없이 집필을 시작할 수 있어야 합니다.
-**Flow**: A0 → A1 → A5B → A3 → A2 ∥ A7 → A3(통합) → A5A → A0 (승인/반려)
+**Flow**: A0 → A1 → A5B → A3 → A3B → A3C → A2 ∥ A7 → A3(통합) → A5A → A0 (승인/반려)
  A5B(학습자 분석) → A3(커리큐럼 설계): A5B 산출물을 A3의 입력으로 참조
- A2∥A7 병렬 완료 후 A3가 양쪽 산출물을 커리큐럼에 통합 (Integration Hub)
- 1일 4시간 초과 시 AM/PM 분할 설계, 60~90분 단위 하위 세션 세분화
+ A3 → A3B(마이크로 세션 청킹) → A3C(세션 인덱싱): 15~25분 단위 세분화 및 의존성 그래프
+ A2∥A7 병렬 완료 후 A3가 양쪽 산출물 + 마이크로 세션 인덱스를 커리큐럼에 통합 (Integration Hub)
+ 반려 시 step_4(A3B)부터 재실행
 
 ### Team 2: Writer (02_writer) — 11 agents
 **팀 공통 원칙**: 초보 강사가 교안만 읽고 막힘 없이 설명할 수 있어야 합니다.
@@ -116,6 +117,7 @@
 |----------|:---:|---|:---:|
 | **P01** Planner | `deep` | A0 Orchestrator | `unspecified-low` |
 | | | A3 Curriculum Architect, A5A QA Manager | `ultrabrain` |
+| | | A3B MicroSession Specifier, A3C Session Indexer | `curriculum-chunking` |
 | | | A7 Differentiation Advisor | `artistry` |
 | **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
 | | | A6 Visualization Designer | `visual-engineering` |

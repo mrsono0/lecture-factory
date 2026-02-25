@@ -22,41 +22,53 @@ model: opus
 
 | Step | Agent | 프롬프트 파일 |
 |---|---|---|
-| 0, 7 | A0 Orchestrator | `.agent/agents/01_planner/A0_Orchestrator.md` |
+| 0, 10 | A0 Orchestrator | `.agent/agents/01_planner/A0_Orchestrator.md` |
 | 1 | A1 Trend Researcher | `.agent/agents/01_planner/A1_Trend_Researcher.md` |
 | 2 | A5B Learner Analyst | `.agent/agents/01_planner/A5B_Learner_Analyst.md` |
 | 3 | A3 Curriculum Architect | `.agent/agents/01_planner/A3_Curriculum_Architect.md` |
-| 4 | A2 Instructional Designer | `.agent/agents/01_planner/A2_Instructional_Designer.md` |
-| 5 | A7 Differentiation Advisor | `.agent/agents/01_planner/A7_Differentiation_Advisor.md` |
-| 6 | A5A QA Manager | `.agent/agents/01_planner/A5A_QA_Manager.md` |
+| 4 | A3B MicroSession Specifier | `.agent/agents/01_planner/A3B_MicroSession_Specifier.md` |
+| 5 | A3C Session Indexer | `.agent/agents/01_planner/A3C_Session_Indexer.md` |
+| 6 | A2 Instructional Designer | `.agent/agents/01_planner/A2_Instructional_Designer.md` |
+| 7 | A7 Differentiation Advisor | `.agent/agents/01_planner/A7_Differentiation_Advisor.md` |
+| 8 | A3 Curriculum Architect (통합) | `.agent/agents/01_planner/A3_Curriculum_Architect.md` |
+| 9 | A5A QA Manager | `.agent/agents/01_planner/A5A_QA_Manager.md` |
 
-## 파이프라인 실행 순서
+## 파이프라인 실행 순서 (11 Steps)
 
 ```
 Step 0: A0 — 요청 분석, 범위 정의
 Step 1: A1 — 트렌드 조사 (NotebookLM/Web)
 Step 2: A5B — 학습자 페르소나 분석
-Step 3: A3 — 커리큐럼 구조 설계
-Step 4 ∥ Step 5: A2 + A7 — 학습 활동 설계 + 차별화 전략 (병렬)
-Step 5b: A3 — A2+A7 산출물 통합 (Integration Hub)
-Step 6: A5A — QA 검증
-Step 7: A0 — 최종 승인/반려
+Step 3: A3 — 커리큘럼 구조 설계 (60~90분 단위 초안)
+Step 4: A3B — 마이크로 세션 청킹 (15~25분 단위 세분화)
+Step 5: A3C — 세션 인덱싱, 의존성 그래프, 학습 경로 설계
+Step 6 ∥ Step 7: A2 + A7 — 학습 활동 설계 + 차별화 전략 (병렬)
+Step 8: A3 — A2+A7 산출물 통합 (Integration Hub)
+Step 9: A5A — QA 검증 (마이크로 세션 전용 체크리스트 포함)
+Step 10: A0 — 최종 승인/반려
 ```
 
-## 병렬 실행 (Step 4 & 5)
+## 병렬 실행 (Step 6 & 7)
 
-Step 4(A2)와 Step 5(A7)는 독립적이므로, Task 도구로 `run_in_background: true`를 사용하여 병렬 실행합니다. 두 결과를 모두 수집한 후 Step 5b(A3 통합)로 진행합니다.
+Step 6(A2)와 Step 7(A7)는 독립적이므로, Task 도구로 `run_in_background: true`를 사용하여 병렬 실행합니다. 두 결과를 모두 수집한 후 Step 8(A3 통합)로 진행합니다.
 
 ## 승인/반려 루프
 
-Step 7에서 A0이 최종 판단합니다:
-- **승인(Approved)**: 산출물을 `01_Planning/강의구성안.md`로 저장하고 완료
-- **반려(Rejected)**: 반려 사유를 분석하여 Step 3(A3)부터 재실행 (최대 2회)
+Step 10에서 A0이 최종 판단합니다:
+- **승인(Approved)**: 산출물을 저장하고 완료 (save_targets 9개 파일 존재 검증 필수)
+- **반려(Rejected)**: 반려 사유를 분석하여 Step 4(A3B 마이크로 세션 청킹)부터 재실행 (최대 2회)
 
 ## 산출물
 
 - `{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md`
 - `{YYYY-MM-DD_강의제목}/01_Planning/Trend_Report.md`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/_index.json`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/_flow.md`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/_dependency.mmd`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/_reference_mapping.json`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/_activities.md`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/_differentiation.md`
+- `{YYYY-MM-DD_강의제목}/01_Planning/micro_sessions/세션-*.md`
 
 ## 출력 규칙
 
