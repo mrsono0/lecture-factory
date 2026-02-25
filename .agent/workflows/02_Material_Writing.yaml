@@ -348,10 +348,10 @@ steps:
 # ── 모델 라우팅 참조 (정본: .agent/agents/02_writer/config.json) ──────────────────────────────────────────
 # 아래는 참조용입니다. 실제 라우팅은 config.json을 따릅니다.
 model_routing:
-  # 세션별 집필: deep 카테고리 (7섹션 구조 + 분량 무제한 → 고품질 모델 필요)
+  # 세션별 집필: micro-writing 카테고리 (Gemini 최적화 마이크로 세션 서술형 집필)
   A4B_Session_Writer:
-    category: "deep"
-    note: "7섹션 구조 세션 집필 (분량 무제한) - 고품질 모델 사용"
+    category: "micro-writing"
+    note: "7섹션 교안 집필 — Gemini 최적화 마이크로 세션 서술형 집필"
   
   # 취합 및 통합: deep 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
   A4C_Material_Aggregator:
@@ -371,6 +371,21 @@ model_routing:
   A8_QA_Editor:
     category: "ultrabrain"
     note: "최종 QA (기존 설정 유지)"
+  
+  # 출처 추적: quick 카테고리
+  A2_Traceability_Curator:
+    category: "quick"
+    note: "출처 추적 구축 — 기계적 매핑"
+  
+  # 코드 검증: quick 카테고리
+  A5_Code_Validator:
+    category: "quick"
+    note: "코드 실행 검증 — 정확성만 필요"
+  
+  # 차별화 전략: artistry 카테고리
+  A10_Differentiation_Strategist:
+    category: "artistry"
+    note: "차별화 강화 — 창의적 전략"
 
 # ── 업스트림/다운스트림 연동 ──────────────────────────────────────────
 upstream_integration:
