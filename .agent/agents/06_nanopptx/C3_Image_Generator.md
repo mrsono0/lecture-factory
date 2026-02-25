@@ -130,7 +130,7 @@ C3_Image_Generator는 **Gemini API (gemini-3-pro-image-preview)**를 호출하�
 ```bash
 START_TIME=$(date +%s)
 PROMPT_BYTES=$(echo -n "$PROMPT" | wc -c)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"06_NanoBanana_PPTX","step_id":"step_3_image_generation","agent":"C3_Image_Generator","category":"visual-engineering","model":"[model]","action":"generate_image","tool_name":"gemini-api","tool_action":"generate_image","tool_input_bytes":'"$PROMPT_BYTES"',"retry":0}' >> ".agent/logs/[DATE]_06_NanoBanana_PPTX.jsonl"
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"06_NanoBanana_PPTX","step_id":"step_5_image_generation","agent":"C3_Image_Generator","category":"visual-engineering","model":"[model]","action":"generate_image","tool_name":"gemini-api","tool_action":"generate_image","tool_input_bytes":'"$PROMPT_BYTES"',"retry":0}' >> ".agent/logs/[DATE]_06_NanoBanana_PPTX.jsonl"
 ```
 
 **END (API 호출 완료 후)**:
@@ -139,7 +139,7 @@ END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 # 이미지 파일 크기 (PNG)
 OUTPUT_BYTES=$(wc -c < "06_NanoPPTX/images/slide-XX.png")
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"06_NanoBanana_PPTX","step_id":"step_3_image_generation","agent":"C3_Image_Generator","category":"visual-engineering","model":"[model]","action":"generate_image","tool_name":"gemini-api","tool_action":"generate_image","tool_input_bytes":'"$PROMPT_BYTES"',"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_06_NanoBanana_PPTX.jsonl"
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"06_NanoBanana_PPTX","step_id":"step_5_image_generation","agent":"C3_Image_Generator","category":"visual-engineering","model":"[model]","action":"generate_image","tool_name":"gemini-api","tool_action":"generate_image","tool_input_bytes":'"$PROMPT_BYTES"',"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_06_NanoBanana_PPTX.jsonl"
 ```
 
 ### 검증 체크포인트
