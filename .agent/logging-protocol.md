@@ -490,7 +490,7 @@ cat .agent/logs/*.jsonl | jq -s '
 | 04 SlidePrompt Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
 | 05 PPTX Conversion | Step-by-Step | 세션별 개별 실행 | 6 steps × (START+END) |
 | 06 NanoBanana PPTX | Step-by-Step | 세션별 개별 실행 | 6 steps × (START+END) |
-| 07 Manus Slide | Step-by-Step | 세션별 순차 처리 | 6 steps × (START+END) |
+| 07 Manus Slide | Step-by-Step | 세션별 순차 처리 | 8 steps × (START+END) |
 | 08 Log Analysis | Step-by-Step | 단일 실행 | 6 steps × (START+END) |
 
 > **Note**: 기본 모델은 권장 사항이며, 실행 상황에 따라 다른 모델이 사용될 수 있습니다 (§9.0 혼합 모델 참조).
