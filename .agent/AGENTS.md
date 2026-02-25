@@ -46,7 +46,7 @@
 **Flow**:
 - Phase 1: A1 → A2 (분석)
 - Phase 2: A3 → A7 (설계)
-- Phase 3: A4 + A5 + A8 (병렬), A5 → A6 (Lab 카드)
+- Phase 3: A4 ∥ A5 (병렬), A4 → A8 (카피 편집), A5+A3 → A6 (Lab 카드)
 - Phase 4: A10 → A9 (최종 QA)
 
 ### Team 4: Slide Prompt Generator (04_prompt_generator) — 5 agents
@@ -122,6 +122,7 @@
 | | | A3B MicroSession Specifier, A3C Session Indexer | `curriculum-chunking` |
 | | | A7 Differentiation Advisor | `artistry` |
 | **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
+| | | A4B Session Writer | `micro-writing` |
 | | | A6 Visualization Designer, A11 Chart Specifier | `visual-engineering` |
 | | | A8 QA Editor | `ultrabrain` |
 | | | A10 Differentiation Strategist | `artistry` |

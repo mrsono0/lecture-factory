@@ -132,12 +132,14 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 |----------|-----------|:------------:|:-------------:|
 | `quick` | Haiku/Flash | 0.00025 | 0.00125 |
 | `unspecified-low` | Sonnet/Flash | 0.003 | 0.015 |
-| `deep` | Sonnet/Pro | 0.003 | 0.015 |
+| `deep` | Opus/Pro | 0.015 | 0.075 |
 | `visual-engineering` | Sonnet/Pro | 0.003 | 0.015 |
 | `writing` | Sonnet/Pro | 0.003 | 0.015 |
 | `ultrabrain` | Opus/Pro | 0.015 | 0.075 |
-| `artistry` | Opus/Pro | 0.015 | 0.075 |
+| `artistry` | Gemini 3.1 Pro | 0.003 | 0.015 |
 | `unspecified-high` | Opus/Pro | 0.015 | 0.075 |
+| `curriculum-chunking` | Gemini 3.1 Pro | 0.003 | 0.015 |
+| `micro-writing` | Gemini 3.1 Pro | 0.003 | 0.015 |
 
 **비용 계산:**
 ```

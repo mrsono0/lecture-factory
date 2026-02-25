@@ -57,7 +57,11 @@ steps:
     input: "Slide Sequence Map, Output Language: Korean"
     output: "Design Tokens & Style Guide"
 
-  # Phase 3: 생성 및 검증 (병렬 실행)
+  # Phase 3: 생성 및 검증
+  # ┌─ step_5 (A4 Layout) ─→ step_7 (A8 Copy) ──┐
+  # │                                              ├→ step_9 (A10 Trace)
+  # └─ step_6 (A5 Code)  ─→ step_8 (A6 Lab)  ───┘
+  # Note: step_5 ∥ step_6 만 진정한 병렬. step_7은 step_5 완료 후, step_8은 step_6 완료 후 순차 실행.
   - id: step_5_layout
     agent: "03_visualizer/A4_Layout_Designer"
     action: "create_layout"
@@ -82,11 +86,13 @@ steps:
     input: "Slide Layout Specs, Output Language: Korean"
     output: "Refined Slide Copy"
 
-  # Phase 3.5: 실습 재현성 (A5 완료 후)
+  # Phase 3.5: 실습 재현성 (A5 + A3 산출물 필요)
   - id: step_8_lab_cards
     agent: "03_visualizer/A6_Lab_Reproducibility_Engineer"
     action: "create_lab_cards"
-    depends_on: "step_6_code_validation"
+    depends_on:
+      - "step_6_code_validation"
+      - "step_3_structure"
     input: "Validated Code Blocks, Slide Sequence Map, Output Language: Korean"
     output: "Lab Cards & Troubleshooting Guide"
 
