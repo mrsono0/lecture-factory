@@ -19,6 +19,7 @@ micro_session_policy:
     index_file: "01_Planning/micro_sessions/_index.json"
     flow_file: "01_Planning/micro_sessions/_flow.md"
     dependency_file: "01_Planning/micro_sessions/_dependency.mmd"
+    reference_mapping_file: "01_Planning/micro_sessions/_reference_mapping.json"
     session_dir: "01_Planning/micro_sessions/"
     session_pattern: "세션-{번호:03d}-{제목}.md"
   
@@ -133,7 +134,7 @@ steps:
       - "Micro Session Index"
       - "Learner Persona"
       - "Output Language: Korean"
-    output: "Learning Activities & Assessment Plan (per micro-session)"
+    output: "Learning Activities & Assessment Plan (01_Planning/micro_sessions/_activities.md)"
     notes: |
       각 마이크로 세션별 학습 활동 설계. 개별 세션 파일에 활동 정보 추가.
 
@@ -147,7 +148,7 @@ steps:
       - "Micro Session Index"
       - "Trend Report"
       - "Output Language: Korean"
-    output: "Differentiation Strategy (USP) per micro-session"
+    output: "Differentiation Strategy (USP) per micro-session (01_Planning/micro_sessions/_differentiation.md)"
 
   # Phase 3.5: 통합 — A3가 A2+A7 산출물을 커리큘럼에 병합
   - id: step_8_integration
@@ -208,9 +209,13 @@ steps:
         action: "Finish"
         save_targets:
           - "01_Planning/강의구성안.md"
+          - "01_Planning/Trend_Report.md"
           - "01_Planning/micro_sessions/_index.json"
           - "01_Planning/micro_sessions/_flow.md"
           - "01_Planning/micro_sessions/_dependency.mmd"
+          - "01_Planning/micro_sessions/_reference_mapping.json"
+          - "01_Planning/micro_sessions/_activities.md"
+          - "01_Planning/micro_sessions/_differentiation.md"
           - "01_Planning/micro_sessions/세션-*.md"
       rejected: 
         action: "Retry from step_4_micro_chunking"
