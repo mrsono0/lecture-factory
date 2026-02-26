@@ -130,7 +130,8 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
 1. **`run_id` 확인**: 상위에서 전달받은 `run_id`가 있으면 사용, 없으면 `run_{YYYYMMDD}_{HHMMSS}` 형식으로 생성합니다.
 2. **로그 파일 경로**: `.agent/workflows/01_Lecture_Planning.yaml`의 `logging.path`를 읽어 결정합니다.
 3. **config.json 로드**: `.agent/agents/01_planner/config.json`에서 `default_category`와 `agent_models`를 읽어 에이전트별 카테고리를 결정합니다.
-4. **model 매핑**: `logging.model_config` 경로의 파일에서 `categories.{category}.model` 값을 조회합니다.
+   - ⚠️ **자기 자신(A0_Orchestrator)도 `agent_models`에서 조회**합니다. 오버라이드가 있으면 해당 카테고리를 사용하고, 없으면 `default_category`를 사용합니다.
+4. **model 매핑**: 아래 '에이전트별 category→model 매핑' 테이블에서 해당 카테고리의 model 값을 직접 참조합니다. (외부 파일 조회 불필요)
 
 ### Step-by-Step 실행 시
 - 각 step 실행 **직전**에 `START` 이벤트를 JSONL에 append합니다.
@@ -159,6 +160,23 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
+
+### 에이전트별 category→model 매핑 (Quick Reference)
+
+> `config.json`과 `.opencode/oh-my-opencode.jsonc`에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
+
+| 에이전트 | category | model |
+|---|---|---|
+| A0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
+| A1_Trend_Researcher | `deep` | `anthropic/claude-opus-4-6` |
+| A5B_Learner_Analyst | `deep` | `anthropic/claude-opus-4-6` |
+| A3_Curriculum_Architect | `ultrabrain` | `opencode/gpt-5.3-codex` |
+| A3B_MicroSession_Specifier | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
+| A3C_Session_Indexer | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
+| A2_Resource_Mapper | `deep` | `anthropic/claude-opus-4-6` |
+| A7_Differentiation_Advisor | `artistry` | `google/antigravity-gemini-3.1-pro` |
+| A5A_QA_Manager | `ultrabrain` | `opencode/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `deep` (default) | `anthropic/claude-opus-4-6` |
 ---
 
 ## 시작 가이드 (Startup)
