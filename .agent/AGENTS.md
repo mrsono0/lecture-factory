@@ -13,6 +13,26 @@
 ---
 
 
+
+## Project Structure
+```
+YYYY-MM-DD_강의제목/
+├── 01_Planning/
+│   ├── 강의구성안.md
+│   ├── Trend_Report.md
+│   └── micro_sessions/
+│       ├── _index.json
+│       ├── _flow.md
+│       ├── _dependency.mmd
+│       ├── _reference_mapping.json
+│       └── 세션-*.md
+├── 02_Material/강의교안_v1.0.md, src/, images/
+├── 03_Slides/{session}/슬라이드기획안.md
+├── 04_SlidePrompt/{세션ID}_{세션제목}_프롬프트.md
+├── 05_PPTX/ | 06_NanoPPTX/ | 07_ManusSlides/
+└── 참고자료/원본_기획안.md
+```
+
 ### Subagent Delegation 원칙
 **One Task per Subagent**: 각 서브에이전트에게 **단 하나의 명확한 임무**만 부여합니다.
 - 메인 에이전트의 context 창 보존을 위해 보조 작업(리서치, 탐색)은 반드시 위임
