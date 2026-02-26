@@ -96,6 +96,12 @@
       "model": "google/antigravity-gemini-3.1-pro",
       "variant": "high"
     },
+    // Research Tasks: Trend analysis, source-based research, deep web search
+    // Gemini 3.1 Pro — 1M context for large-scale research synthesis, native tool-use for bash execution
+    "research": {
+      "model": "google/antigravity-gemini-3.1-pro",
+      "variant": "high"
+    },
     // General High-Effort: Fallback for unclassified complex tasks
     "unspecified-high": {
       "model": "anthropic/claude-opus-4-6",

@@ -140,6 +140,7 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 | `unspecified-high` | Opus/Pro | 0.015 | 0.075 |
 | `curriculum-chunking` | Gemini 3.1 Pro | 0.003 | 0.015 |
 | `micro-writing` | Gemini 3.1 Pro | 0.003 | 0.015 |
+| `research` | Gemini 3.1 Pro | 0.002 | 0.012 |
 
 **비용 계산:**
 ```
@@ -172,8 +173,8 @@ run_{YYYYMMDD}_{HHMMSS}
 ```jsonl
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:05","status":"START","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"opencode/claude-sonnet-4-6","action":"analyze_request","parallel_group":null,"retry":0}
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:45","status":"END","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"opencode/claude-sonnet-4-6","action":"analyze_request","parallel_group":null,"retry":0,"duration_sec":40,"input_bytes":15200,"output_bytes":9600,"est_input_tokens":4606,"est_output_tokens":2909,"est_cost_usd":0.047,"decision":null}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:46","status":"START","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"deep","model":"anthropic/claude-opus-4-6","action":"research_trend","parallel_group":null,"retry":0}
-{"run_id":"run_20260222_143005","ts":"2026-02-22T14:35:20","status":"END","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"deep","model":"anthropic/claude-opus-4-6","action":"research_trend","parallel_group":null,"retry":0,"duration_sec":274,"input_bytes":9600,"output_bytes":28500,"est_input_tokens":2909,"est_output_tokens":8636,"est_cost_usd":0.138,"decision":null}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:30:46","status":"START","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"research","model":"google/antigravity-gemini-3.1-pro","action":"research_trend","parallel_group":null,"retry":0}
+{"run_id":"run_20260222_143005","ts":"2026-02-22T14:35:20","status":"END","workflow":"01_Lecture_Planning","step_id":"step_1_trend","agent":"A1_Trend_Researcher","category":"research","model":"google/antigravity-gemini-3.1-pro","action":"research_trend","parallel_group":null,"retry":0,"duration_sec":274,"input_bytes":9600,"output_bytes":28500,"est_input_tokens":2909,"est_output_tokens":8636,"est_cost_usd":0.040,"decision":null}
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:40:00","status":"START","workflow":"01_Lecture_Planning","step_id":"step_4_inst","agent":"A2_Instructional_Designer","category":"deep","model":"anthropic/claude-opus-4-6","action":"design_activities","parallel_group":"phase2_parallel","retry":0}
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:40:00","status":"START","workflow":"01_Lecture_Planning","step_id":"step_5_diff","agent":"A7_Differentiation_Advisor","category":"artistry","model":"google/antigravity-gemini-3.1-pro","action":"identify_usp","parallel_group":"phase2_parallel","retry":0}
 {"run_id":"run_20260222_143005","ts":"2026-02-22T14:48:30","status":"END","workflow":"01_Lecture_Planning","step_id":"step_4_inst","agent":"A2_Instructional_Designer","category":"deep","model":"anthropic/claude-opus-4-6","action":"design_activities","parallel_group":"phase2_parallel","retry":0,"duration_sec":510,"input_bytes":18000,"output_bytes":22000,"est_input_tokens":5454,"est_output_tokens":6666,"est_cost_usd":0.116,"decision":null}
