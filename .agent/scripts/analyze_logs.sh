@@ -86,14 +86,14 @@ cmd_summary() {
       workflow: .[0].workflow,
       start_ts: (map(.ts) | min),
       end_ts: (map(.ts) | max),
-      steps: (map(select(.status=="END")) | length),
-      total_duration_sec: (map(select(.status=="END") | .duration_sec) | add),
-      total_input_tokens: (map(select(.status=="END") | .est_input_tokens) | add),
-      total_output_tokens: (map(select(.status=="END") | .est_output_tokens) | add),
-      total_cost_usd: (map(select(.status=="END") | .est_cost_usd) | add),
+      steps: (map(select(.status=="END" or .status=="SESSION_END")) | length),
+      total_duration_sec: (map(select(.status=="END" or .status=="SESSION_END") | .duration_sec) | add),
+      total_input_tokens: (map(select(.status=="END" or .status=="SESSION_END") | .est_input_tokens) | add),
+      total_output_tokens: (map(select(.status=="END" or .status=="SESSION_END") | .est_output_tokens) | add),
+      total_cost_usd: (map(select(.status=="END" or .status=="SESSION_END") | .est_cost_usd) | add),
       failures: (map(select(.status=="FAIL")) | length),
       retries: (map(select(.status=="RETRY")) | length),
-      decision: (map(select(.status=="END" and .decision != null) | .decision) | last // "N/A")
+      decision: (map(select((.status=="END" or .status=="SESSION_END") and .decision != null) | .decision) | last // "N/A")
     }) | sort_by(.start_ts) | reverse
   '
 }
@@ -106,7 +106,7 @@ cmd_bottleneck() {
   header "보틀넥 분석 — 소요시간 TOP $top_n"
 
   concat_logs | jq -s --argjson n "$top_n" '
-    map(select(.status=="END"))
+    map(select(.status=="END" or .status=="SESSION_END"))
     | sort_by(-.duration_sec)
     | .[0:$n]
     | to_entries | map({
@@ -125,7 +125,7 @@ cmd_bottleneck() {
 
   subheader "소요시간 분포"
   concat_logs | jq -s '
-    map(select(.status=="END") | .duration_sec) |
+    map(select(.status=="END" or .status=="SESSION_END") | .duration_sec) |
     {
       count: length,
       min_sec: min,
@@ -145,7 +145,7 @@ cmd_cost() {
 
   subheader "파이프라인별 총 비용"
   concat_logs | jq -s '
-    map(select(.status=="END"))
+    map(select(.status=="END" or .status=="SESSION_END"))
     | group_by(.workflow)
     | map({
       workflow: .[0].workflow,
@@ -160,7 +160,7 @@ cmd_cost() {
 
   subheader "비용 TOP 5 스텝 (가장 비싼 작업)"
   concat_logs | jq -s '
-    map(select(.status=="END"))
+    map(select(.status=="END" or .status=="SESSION_END"))
     | sort_by(-.est_cost_usd)
     | .[0:5]
     | map({step_id, agent, category, workflow, est_cost_usd,
@@ -175,7 +175,7 @@ cmd_agent() {
   header "에이전트별 통계"
 
   concat_logs | jq -s '
-    map(select(.status=="END"))
+    map(select(.status=="END" or .status=="SESSION_END"))
     | group_by(.agent)
     | map({
       agent: .[0].agent,
@@ -237,7 +237,7 @@ cmd_parallel() {
   header "병렬 실행 효율 분석"
 
   local para_count
-  para_count=$(concat_logs | jq -s 'map(select(.status=="END" and .parallel_group != null)) | length')
+  para_count=$(concat_logs | jq -s 'map(select((.status=="END" or .status=="SESSION_END") and .parallel_group != null)) | length')
 
   if [[ "$para_count" == "0" ]]; then
     warn "병렬 실행 기록 없음"
@@ -245,7 +245,7 @@ cmd_parallel() {
   fi
 
   concat_logs | jq -s '
-    map(select(.status=="END" and .parallel_group != null))
+    map(select((.status=="END" or .status=="SESSION_END") and .parallel_group != null))
     | group_by(.parallel_group)
     | map({
       group: .[0].parallel_group,
@@ -266,7 +266,7 @@ cmd_category() {
   header "LLM 카테고리별 비용 분석"
 
   concat_logs | jq -s '
-    map(select(.status=="END"))
+    map(select(.status=="END" or .status=="SESSION_END"))
     | group_by(.category)
     | map({
       category: .[0].category,
@@ -357,7 +357,7 @@ cmd_validate() {
     # END 이벤트 전용 필드 검증
     local end_missing
     end_missing=$(jq -c '
-      select(.status=="END") |
+      select(.status=="END" or .status=="SESSION_END") |
       ["duration_sec","input_bytes","output_bytes","est_input_tokens","est_output_tokens","est_cost_usd"]
       - keys | select(length > 0)
     ' "$f" 2>/dev/null | head -5)
@@ -373,12 +373,12 @@ cmd_validate() {
     # START/END 쌍 검증
     local start_count end_count
     start_count=$(jq -s 'map(select(.status=="START")) | length' "$f")
-    end_count=$(jq -s 'map(select(.status=="END")) | length' "$f")
+    end_count=$(jq -s 'map(select(.status=="END" or .status=="SESSION_END")) | length' "$f")
 
     # 토큰 추정 정확성 검증 (bytes/3.3 ≈ tokens, ±2 허용)
     local token_mismatch
     token_mismatch=$(jq -c '
-      select(.status=="END") |
+      select(.status=="END" or .status=="SESSION_END") |
       select(
         ((.input_bytes / 3.3 | round) - .est_input_tokens | fabs) > 2 or
         ((.output_bytes / 3.3 | round) - .est_output_tokens | fabs) > 2
@@ -390,7 +390,7 @@ cmd_validate() {
       echo "$token_mismatch"
     fi
 
-    echo -e "${BOLD}${fname}${NC}: ${line_count}줄, run_id ${run_id_count}개, START=${start_count} END=${end_count}"
+    echo -e "${BOLD}${fname}${NC}: ${line_count}줄, run_id ${run_id_count}개, START=${start_count} END/SESSION_END=${end_count}"
 
     if [[ "$start_count" != "$end_count" ]]; then
       local unmatched
@@ -438,11 +438,11 @@ cmd_report() {
       group_by(.run_id) | map({
         run_id: .[0].run_id,
         workflow: .[0].workflow,
-        steps: (map(select(.status=="END")) | length),
-        total_duration_min: ((map(select(.status=="END") | .duration_sec) | add) / 60 * 10 | round | . / 10),
-        total_cost_usd: ((map(select(.status=="END") | .est_cost_usd) | add) * 1000 | round | . / 1000),
-        total_tokens: (map(select(.status=="END") | .est_input_tokens + .est_output_tokens) | add),
-        decision: (map(select(.status=="END" and .decision != null) | .decision) | last // "N/A")
+        steps: (map(select(.status=="END" or .status=="SESSION_END")) | length),
+        total_duration_min: ((map(select(.status=="END" or .status=="SESSION_END") | .duration_sec) | add) / 60 * 10 | round | . / 10),
+        total_cost_usd: ((map(select(.status=="END" or .status=="SESSION_END") | .est_cost_usd) | add) * 1000 | round | . / 1000),
+        total_tokens: (map(select(.status=="END" or .status=="SESSION_END") | .est_input_tokens + .est_output_tokens) | add),
+        decision: (map(select((.status=="END" or .status=="SESSION_END") and .decision != null) | .decision) | last // "N/A")
       }) | sort_by(.run_id) | reverse
     '
     echo '```'
@@ -451,7 +451,7 @@ cmd_report() {
     echo ""
     echo '```json'
     concat_logs | jq -s '
-      map(select(.status=="END")) | sort_by(-.duration_sec) | .[0:5]
+      map(select(.status=="END" or .status=="SESSION_END")) | sort_by(-.duration_sec) | .[0:5]
       | map({step_id, agent, category, duration_min: ((.duration_sec/60*10|round)/10), est_cost_usd})
     '
     echo '```'
@@ -461,7 +461,7 @@ cmd_report() {
     echo "| 카테고리 | 스텝 수 | 총 비용 (USD) | 총 토큰 | 분당 비용 |"
     echo "|----------|---------|---------------|---------|----------|"
     concat_logs | jq -sr '
-      map(select(.status=="END")) | group_by(.category)
+      map(select(.status=="END" or .status=="SESSION_END")) | group_by(.category)
       | map(
         "| " + .[0].category +
         " | " + (length | tostring) +
@@ -477,7 +477,7 @@ cmd_report() {
     echo "| 에이전트 | 모델 | 카테고리 | 실행 수 | 평균 소요(sec) | 총 비용 |"
     echo "|----------|------|----------|---------|---------------|---------|"
     concat_logs | jq -sr '
-      map(select(.status=="END")) | group_by(.agent)
+      map(select(.status=="END" or .status=="SESSION_END")) | group_by(.agent)
       | sort_by(-(map(.est_cost_usd)|add))
       | map(
         "| " + .[0].agent +
@@ -493,13 +493,13 @@ cmd_report() {
     echo "## 5. 병렬 실행 효율"
     echo ""
     local para_data
-    para_data=$(concat_logs | jq -s 'map(select(.status=="END" and .parallel_group != null)) | length')
+    para_data=$(concat_logs | jq -s 'map(select((.status=="END" or .status=="SESSION_END") and .parallel_group != null)) | length')
     if [[ "$para_data" == "0" ]]; then
       echo "병렬 실행 기록 없음"
     else
       echo '```json'
       concat_logs | jq -s '
-        map(select(.status=="END" and .parallel_group != null))
+        map(select((.status=="END" or .status=="SESSION_END") and .parallel_group != null))
         | group_by(.parallel_group)
         | map({
           group: .[0].parallel_group,
