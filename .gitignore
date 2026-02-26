@@ -90,6 +90,7 @@ AI-native_스프링부트기초.md
 *.log
 *.jsonl
 .agent/dashboard/*.md
+.agent/logs/.state/
 *.tmp
 *.swp
 *.swo

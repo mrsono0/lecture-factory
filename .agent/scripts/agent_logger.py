@@ -39,7 +39,9 @@ Lecture Factory 로깅 프로토콜(.agent/logging-protocol.md) 구현
 """
 
 import json
-import os
+import argparse
+import re
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
@@ -119,15 +121,9 @@ class AgentLogger:
         try:
             config_path = Path(self.model_config_path)
             if config_path.exists():
-                # JSONC (JSON with comments) 처리
-                content = config_path.read_text(encoding="utf-8")
-                # 주석 제거 (간단한 처리)
-                lines = []
-                for line in content.split("\n"):
-                    if "//" in line:
-                        line = line[: line.index("//")]
-                    lines.append(line)
-                config = json.loads("\n".join(lines))
+                # JSONC (JSON with comments) 처리 — 문자열 내부 // 보존
+                content = re.sub(r'(?<!:)//.*$', '', content, flags=re.MULTILINE)
+                config = json.loads(content)
 
                 categories = config.get("categories", {})
                 return {
@@ -135,7 +131,7 @@ class AgentLogger:
                     for cat, info in categories.items()
                 }
         except Exception as e:
-            print(f"[WARN] model_config 로드 실패: {e}")
+            print(f"[WARN] model_config 로드 실패: {e}", file=sys.stderr)
 
         return {}
 
@@ -212,7 +208,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:START] {step_id} ({agent})")
+        print(f"[LOG:START] {step_id} ({agent})", file=sys.stderr)
         return entry
 
     def log_end(
@@ -271,7 +267,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:END] {step_id} ({duration_sec:.1f}s, ${est_cost_usd:.4f})")
+        print(f"[LOG:END] {step_id} ({duration_sec:.1f}s, ${est_cost_usd:.4f})", file=sys.stderr)
         return entry
 
     def log_fail(
@@ -301,7 +297,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:FAIL] {step_id} - {error_message}")
+        print(f"[LOG:FAIL] {step_id} - {error_message}", file=sys.stderr)
         return entry
 
     def log_retry(
@@ -324,7 +320,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:RETRY] {step_id} (retry={retry})")
+        print(f"[LOG:RETRY] {step_id} (retry={retry})", file=sys.stderr)
         return entry
 
     def log_session_start(
@@ -359,7 +355,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:SESSION_START] {session_id} ({session_name})")
+        print(f"[LOG:SESSION_START] {session_id} ({session_name})", file=sys.stderr)
         return entry
 
     def log_session_end(
@@ -412,7 +408,8 @@ class AgentLogger:
 
         self._write_log(entry)
         print(
-            f"[LOG:SESSION_END] {session_id} ({duration_sec:.1f}s, ${est_cost_usd:.4f})"
+            f"[LOG:SESSION_END] {session_id} ({duration_sec:.1f}s, ${est_cost_usd:.4f})",
+            file=sys.stderr,
         )
         return entry
 
@@ -454,7 +451,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:TOOL_START] {tool_name}.{tool_action}")
+        print(f"[LOG:TOOL_START] {tool_name}.{tool_action}", file=sys.stderr)
         return start_time
 
     def log_external_tool_end(
@@ -498,7 +495,7 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:TOOL_END] {tool_name}.{tool_action} ({duration:.1f}s, {status})")
+        print(f"[LOG:TOOL_END] {tool_name}.{tool_action} ({duration:.1f}s, {status})", file=sys.stderr)
         return entry
 
     def _get_category_for_step(self, step_id: str) -> str:
@@ -524,38 +521,171 @@ def get_log_path(workflow: str, log_dir: str = ".agent/logs") -> str:
     return str(log_path)
 
 
+# ─── CLI 상태 관리 ───
+
+STATE_DIR = Path(".agent/logs/.state")
+
+
+def _state_path(workflow: str, run_id: str) -> Path:
+    """실행 중인 step 시작 시간을 저장하는 상태 파일 경로"""
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    return STATE_DIR / f"{run_id}_{workflow}.json"
+
+
+def _load_state(workflow: str, run_id: str) -> Dict[str, Any]:
+    p = _state_path(workflow, run_id)
+    if p.exists():
+        return json.loads(p.read_text(encoding="utf-8"))
+    return {}
+
+
+def _save_state(workflow: str, run_id: str, state: Dict[str, Any]) -> None:
+    p = _state_path(workflow, run_id)
+    p.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+
+
+# ─── CLI 진입점 ───
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Agent Logger CLI — 오케스트레이터용 로깅 인터페이스",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""사용 예시:
+  # 1) 파이프라인 시작 — run_id 생성 및 출력
+  RUN_ID=$(python .agent/scripts/agent_logger.py init --workflow 02_Material_Writing)
+
+  # 2) step START 기록
+  python .agent/scripts/agent_logger.py start \\
+    --workflow 02_Material_Writing --run-id $RUN_ID \\
+    --step-id step_1 --agent A1_Source_Miner --category deep \\
+    --action source_mining --input-bytes 15000
+
+  # 3) step END 기록
+  python .agent/scripts/agent_logger.py end \\
+    --workflow 02_Material_Writing --run-id $RUN_ID \\
+    --step-id step_1 --output-bytes 28500
+
+  # 4) step FAIL 기록
+  python .agent/scripts/agent_logger.py fail \\
+    --workflow 02_Material_Writing --run-id $RUN_ID \\
+    --step-id step_1 --agent A1_Source_Miner --category deep \\
+    --action source_mining --error "timeout after 300s"
+"""
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    # ── init ──
+    p_init = sub.add_parser("init", help="파이프라인 시작: run_id 생성 및 출력")
+    p_init.add_argument("--workflow", required=True)
+    p_init.add_argument("--parent-run-id", default=None)
+
+    # ── start ──
+    p_start = sub.add_parser("start", help="step START 이벤트 기록")
+    p_start.add_argument("--workflow", required=True)
+    p_start.add_argument("--run-id", required=True)
+    p_start.add_argument("--step-id", required=True)
+    p_start.add_argument("--agent", required=True)
+    p_start.add_argument("--category", required=True)
+    p_start.add_argument("--action", required=True)
+    p_start.add_argument("--input-bytes", type=int, default=0)
+    p_start.add_argument("--parallel-group", default=None)
+    p_start.add_argument("--retry", type=int, default=0)
+    p_start.add_argument("--parent-run-id", default=None)
+
+    # ── end ──
+    p_end = sub.add_parser("end", help="step END 이벤트 기록")
+    p_end.add_argument("--workflow", required=True)
+    p_end.add_argument("--run-id", required=True)
+    p_end.add_argument("--step-id", required=True)
+    p_end.add_argument("--output-bytes", type=int, required=True)
+    p_end.add_argument("--decision", default=None)
+
+    # ── fail ──
+    p_fail = sub.add_parser("fail", help="step FAIL 이벤트 기록")
+    p_fail.add_argument("--workflow", required=True)
+    p_fail.add_argument("--run-id", required=True)
+    p_fail.add_argument("--step-id", required=True)
+    p_fail.add_argument("--agent", required=True)
+    p_fail.add_argument("--category", required=True)
+    p_fail.add_argument("--action", required=True)
+    p_fail.add_argument("--error", required=True)
+    p_fail.add_argument("--retry", type=int, default=0)
+
+    args = parser.parse_args()
+
+    if args.command == "init":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            parent_run_id=args.parent_run_id,
+        )
+        # stdout에 run_id만 출력 (bash 변수 캡처용)
+        print(logger.run_id)
+
+    elif args.command == "start":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+            parent_run_id=args.parent_run_id,
+        )
+        logger.log_start(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            input_bytes=args.input_bytes,
+            parallel_group=args.parallel_group,
+            retry=args.retry,
+        )
+        # 상태 파일에 시작 시간 + category 저장 (end에서 사용)
+        state = _load_state(args.workflow, args.run_id)
+        state[args.step_id] = {
+            "start_time": time.time(),
+            "category": args.category,
+            "input_bytes": args.input_bytes,
+        }
+        _save_state(args.workflow, args.run_id, state)
+
+    elif args.command == "end":
+        # 상태 파일에서 시작 시간 + category 복원
+        state = _load_state(args.workflow, args.run_id)
+        step_state = state.pop(args.step_id, {})
+        start_time = step_state.get("start_time")
+        category = step_state.get("category", "deep")
+        input_bytes = step_state.get("input_bytes", 0)
+        _save_state(args.workflow, args.run_id, state)
+
+        duration_sec = None
+        if start_time:
+            duration_sec = time.time() - start_time
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        # category/input_bytes를 수동 주입 (CLI 모드)
+        logger._step_categories[args.step_id] = category
+        logger._step_input_bytes[args.step_id] = input_bytes
+        logger.log_end(
+            step_id=args.step_id,
+            output_bytes=args.output_bytes,
+            duration_sec=duration_sec,
+            decision=args.decision,
+        )
+
+    elif args.command == "fail":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        logger.log_fail(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            error_message=args.error,
+            retry=args.retry,
+        )
+
+
 if __name__ == "__main__":
-    # 테스트 실행
-    print("AgentLogger 테스트")
-
-    logger = AgentLogger(
-        workflow="01_Lecture_Planning",
-        model_config_path="../../.opencode/oh-my-opencode.jsonc",
-    )
-
-    print(f"로그 파일: {logger.get_log_path()}")
-    print(f"Run ID: {logger.run_id}")
-
-    # 테스트 이벤트 기록
-    logger.log_start(
-        step_id="step_0_scope",
-        agent="A0_Orchestrator",
-        category="unspecified-low",
-        action="analyze_request",
-        input_bytes=8000,
-    )
-
-    import time
-
-    time.sleep(0.5)
-
-    logger.log_end(
-        step_id="step_0_scope",
-        output_bytes=4000,
-    )
-
-    print(f"\n로그 파일 확인: {logger.get_log_path()}")
-    print("파일 내용:")
-    with open(logger.get_log_path(), "r") as f:
-        for line in f:
-            print(json.loads(line))
+    main()
