@@ -11,10 +11,12 @@ model: sonnet
 
 ## 실행 전 필수 준비
 
-1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/03_Slide_Generation.yaml`을 읽고 스텝 순서를 파악합니다.
-3. **입력 모드 판별**: 파일 지정→단일 모드, 폴더 지정→배치 모드(N개 순차), 미지정→`02_Material/` 자동 탐색.
-4. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
+1. **오케스트레이터 프롬프트 로드**: `.agent/agents/03_visualizer/A0_Orchestrator.md`를 읽고 오케스트레이터 역할(이중 대상 독립 활용 가능성, 통합 품질 관점 3가지, 배치/단일 모드 판단, A1~A10 지휘)을 내재화합니다.
+2. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
+3. **워크플로우 로드**: `.agent/workflows/03_Slide_Generation.yaml`을 읽고 스텝 순서를 파악합니다.
+4. **모델 라우팅 로드**: `.agent/agents/03_visualizer/config.json`에서 에이전트별 카테고리를 확인합니다.
+5. **입력 모드 판별**: 파일 지정→단일 모드, 폴더 지정→배치 모드(N개 순차), 미지정→`02_Material/` 자동 탐색.
+6. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 

@@ -11,11 +11,13 @@ model: sonnet
 
 ## 실행 전 필수 준비
 
-1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/08_Log_Analysis.yaml`을 읽고 스텝 순서를 파악합니다.
-3. **환경 확인**: `jq >= 1.6` 설치 확인. `.agent/logs/`에 JSONL 파일 존재 확인.
-4. **분석 스크립트**: `.agent/scripts/analyze_logs.sh` (599줄, 11 서브커맨드) 존재 확인.
-5. **로깅**: `.agent/logging-protocol.md`의 JSONL 스키마(20필드, 5이벤트)와 비용 단가표를 숙지합니다.
+1. **오케스트레이터 프롬프트 로드**: `.agent/agents/08_log_analyzer/L0_Orchestrator.md`를 읽고 오케스트레이터 역할(분석 범위 결정, 분석 모드 5가지, L1~L5 작업 분배, 최종 승인/반려 판단)을 내재화합니다.
+2. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
+3. **워크플로우 로드**: `.agent/workflows/08_Log_Analysis.yaml`을 읽고 스텝 순서를 파악합니다.
+4. **모델 라우팅 로드**: `.agent/agents/08_log_analyzer/config.json`에서 에이전트별 카테고리를 확인합니다.
+5. **환경 확인**: `jq >= 1.6` 설치 확인. `.agent/logs/`에 JSONL 파일 존재 확인.
+6. **분석 스크립트**: `.agent/scripts/analyze_logs.sh` (599줄, 11 서브커맨드) 존재 확인.
+7. **로깅**: `.agent/logging-protocol.md`의 JSONL 스키마(20필드, 5이벤트)와 비용 단가표를 숙지합니다.
 
 ## 파이프라인 개요
 

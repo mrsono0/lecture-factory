@@ -11,11 +11,13 @@ model: sonnet
 
 ## 실행 전 필수 준비
 
-1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/07_Manus_Slide.yaml`을 읽고 스텝 순서를 파악합니다.
-3. **환경 확인**: `.agent/.env`에서 `MANUS_API_KEY` 설정 확인. `requests` 패키지 필요.
-4. **프로젝트 폴더**: 입력 있으면 해당 경로, 없으면 최신 프로젝트 자동 탐색. `04_SlidePrompt/` 필수.
-5. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다.
+1. **오케스트레이터 프롬프트 로드**: `.agent/agents/07_manus_slide/D0_Orchestrator.md`를 읽고 오케스트레이터 역할(동적 입력 탐색, 파일 업로드 모드, 교시 단위 분할 전략, D1~D5 지휘, 승인/재제출/반려 판단)을 내재화합니다.
+2. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
+3. **워크플로우 로드**: `.agent/workflows/07_Manus_Slide.yaml`을 읽고 스텝 순서를 파악합니다.
+4. **모델 라우팅 로드**: `.agent/agents/07_manus_slide/config.json`에서 에이전트별 카테고리를 확인합니다.
+5. **환경 확인**: `.agent/.env`에서 `MANUS_API_KEY` 설정 확인. `requests` 패키지 필요.
+6. **프로젝트 폴더**: 입력 있으면 해당 경로, 없으면 최신 프로젝트 자동 탐색. `04_SlidePrompt/` 필수.
+7. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다.
 
 ## 파이프라인 개요
 
