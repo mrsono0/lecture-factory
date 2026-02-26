@@ -3,7 +3,7 @@
 Lecture Factory agent team의 운영 규칙과 워크플로우 정의. 상세 사용법은 `.claude/Lecture_Creation_Guide.md` 또는 `.gemini/Lecture_Creation_Guide.md` 참조.
 
 ## Essential Rules
-> 행동 원칙은 [Karpathy Guidelines](https://github.com/forrestchang/andrej-karpathy-skills)에서 파생. 사소한 작업에는 판단에 따라 유연하게 적용.
+> 사소한 작업에는 판단에 따라 유연하게 적용.
 
 ### 1. Think Before Coding
 **가정하지 말 것. 혼란을 숨기지 말 것. 트레이드오프를 드러낼 것.**
@@ -88,7 +88,7 @@ Lecture Factory agent team의 운영 규칙과 워크플로우 정의. 상세 �
 | E2E | **End-to-End** | 1-4단계 순차 실행 |
 
 > Pipeline 5-7은 대안 방식: 05(HTML), 06(Gemini AI), 07(Manus AI)
-> **로깅 위치**: 분석 리포트는 `.agent/dashboard/`, 원시 실행 로그는 `.agent/logs/`에 저장됨 (`.agent/AGENTS.md` §로깅 프로토콜 참조)
+> **로깅 위치**: 분석 리포트는 `.agent/dashboard/`, 원시 실행 로그는 `.agent/logs/`에 저장됨 (`.agent/AGENTS.md` §Agent Execution Logging 참조)
 
 ### Subagent Delegation (MANDATORY)
 **One Task per Subagent**: 단일 서브에이전트에게 정교한 결과를 위해 딱 **하나의 임무**만 부여합니다.
@@ -98,27 +98,10 @@ Lecture Factory agent team의 운영 규칙과 워크플로우 정의. 상세 �
 
 ## Execution Methods
 - **Gemini CLI**: `/skill lecture-plan` 등 스킬 기반
-- **Claude Code**: `/project:lecture-plan` 등 슬래시 커맨드
-- **E2E**: Claude Code에서 `/project:lecture-factory`로 1-4단계 자동 실행
+- **Claude Code**: `/lecture-plan` 등 슬래시 커맨드
+- **E2E**: Claude Code에서 `/ecture-factory`로 1-4단계 자동 실행
 
-## Project Structure
-```
-YYYY-MM-DD_강의제목/
-├── 01_Planning/
-│   ├── 강의구성안.md
-│   ├── Trend_Report.md
-│   └── micro_sessions/
-│       ├── _index.json
-│       ├── _flow.md
-│       ├── _dependency.mmd
-│       ├── _reference_mapping.json
-│       └── 세션-*.md
-├── 02_Material/강의교안_v1.0.md, src/, images/
-├── 03_Slides/{session}/슬라이드기획안.md
-├── 04_SlidePrompt/{세션ID}_{세션제목}_프롬프트.md
-├── 05_PPTX/ | 06_NanoPPTX/ | 07_ManusSlides/
-└── 참고자료/원본_기획안.md
-```
+> 프로젝트 디렉토리 구조는 `.agent/AGENTS.md` §Project Structure 참조
 
 ## Model Configuration
 - 상세 설정: `.opencode/oh-my-opencode.jsonc`
