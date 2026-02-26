@@ -59,13 +59,13 @@ class AgentLogger:
     COST_TABLE = {
         "quick": {"input": 0.00025, "output": 0.00125},
         "unspecified-low": {"input": 0.003, "output": 0.015},
-        "deep": {"input": 0.003, "output": 0.015},
+        "deep": {"input": 0.015, "output": 0.075},
         "visual-engineering": {"input": 0.003, "output": 0.015},
         "writing": {"input": 0.003, "output": 0.015},
         "micro-writing": {"input": 0.003, "output": 0.015},
         "curriculum-chunking": {"input": 0.003, "output": 0.015},
         "ultrabrain": {"input": 0.015, "output": 0.075},
-        "artistry": {"input": 0.015, "output": 0.075},
+        "artistry": {"input": 0.003, "output": 0.015},
         "unspecified-high": {"input": 0.015, "output": 0.075},
     }
 
@@ -108,9 +108,10 @@ class AgentLogger:
         # 실행 중인 step의 시작 시간 추적
         self._start_times: Dict[str, float] = {}
 
-        # step별 category/input_bytes 추적 (log_end에서 조회용)
+        # step별 category/input_bytes/agent/action/parallel_group/retry 추적 (log_end에서 조회용)
         self._step_categories: Dict[str, str] = {}
         self._step_input_bytes: Dict[str, int] = {}
+        self._step_meta: Dict[str, Dict[str, Any]] = {}  # agent, action, parallel_group, retry
 
     def _generate_run_id(self) -> str:
         """run_id 생성: run_{YYYYMMDD}_{HHMMSS}"""
@@ -122,6 +123,7 @@ class AgentLogger:
             config_path = Path(self.model_config_path)
             if config_path.exists():
                 # JSONC (JSON with comments) 처리 — 문자열 내부 // 보존
+                content = config_path.read_text(encoding='utf-8')
                 content = re.sub(r'(?<!:)//.*$', '', content, flags=re.MULTILINE)
                 config = json.loads(content)
 
@@ -191,6 +193,12 @@ class AgentLogger:
         self._start_times[step_id] = time.time()
         self._step_categories[step_id] = category
         self._step_input_bytes[step_id] = input_bytes
+        self._step_meta[step_id] = {
+            "agent": agent,
+            "action": action,
+            "parallel_group": parallel_group,
+            "retry": retry,
+        }
 
         entry = {
             "run_id": self.run_id,
@@ -251,12 +259,22 @@ class AgentLogger:
             est_input_tokens, est_output_tokens, category
         )
 
+        # START에서 저장한 메타데이터 복원 (공통 필드)
+        meta = self._step_meta.pop(step_id, {})
+
         entry = {
             "run_id": self.run_id,
+            "parent_run_id": self.parent_run_id,
             "ts": ts,
             "status": "END",
             "workflow": self.workflow,
             "step_id": step_id,
+            "agent": meta.get("agent"),
+            "category": category,
+            "model": self._get_model_for_category(category),
+            "action": meta.get("action"),
+            "parallel_group": meta.get("parallel_group"),
+            "retry": meta.get("retry", 0),
             "duration_sec": round(duration_sec, 1),
             "input_bytes": input_bytes,
             "output_bytes": output_bytes,
@@ -387,12 +405,22 @@ class AgentLogger:
             est_input_tokens, est_output_tokens, category
         )
 
+        # START에서 저장한 메타데이터 복원 (공통 필드)
+        meta = self._step_meta.pop(step_id, {})
+
         entry = {
             "run_id": self.run_id,
+            "parent_run_id": self.parent_run_id,
             "ts": ts,
             "status": "SESSION_END",
             "workflow": self.workflow,
             "step_id": step_id,
+            "agent": meta.get("agent"),
+            "category": category,
+            "model": self._get_model_for_category(category),
+            "action": meta.get("action"),
+            "parallel_group": meta.get("parallel_group"),
+            "retry": meta.get("retry", 0),
             "duration_sec": round(duration_sec, 1),
             "input_bytes": input_bytes,
             "output_bytes": output_bytes,
@@ -643,6 +671,10 @@ def main():
             "start_time": time.time(),
             "category": args.category,
             "input_bytes": args.input_bytes,
+            "agent": args.agent,
+            "action": args.action,
+            "parallel_group": args.parallel_group,
+            "retry": args.retry,
         }
         _save_state(args.workflow, args.run_id, state)
 
@@ -653,6 +685,10 @@ def main():
         start_time = step_state.get("start_time")
         category = step_state.get("category", "deep")
         input_bytes = step_state.get("input_bytes", 0)
+        agent = step_state.get("agent")
+        action = step_state.get("action")
+        parallel_group = step_state.get("parallel_group")
+        retry = step_state.get("retry", 0)
         _save_state(args.workflow, args.run_id, state)
 
         duration_sec = None
@@ -662,9 +698,15 @@ def main():
             workflow=args.workflow,
             run_id=args.run_id,
         )
-        # category/input_bytes를 수동 주입 (CLI 모드)
+        # category/input_bytes/meta를 수동 주입 (CLI 모드)
         logger._step_categories[args.step_id] = category
         logger._step_input_bytes[args.step_id] = input_bytes
+        logger._step_meta[args.step_id] = {
+            "agent": agent,
+            "action": action,
+            "parallel_group": parallel_group,
+            "retry": retry,
+        }
         logger.log_end(
             step_id=args.step_id,
             output_bytes=args.output_bytes,
