@@ -95,6 +95,34 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
+### 🔧 CLI 로깅 명령어 (복붙용)
+
+> `agent_logger.py` CLI를 사용하면 JSONL 수동 구성 없이 정확한 로그를 기록할 수 있습니다. 각 step 전후로 아래 명령어를 실행하세요.
+
+```bash
+# 파이프라인 시작 — run_id 생성 (최초 1회)
+RUN_ID=$(python3 .agent/scripts/agent_logger.py init --workflow 03_Slide_Generation)
+
+# step START (각 step 실행 직전)
+python3 .agent/scripts/agent_logger.py start \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id {step_id} --agent {에이전트명} --category {카테고리} \
+  --action {액션명} --input-bytes {입력바이트수}
+
+# step END (각 step 실행 직후)
+python3 .agent/scripts/agent_logger.py end \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id {step_id} --output-bytes {출력바이트수}
+
+# step FAIL (실패 시)
+python3 .agent/scripts/agent_logger.py fail \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id {step_id} --agent {에이전트명} --category {카테고리} \
+  --action {액션명} --error "{에러메시지}"
+```
+
+> ⚠️ **로깅은 step 실행보다 우선합니다.** 컨텍스트가 부족하더라도 START/END 명령어는 반드시 실행하세요. duration, tokens, cost는 자동 계산됩니다.
+
 
 ### 에이전트별 category→model 매핑 (Quick Reference)
 
