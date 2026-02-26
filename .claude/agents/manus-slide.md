@@ -17,7 +17,6 @@ model: sonnet
 4. **모델 라우팅 로드**: `.agent/agents/07_manus_slide/config.json`에서 에이전트별 카테고리를 확인합니다.
 5. **환경 확인**: `.agent/.env`에서 `MANUS_API_KEY` 설정 확인. `requests` 패키지 필요.
 6. **프로젝트 폴더**: 입력 있으면 해당 경로, 없으면 최신 프로젝트 자동 탐색. `04_SlidePrompt/` 필수.
-7. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다.
 
 ## 파이프라인 개요
 

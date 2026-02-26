@@ -19,7 +19,6 @@ model: opus
    - **입력 파일**: 강의 주제 파일 (예: `AI-native_파이썬기초.md`)
    - **NotebookLM URL**: (선택) 참고할 NotebookLM 주소
    - **로컬 폴더**: (선택) 참고할 로컬 폴더 경로 → 해당 폴더의 모든 파일을 먼저 분석
-6. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 

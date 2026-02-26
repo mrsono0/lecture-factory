@@ -18,7 +18,6 @@ model: opus
    - **입력 파일**: (선택) 강의구성안 파일. 미지정 시 `01_Planning/강의구성안.md` 자동 탐색
    - **NotebookLM URL**: (선택) A1 Source Miner가 참조할 URL
    - **로컬 폴더**: (선택) 프로젝트 폴더 경로 → 해당 폴더의 모든 파일을 먼저 분석하여 스타일/기존 내용 파악
-6. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 

@@ -15,7 +15,6 @@ model: sonnet
 2. **워크플로우 로드**: `.agent/workflows/05_PPTX_Conversion.yaml`을 읽고 스텝 순서를 파악합니다.
 3. **스킬 로드**: `.agent/skills/pptx-official/SKILL.md`와 `html2pptx.md`를 읽고 변환 규칙을 숙지합니다.
 4. **입력 검증**: `03_Slides/` 세션별 서브폴더 탐색. 1개면 자동 선택, 복수면 사용자에게 확인.
-5. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 

@@ -17,7 +17,6 @@ model: sonnet
 4. **모델 라우팅 로드**: `.agent/agents/08_log_analyzer/config.json`에서 에이전트별 카테고리를 확인합니다.
 5. **환경 확인**: `jq >= 1.6` 설치 확인. `.agent/logs/`에 JSONL 파일 존재 확인.
 6. **분석 스크립트**: `.agent/scripts/analyze_logs.sh` (599줄, 11 서브커맨드) 존재 확인.
-7. **로깅**: `.agent/logging-protocol.md`의 JSONL 스키마(20필드, 5이벤트)와 비용 단가표를 숙지합니다.
 
 ## 파이프라인 개요
 
