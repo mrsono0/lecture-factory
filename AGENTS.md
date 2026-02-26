@@ -128,16 +128,26 @@ YYYY-MM-DD_강의제목/
 
 ## Git Branching Rule (MANDATORY)
 `.agent/` 또는 `.claude/` 파일 수정 시 필수 적용.
-
-**Workflow**: `feat/<설명>` 브랜치 생성 → 작업 → main 머지 (`--no-ff`) → 푸시 → 브랜치 삭제
-
 **Scope**: `.agent/agents/`, `.agent/workflows/`, `.agent/scripts/`, `.agent/skills/`, `.claude/agents/`, `.claude/commands/`, `AGENTS.md`
 
+### 실행 순서 (반드시 이 순서대로)
+
+1. **브랜치 생성** — 파일 수정 **전에** 반드시 `feat/<설명>` 브랜치를 먼저 생성
+2. **파일 수정** — 브랜치 안에서 edit/write 도구로 파일 수정
+3. **커밋** — 변경사항을 커밋
+4. **머지** — main으로 전환 후 `--no-ff` 머지
+5. **푸시 & 정리** — 원격 푸시 후 feat 브랜치 삭제
 ```bash
+# 1. 브랜치 생성 (파일 수정 전에 반드시 먼저 실행)
 git checkout -b feat/update-writer-agent
-# 작업 & 커밋
+# 2. 파일 수정 (edit/write 도구 사용) & 커밋
+git add <수정된 파일> && git commit -m "설명"
+# 3. main 머지 & 푸시 & 브랜치 삭제
 git checkout main && git merge --no-ff feat/update-writer-agent
 git push && git branch -d feat/update-writer-agent
 ```
 
+### ❌ 금지 패턴
+- main 브랜치에서 직접 파일 수정 후 브랜치 생성 (순서 위반)
+- Scope 경로의 파일을 브랜치 없이 main에서 직접 커밋
 > 별도 지시 없어도 AI 에이전트는 위 경로 수정 시 자동으로 이 워크플로를 수행합니다.
