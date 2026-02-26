@@ -341,6 +341,40 @@ class AgentLogger:
         print(f"[LOG:RETRY] {step_id} (retry={retry})", file=sys.stderr)
         return entry
 
+
+    def log_decision(
+        self,
+        step_id: str,
+        agent: str,
+        category: str,
+        action: str,
+        decision: str,
+        parallel_group: Optional[str] = None,
+        retry: int = 0,
+    ) -> Dict[str, Any]:
+        """DECISION 이벤트 기록 (QA/승인 스텝 판정)"""
+        ts = datetime.now().isoformat()
+
+        entry = {
+            "run_id": self.run_id,
+            "parent_run_id": self.parent_run_id,
+            "ts": ts,
+            "status": "DECISION",
+            "workflow": self.workflow,
+            "step_id": step_id,
+            "agent": agent,
+            "category": category,
+            "model": self._get_model_for_category(category),
+            "action": action,
+            "parallel_group": parallel_group,
+            "retry": retry,
+            "decision": decision,
+        }
+
+        self._write_log(entry)
+        print(f"[LOG:DECISION] {step_id} ({decision})", file=sys.stderr)
+        return entry
+
     def log_session_start(
         self,
         step_id: str,
@@ -640,6 +674,57 @@ def main():
     p_fail.add_argument("--error", required=True)
     p_fail.add_argument("--retry", type=int, default=0)
 
+
+    # ── decision ──
+    p_decision = sub.add_parser("decision", help="DECISION 이벤트 기록 (QA/승인 판정)")
+    p_decision.add_argument("--workflow", required=True)
+    p_decision.add_argument("--run-id", required=True)
+    p_decision.add_argument("--step-id", required=True)
+    p_decision.add_argument("--agent", required=True)
+    p_decision.add_argument("--category", required=True)
+    p_decision.add_argument("--action", required=True)
+    p_decision.add_argument("--decision", required=True, choices=["approved", "rejected"])
+    p_decision.add_argument("--parallel-group", default=None)
+    p_decision.add_argument("--retry", type=int, default=0)
+
+    # ── retry ──
+    p_retry = sub.add_parser("retry", help="RETRY 이벤트 기록")
+    p_retry.add_argument("--workflow", required=True)
+    p_retry.add_argument("--run-id", required=True)
+    p_retry.add_argument("--step-id", required=True)
+    p_retry.add_argument("--agent", required=True)
+    p_retry.add_argument("--category", required=True)
+    p_retry.add_argument("--action", required=True)
+    p_retry.add_argument("--retry", type=int, required=True)
+
+    # ── session-start ──
+    p_ss = sub.add_parser("session-start", help="SESSION_START 이벤트 기록")
+    p_ss.add_argument("--workflow", required=True)
+    p_ss.add_argument("--run-id", required=True)
+    p_ss.add_argument("--step-id", required=True)
+    p_ss.add_argument("--agent", required=True)
+    p_ss.add_argument("--category", required=True)
+    p_ss.add_argument("--action", required=True)
+    p_ss.add_argument("--session-id", required=True)
+    p_ss.add_argument("--session-name", required=True)
+    p_ss.add_argument("--parallel-group", default=None)
+    p_ss.add_argument("--retry", type=int, default=0)
+    p_ss.add_argument("--input-bytes", type=int, default=0)
+    p_ss.add_argument("--parent-run-id", default=None)
+
+    # ── session-end ──
+    p_se = sub.add_parser("session-end", help="SESSION_END 이벤트 기록")
+    p_se.add_argument("--workflow", required=True)
+    p_se.add_argument("--run-id", required=True)
+    p_se.add_argument("--step-id", required=True)
+    p_se.add_argument("--session-id", required=True)
+    p_se.add_argument("--session-name", required=True)
+    p_se.add_argument("--input-bytes", type=int, default=0)
+    p_se.add_argument("--output-bytes", type=int, required=True)
+    p_se.add_argument("--output-files", nargs="*", default=[])
+    p_se.add_argument("--total-slides", type=int, default=None)
+    p_se.add_argument("--decision", default=None)
+
     args = parser.parse_args()
 
     if args.command == "init":
@@ -726,6 +811,104 @@ def main():
             action=args.action,
             error_message=args.error,
             retry=args.retry,
+        )
+
+    elif args.command == "decision":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        logger.log_decision(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            decision=args.decision,
+            parallel_group=args.parallel_group,
+            retry=args.retry,
+        )
+
+    elif args.command == "retry":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        logger.log_retry(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            retry=args.retry,
+        )
+
+    elif args.command == "session-start":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+            parent_run_id=args.parent_run_id,
+        )
+        logger.log_session_start(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            session_id=args.session_id,
+            session_name=args.session_name,
+            parallel_group=args.parallel_group,
+            retry=args.retry,
+        )
+        # 상태 파일에 시작 시간 + 메타데이터 저장 (session-end에서 사용)
+        state = _load_state(args.workflow, args.run_id)
+        state[args.step_id] = {
+            "start_time": time.time(),
+            "category": args.category,
+            "input_bytes": args.input_bytes,
+            "agent": args.agent,
+            "action": args.action,
+            "parallel_group": args.parallel_group,
+            "retry": args.retry,
+        }
+        _save_state(args.workflow, args.run_id, state)
+
+    elif args.command == "session-end":
+        # 상태 파일에서 시작 시간 + 메타데이터 복원
+        state = _load_state(args.workflow, args.run_id)
+        step_state = state.pop(args.step_id, {})
+        start_time = step_state.get("start_time")
+        category = step_state.get("category", "deep")
+        input_bytes_state = step_state.get("input_bytes", 0)
+        agent = step_state.get("agent")
+        action = step_state.get("action")
+        parallel_group = step_state.get("parallel_group")
+        retry = step_state.get("retry", 0)
+        _save_state(args.workflow, args.run_id, state)
+
+        duration_sec = None
+        if start_time:
+            duration_sec = time.time() - start_time
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        # category/meta를 수동 주입 (CLI 모드)
+        logger._step_categories[args.step_id] = category
+        logger._step_input_bytes[args.step_id] = args.input_bytes or input_bytes_state
+        logger._step_meta[args.step_id] = {
+            "agent": agent,
+            "action": action,
+            "parallel_group": parallel_group,
+            "retry": retry,
+        }
+        logger.log_session_end(
+            step_id=args.step_id,
+            session_id=args.session_id,
+            session_name=args.session_name,
+            input_bytes=args.input_bytes or input_bytes_state,
+            output_bytes=args.output_bytes,
+            output_files=args.output_files,
+            total_slides=args.total_slides,
+            duration_sec=duration_sec,
+            decision=args.decision,
         )
 
 
