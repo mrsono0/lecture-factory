@@ -141,6 +141,7 @@ YYYY-MM-DD_강의제목/
 | | | A3 Curriculum Architect, A5A QA Manager | `ultrabrain` |
 | | | A3B MicroSession Specifier, A3C Session Indexer | `curriculum-chunking` |
 | | | A7 Differentiation Advisor | `artistry` |
+| | | A1 Trend Researcher | `research` |
 | **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
 | | | A4B Session Writer | `micro-writing` |
 | | | A6 Visualization Designer, A11 Chart Specifier | `visual-engineering` |
