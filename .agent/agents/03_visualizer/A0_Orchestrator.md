@@ -119,6 +119,31 @@ python3 .agent/scripts/agent_logger.py fail \
   --workflow 03_Slide_Generation --run-id $RUN_ID \
   --step-id {step_id} --agent {에이전트명} --category {카테고리} \
   --action {액션명} --error "{에러메시지}"
+
+# DECISION (QA/승인 판정 시)
+python3 .agent/scripts/agent_logger.py decision \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id {step_id} --agent {에이전트명} --category {카테고리} \
+  --action {액션명} --decision {approved|rejected}
+
+# RETRY (재시도 시)
+python3 .agent/scripts/agent_logger.py retry \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id {step_id} --agent {에이전트명} --category {카테고리} \
+  --action {액션명} --retry {재시도횟수}
+
+# SESSION_START (세션 단위 병렬 실행 시작)
+python3 .agent/scripts/agent_logger.py session-start \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id session_{세션ID} --agent {에이전트명} --category {카테고리} \
+  --action {액션명} --session-id {세션ID} --session-name "{세션명}" \
+  --parallel-group {병렬그룹} --input-bytes {입력바이트수}
+
+# SESSION_END (세션 단위 병렬 실행 완료)
+python3 .agent/scripts/agent_logger.py session-end \
+  --workflow 03_Slide_Generation --run-id $RUN_ID \
+  --step-id session_{세션ID} --session-id {세션ID} --session-name "{세션명}" \
+  --output-bytes {출력바이트수} --output-files {파일1} {파일2} --total-slides {슬라이드수}
 ```
 
 > ⚠️ **로깅은 step 실행보다 우선합니다.** 컨텍스트가 부족하더라도 START/END 명령어는 반드시 실행하세요. duration, tokens, cost는 자동 계산됩니다.
