@@ -10,14 +10,15 @@ model: opus
 > **정본(SSOT)**: `.agent/workflows/02_Material_Writing.yaml`이 실행 순서, 에이전트 역할, I/O 계약의 단일 정본입니다. 본 문서와 불일치 시 워크플로우 YAML이 우선합니다.
 
 ## 실행 전 필수 준비
-
-1. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
-2. **워크플로우 로드**: `.agent/workflows/02_Material_Writing.yaml`을 읽고 스텝 순서를 파악합니다.
-3. **입력 파싱**: 사용자 입력에서 다음을 판별합니다:
+1. **오케스트레이터 프롬프트 로드**: `.agent/agents/02_writer/A0_Orchestrator.md`를 읽고 오케스트레이터 역할(3-Source Mandatory 정책, 안티-할루시네이션 검증, AM/PM 분할 판단, 7섹션 구조 강제, EXTERNAL_TOOL 로깅)을 내재화합니다.
+2. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
+3. **워크플로우 로드**: `.agent/workflows/02_Material_Writing.yaml`을 읽고 스텝 순서를 파악합니다.
+4. **모델 라우팅 로드**: `.agent/agents/02_writer/config.json`에서 에이전트별 카테고리를 확인합니다.
+5. **입력 파싱**: 사용자 입력에서 다음을 판별합니다:
    - **입력 파일**: (선택) 강의구성안 파일. 미지정 시 `01_Planning/강의구성안.md` 자동 탐색
    - **NotebookLM URL**: (선택) A1 Source Miner가 참조할 URL
    - **로컬 폴더**: (선택) 프로젝트 폴더 경로 → 해당 폴더의 모든 파일을 먼저 분석하여 스타일/기존 내용 파악
-4. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
+6. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 
