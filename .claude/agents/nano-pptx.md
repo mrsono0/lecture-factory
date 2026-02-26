@@ -16,7 +16,6 @@ model: opus
 3. **스킬 로드**: nanobanana-ppt-skills, imagen, gemini-api-dev, pptx-official, last30days (5개 SKILL.md).
 4. **API 키 확인**: `GEMINI_API_KEY` 환경변수. 미설정 시 사용자에게 안내.
 5. **입력 검증**: `03_Slides/` 세션별 서브폴더 탐색.
-6. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 

@@ -16,7 +16,6 @@ model: sonnet
 3. **워크플로우 로드**: `.agent/workflows/04_SlidePrompt_Generation.yaml`을 읽고 스텝 순서를 파악합니다.
 4. **모델 라우팅 로드**: `.agent/agents/04_prompt_generator/config.json`에서 에이전트별 카테고리를 확인합니다.
 5. **입력 탐색**: 미지정 시 `02_Material/` 자동 탐색. `03_Slides/` 존재 시 IR/DesignTokens 참조.
-6. **로깅**: `.agent/logging-protocol.md`에 따라 `.agent/logs/`에 JSONL 로그를 기록합니다. 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 참조.
 
 ## 파이프라인 개요
 
