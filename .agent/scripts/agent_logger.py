@@ -60,6 +60,8 @@ class AgentLogger:
         "deep": {"input": 0.003, "output": 0.015},
         "visual-engineering": {"input": 0.003, "output": 0.015},
         "writing": {"input": 0.003, "output": 0.015},
+        "micro-writing": {"input": 0.003, "output": 0.015},
+        "curriculum-chunking": {"input": 0.003, "output": 0.015},
         "ultrabrain": {"input": 0.015, "output": 0.075},
         "artistry": {"input": 0.015, "output": 0.075},
         "unspecified-high": {"input": 0.015, "output": 0.075},
@@ -103,6 +105,10 @@ class AgentLogger:
 
         # 실행 중인 step의 시작 시간 추적
         self._start_times: Dict[str, float] = {}
+
+        # step별 category/input_bytes 추적 (log_end에서 조회용)
+        self._step_categories: Dict[str, str] = {}
+        self._step_input_bytes: Dict[str, int] = {}
 
     def _generate_run_id(self) -> str:
         """run_id 생성: run_{YYYYMMDD}_{HHMMSS}"""
@@ -187,6 +193,8 @@ class AgentLogger:
         """
         ts = datetime.now().isoformat()
         self._start_times[step_id] = time.time()
+        self._step_categories[step_id] = category
+        self._step_input_bytes[step_id] = input_bytes
 
         entry = {
             "run_id": self.run_id,
@@ -237,7 +245,7 @@ class AgentLogger:
                 duration_sec = 0
 
         # START 이벤트에서 input_bytes 가져오기 (또는 0)
-        input_bytes = getattr(self, f"_input_bytes_{step_id}", 0)
+        input_bytes = self._step_input_bytes.pop(step_id, 0)
 
         # 토큰/비용 계산
         category = self._get_category_for_step(step_id)
@@ -494,9 +502,8 @@ class AgentLogger:
         return entry
 
     def _get_category_for_step(self, step_id: str) -> str:
-        """step_id에서 category 추출 (간단한 구현)"""
-        # TODO: 워크플로우 YAML에서 실제 category 조회
-        return "deep"
+        """step_id에 대응하는 category 조회 (log_start에서 저장된 매핑 사용)"""
+        return self._step_categories.pop(step_id, "deep")
 
     def get_log_path(self) -> Path:
         """현재 로그 파일 경로 반환"""
