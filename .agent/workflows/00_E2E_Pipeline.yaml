@@ -1,0 +1,188 @@
+name: "E2E Lecture Factory Pipeline"
+description: >
+  강의 팩토리 전체 파이프라인(기획→집필→시각화→프롬프트)을 순차적으로 실행하는
+  메타 오케스트레이션 워크플로우. 각 Phase는 독립 파이프라인을 호출하며,
+  산출물 검증 게이트를 통과해야 다음 Phase로 진행합니다.
+  사용자가 5~7단계(PPTX 생성)를 별도 지정하지 않으면 기본 E2E는 Phase 4까지입니다.
+  ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents
+  using list_dir/read_file BEFORE proceeding.
+version: "1.0"
+
+output_path: "{YYYY-MM-DD_강의제목}/"
+
+# ── E2E 특수 로깅 ──────────────────────────────────────────
+logging:
+  enabled: true
+  protocol: ".agent/logging-protocol.md"
+  model_config: ".opencode/oh-my-opencode.jsonc"
+  path: ".agent/logs/{YYYY-MM-DD}_00_E2E_Pipeline.jsonl"
+  format: "jsonl"
+  master_run_id_format: "run_{YYYYMMDD}_{HHMMSS}"
+  notes: |
+    마스터 run_id를 생성하여 하위 파이프라인에 parent_run_id로 전달.
+    각 하위 파이프라인은 자체 로그 파일에 기록하되, parent_run_id 필드도 포함.
+    하위 로그 경로:
+      - Phase 1 → .agent/logs/{DATE}_01_Lecture_Planning.jsonl
+      - Phase 2 → .agent/logs/{DATE}_02_Material_Writing.jsonl
+      - Phase 3 → .agent/logs/{DATE}_03_Slide_Generation.jsonl
+      - Phase 4 → .agent/logs/{DATE}_04_SlidePrompt_Generation.jsonl
+
+# ── 실행 정책 ──────────────────────────────────────────
+execution_policy:
+  mode: "sequential"              # Phase 간 순차 실행 (병렬 절대 금지)
+  gate_verification: true         # 각 Phase 완료 후 산출물 존재 확인 필수
+  input_passthrough: true         # 사용자 URL/폴더를 Phase 간 유실 없이 전달
+  deep_research_mandatory: true   # 딥리서치 지시를 모든 하위 에이전트에 강제
+
+# ═══════════════════════════════════════════════════════════
+# 기본 파이프라인 (Phase 1~4, 항상 실행)
+# ═══════════════════════════════════════════════════════════
+steps:
+  # ── Phase 1: 기획 (Lecture Planning) ────────────────────
+  - id: phase_1_planning
+    pipeline: "01_Lecture_Planning"
+    workflow: ".agent/workflows/01_Lecture_Planning.yaml"
+    command: "lecture-plan"
+    subagent: "lecture-planner"
+    input:
+      - "사용자 제공 입력 파일 (예: 파이썬기초.md)"
+      - "로컬 참고자료 폴더 (선택)"
+      - "NotebookLM URL (선택)"
+      - "딥리서치 지시 (필수)"
+    output_gate:
+      required:
+        - "01_Planning/강의구성안.md"
+        - "01_Planning/micro_sessions/_index.json"
+      optional:
+        - "01_Planning/Trend_Report.md"
+        - "01_Planning/micro_sessions/_flow.md"
+        - "01_Planning/micro_sessions/_dependency.mmd"
+        - "01_Planning/micro_sessions/_reference_mapping.json"
+        - "01_Planning/micro_sessions/_activities.md"
+        - "01_Planning/micro_sessions/_differentiation.md"
+        - "01_Planning/micro_sessions/세션-*.md"
+    notes: |
+      사용자 입력(파일, URL, 폴더)을 반드시 하위 커맨드에 $ARGUMENTS로 전달.
+      딥리서치를 필수로 수행하여 강의 구성안 작성.
+
+  # ── Phase 2: 집필 (Material Writing) ────────────────────
+  - id: phase_2_writing
+    pipeline: "02_Material_Writing"
+    workflow: ".agent/workflows/02_Material_Writing.yaml"
+    command: "material-write"
+    subagent: "material-writer"
+    depends_on: "phase_1_planning"
+    input:
+      - "01_Planning/강의구성안.md (Phase 1 산출물)"
+      - "01_Planning/micro_sessions/ (전체)"
+      - "로컬 참고자료 폴더 (Phase 1에서 전달받은 것)"
+      - "NotebookLM URL (Phase 1에서 전달받은 것)"
+      - "딥리서치 지시 (필수)"
+    output_gate:
+      required:
+        - "02_Material/강의교안_v1.0.md"
+    notes: |
+      ⚠️ Phase 1의 사용자 URL/폴더 정보를 유실하지 말고 포함하여 전달.
+      딥리서치를 필수로 수행하여 상세 교안 작성.
+
+  # ── Phase 3: 시각화 (Slide Generation) ──────────────────
+  - id: phase_3_visualization
+    pipeline: "03_Slide_Generation"
+    workflow: ".agent/workflows/03_Slide_Generation.yaml"
+    command: "slide-gen"
+    subagent: "slide-generator"
+    depends_on: "phase_2_writing"
+    input:
+      - "02_Material/강의교안_v1.0.md (Phase 2 산출물)"
+    output_gate:
+      required:
+        - "03_Slides/ 디렉토리 내 기획안 1개 이상"
+    notes: |
+      슬라이드 스토리보드 및 기획안 작성.
+      배치 모드로 교안 파일 N개를 순차 처리.
+
+  # ── Phase 4: 프롬프트 생성 (Slide Prompt Generation) ────
+  - id: phase_4_prompt
+    pipeline: "04_SlidePrompt_Generation"
+    workflow: ".agent/workflows/04_SlidePrompt_Generation.yaml"
+    command: "slide-prompt"
+    subagent: "slide-prompt-gen"
+    depends_on: "phase_3_visualization"
+    input:
+      - "02_Material/강의교안_v1.0.md (Phase 2 산출물)"
+      - "03_Slides/ (Phase 3 산출물)"
+    output_gate:
+      required:
+        - "04_SlidePrompt/ 디렉토리 내 프롬프트 파일 1개 이상"
+    notes: |
+      원샷 슬라이드 프롬프트 추출 생성.
+      교안별 독립 프롬프트 파일 생성 (6-섹션 고정 스키마).
+
+# ═══════════════════════════════════════════════════════════
+# 선택적 Phase 5~7 (사용자 지정 시에만 실행)
+# ═══════════════════════════════════════════════════════════
+# 사용자가 5, 6, 7단계를 명시적으로 요청하거나
+# PPTX 키워드를 지정한 경우에만 해당 Phase를 추가 실행합니다.
+# Phase 5~7은 상호 배타적 대안이므로, 1개만 선택합니다.
+optional_phases:
+  # ── Phase 5: HTML 기반 PPTX (코드 중심) ────────────────
+  - id: phase_5_pptx
+    pipeline: "05_PPTX_Conversion"
+    workflow: ".agent/workflows/05_PPTX_Conversion.yaml"
+    command: "pptx-convert"
+    subagent: "pptx-converter"
+    depends_on: "phase_3_visualization"
+    trigger: "사용자가 '05', 'PPTX', 'HTML 변환'을 지정한 경우"
+    output_gate:
+      required:
+        - "05_PPTX/최종_프레젠테이션.pptx"
+    notes: "코드 중심 슬라이드. html2pptx.js 엔진 사용."
+
+  # ── Phase 6: AI 이미지 PPTX (디자인 중심) ──────────────
+  - id: phase_6_nanopptx
+    pipeline: "06_NanoBanana_PPTX"
+    workflow: ".agent/workflows/06_NanoBanana_PPTX.yaml"
+    command: "nano-pptx"
+    subagent: "nano-pptx"
+    depends_on: "phase_3_visualization"
+    trigger: "사용자가 '06', 'NanoBanana', 'AI 이미지'를 지정한 경우"
+    required_env: ["GEMINI_API_KEY"]
+    output_gate:
+      required:
+        - "06_NanoPPTX/최종_프레젠테이션.pptx"
+    notes: "디자인 중심 AI 이미지 슬라이드. Gemini API 필요."
+
+  # ── Phase 7: Manus AI 클라우드 PPTX ────────────────────
+  - id: phase_7_manus
+    pipeline: "07_Manus_Slide"
+    workflow: ".agent/workflows/07_Manus_Slide.yaml"
+    command: "manus-slide"
+    subagent: "manus-slide"
+    depends_on: "phase_4_prompt"
+    trigger: "사용자가 '07', 'Manus', '클라우드'를 지정한 경우"
+    required_env: ["MANUS_API_KEY"]
+    output_gate:
+      required:
+        - "07_ManusSlides/ 디렉토리 내 PPTX 파일 1개 이상"
+    notes: "Manus AI 클라우드 제출 방식. MANUS_API_KEY 필요."
+
+# ═══════════════════════════════════════════════════════════
+# 3계층 연결 참조 (L1 ↔ L2 ↔ L3)
+# ═══════════════════════════════════════════════════════════
+layer_mapping:
+  L1_command: ".claude/commands/lecture-factory.md"
+  L2_subagent: ".claude/agents/lecture-orchestrator.md"
+  L3_workflow: ".agent/workflows/00_E2E_Pipeline.yaml"
+
+# ═══════════════════════════════════════════════════════════
+# 전체 파이프라인 연결 맵
+# ═══════════════════════════════════════════════════════════
+pipeline_registry:
+  - { id: "01", name: "Lecture Planning",        workflow: "01_Lecture_Planning.yaml",        agents: "01_planner/",        team_size: 9  }
+  - { id: "02", name: "Material Writing",        workflow: "02_Material_Writing.yaml",        agents: "02_writer/",         team_size: 14 }
+  - { id: "03", name: "Slide Generation",        workflow: "03_Slide_Generation.yaml",        agents: "03_visualizer/",     team_size: 11 }
+  - { id: "04", name: "SlidePrompt Generation",  workflow: "04_SlidePrompt_Generation.yaml",  agents: "04_prompt_generator/", team_size: 5 }
+  - { id: "05", name: "PPTX Conversion",         workflow: "05_PPTX_Conversion.yaml",         agents: "05_pptx_converter/", team_size: 6  }
+  - { id: "06", name: "NanoBanana PPTX",         workflow: "06_NanoBanana_PPTX.yaml",         agents: "06_nanopptx/",       team_size: 6  }
+  - { id: "07", name: "Manus Slide",             workflow: "07_Manus_Slide.yaml",             agents: "07_manus_slide/",    team_size: 6  }
+  - { id: "08", name: "Log Analysis",            workflow: "08_Log_Analysis.yaml",             agents: "08_log_analyzer/",   team_size: 6  }

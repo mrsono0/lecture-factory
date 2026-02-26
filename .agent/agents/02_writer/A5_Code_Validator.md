@@ -33,6 +33,6 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - [ ] 파일명/경로가 코드 블록 상단 또는 주석에 명시되어 있는가?
 
 ## 산출물
-- 검증된 코드 예제 (`02_Code_Lab/`)
+- 검증된 코드 예제 (`02_Material/packets/code_validation/`)
 - 실습 가이드 및 정답 코드
-- 기술 검증 리포트
+- 기술 검증 리포트 (`02_Material/reports/code_validation_report.md`)
