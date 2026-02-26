@@ -1,19 +1,22 @@
-AGENTS.md의 규칙을 따라 02_Material_Writing 워크플로우를 실행합니다.
+02_Material_Writing 워크플로우를 실행합니다.
+
 ## 입력
 $ARGUMENTS
-## 실행 지침
 
-1. 사용자 입력에서 다음을 파싱하세요:
-   - **입력 파일**: (선택) 강의구성안 파일. 미지정 시 `01_Planning/강의구성안.md` 자동 탐색
-   - **NotebookLM URL**: (선택) A1 Source Miner가 참조할 URL
-   - **로컬 폴더**: (선택) 프로젝트 폴더 경로 → 스타일/기존 내용 분석
-2. `material-writer` 서브에이전트에게 작업을 위임하세요:
-   ```
-   Task(subagent_type="material-writer", prompt="<파싱된 입력 정보를 포함한 실행 지시>")
-   ```
-   - 파싱된 입력 파일, NotebookLM URL, 로컬 폴더 경로를 prompt에 모두 포함하세요.
-   - 서브에이전트가 `AGENTS.md`, 워크플로우 YAML, 에이전트 프롬프트를 자체 로드하여 파이프라인을 실행합니다.
-3. 서브에이전트 완료 후 산출물이 `{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md`에 저장되었는지 확인하세요.
+## 실행
+
+`material-writer` 서브에이전트에게 위임하여 실행합니다.
+
+```
+Task(subagent_type="material-writer", prompt=$ARGUMENTS)
+```
+
+서브에이전트가 AGENTS.md 규칙, `.agent/workflows/02_Material_Writing.yaml` 스텝 순서,
+`.agent/agents/02_writer/` 에이전트 프롬프트를 참조하여 파이프라인을 자율 실행합니다.
+
+- 입력 파싱(강의구성안, NotebookLM URL, 로컬 폴더)은 서브에이전트가 판별합니다.
+- 산출물: `02_Material/강의교안_v1.0.md` 및 세션별 교안 파일
+
 
 ## 로깅 (MANDATORY)
 
