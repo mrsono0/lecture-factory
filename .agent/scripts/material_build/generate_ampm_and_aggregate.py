@@ -8,12 +8,31 @@ Step 12 + Step 13: AM/PM 분할 파일 10개 생성 + 통합본 강의교안_v2.
 import json
 import os
 import re
+import sys
 from pathlib import Path
 from datetime import datetime
 
-BASE = Path(
-    "/Users/mrsono0/Obsidian Vault/0 리서치/_lecture-factory/2026-02-18_AI-native_파이썬기초"
-)
+
+def resolve_base():
+    """프로젝트 베이스 경로를 결정합니다.
+    1순위: CLI 인자 (sys.argv[1])
+    2순위: CWD에서 02_Material/ 폴더를 포함하는 프로젝트 디렉토리 자동 탐지
+    """
+    if len(sys.argv) > 1:
+        base = Path(sys.argv[1])
+        if base.exists():
+            return base
+        raise FileNotFoundError(f"지정된 경로가 존재하지 않습니다: {base}")
+    cwd = Path.cwd()
+    if (cwd / "02_Material").exists():
+        return cwd
+    for p in sorted(cwd.glob("????-??-??_*"), reverse=True):
+        if (p / "02_Material").exists():
+            return p
+    raise FileNotFoundError("02_Material/ 폴더를 포함하는 프로젝트 디렉토리를 찾을 수 없습니다.")
+
+
+BASE = resolve_base()
 SESSIONS_DIR = BASE / "02_Material" / "sessions"
 PLANNING_DIR = BASE / "01_Planning" / "micro_sessions"
 MATERIAL_DIR = BASE / "02_Material"

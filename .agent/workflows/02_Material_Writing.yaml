@@ -145,13 +145,13 @@ steps:
     notes: |
       🎯 핵심: 각 마이크로 세션(15~25분)을 개별 파일로 집필
       📐 필수 구조: A0이 정의한 7섹션 구조를 완전히 준수
-        - ① 도입부 (강사 대본 포함)
-        - ② 핵심 개념 설명 (서술형 + 비유/스토리텔링)
-        - ③ 코드 예제 및 실습 (🎙️ 실습 가이드 대본)
-        - ④ 시각화 자료 (표, 다이어그램, Mermaid)
-        - ⑤ 실습 가이드 (단계별 표 + 트러블슈팅 FAQ + 전체 코드 모음)
-        - ⑥ 마무리 및 브릿지 (요약 + 다음 세션 연결)
-        - ⑦ 강사 노트 (타이밍, 난이도 조절 팁, 출처)
+        - §1 개요 (도입부 + 강사 대본 🗣️)
+        - §2 핵심 개념 (서술형 + 비유/스토리텔링)
+        - §3 상세 내용 (코드 예제 + 시각화 + Mermaid)
+        - §4 실습 가이드 (단계별 표 + 🎙️ 실습 대본 + 트러블슈팅 FAQ)
+        - §5 코드 모음 (전체 실행 가능 코드)
+        - §6 요약 (마무리 + 브릿지 노트)
+        - §7 참고자료 (출처 + 강사 노트)
       📝 출력 규칙:
         - 분량 제한 없음. 교육적 완결성이 최우선
         - 서술형 긴 줄글 (개조식 요약 금지)
@@ -177,7 +177,7 @@ steps:
     input: 
       - "Session Material Files"
       - "Output Language: Korean"
-    output: "Verified Code Blocks & Tech Report"
+    output: "Verified Code Blocks & Tech Report (02_Material/packets/code_validation/)"
 
   - id: step_6_visualization_design
     agent: "02_writer/A6_Visualization_Designer"
@@ -280,7 +280,7 @@ steps:
       - "Enriched Session Materials (전체 106개 세션)"
       - "Day-Session 경계표"
       - "Output Language: Korean"
-    output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_*.md)"
+    output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_{주제요약}.md)"
     notes: |
       🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 10개 생성
       📋 Day-Session 경계표:
@@ -290,7 +290,7 @@ steps:
         - Day4 AM: 세션 065-075, PM: 세션 076-085
         - Day5 AM: 세션 086-096, PM: 세션 097-106
       📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
-      📁 산출물: 02_Material/Day{N}_{AM|PM}_세션목록_v2.1.md (총 10개)
+      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md (총 10개)
 
   # Phase 5: 취합 및 통합
   # A4C가 개별 세션 파일들을 취합하여 최종 교안 생성
