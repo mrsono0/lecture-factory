@@ -132,6 +132,15 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **생성 요약**: 파일 수(N), 파일별 교시 수/슬라이드 추정 장수, 총 슬라이드 추정 장수
 
 ## 🔴 실행 로깅 (MANDATORY)
+### ⚠️ Step 실행 순서 (로깅 포함 — 생략 불가)
+
+모든 step은 반드시 아래 3단계로 실행합니다. 1, 3을 생략하면 QA에서 반려됩니다.
+
+```
+1. pre_step  → agent_logger.py start (워크플로우 YAML logging.step_hooks.pre_step 참조)
+2. step 실행 → 에이전트 작업 수행
+3. post_step → agent_logger.py end (워크플로우 YAML logging.step_hooks.post_step 참조)
+```
 
 > 이 섹션은 `.agent/logging-protocol.md`의 구현 가이드입니다. **모든 실행에서 반드시 수행**합니다.
 

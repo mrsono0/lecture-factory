@@ -89,6 +89,10 @@ SLIDE_GENERATION_PREFIX의 디자인 규칙 준수 여부:
 | **PARTIAL_REDO** | FAIL 1~2개 (특정 청크) | 해당 청크만 D3 재제출 |
 | **REJECT** | FAIL 3개 이상 또는 콘텐츠 보존 FAIL | 전체 재제출 또는 에스컬레이션 |
 
+### 실행 로그 검증 (Execution Log Checklist)
+- [ ] **로그 파일 존재**: `.agent/logs/{DATE}_07_Manus_Slide.jsonl` 파일이 존재하는가?
+- [ ] **Step 완전성**: 모든 step에 대해 START/END 쳐가 존재하는가?
+- [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
 ## 산출물
 D0에게 전달하는 **QA 리포트** (파일별):
 

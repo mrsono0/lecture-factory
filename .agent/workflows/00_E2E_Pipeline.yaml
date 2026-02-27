@@ -26,6 +26,37 @@ logging:
       - Phase 2 → .agent/logs/{DATE}_02_Material_Writing.jsonl
       - Phase 3 → .agent/logs/{DATE}_03_Slide_Generation.jsonl
       - Phase 4 → .agent/logs/{DATE}_04_SlidePrompt_Generation.jsonl
+  # ── 로깅 강제 정책 (MANDATORY) ────────────────────────────────────────
+  # A0 오케스트레이터는 각 step 실행 시 반드시 아래 훅을 실행합니다.
+  # {step_id}, {agent}, {category}, {action}은 해당 step 정의에서 자동 치환됩니다.
+  step_hooks:
+    init: "RUN_ID=$(python3 .agent/scripts/agent_logger.py init --workflow 00_E2E_Pipeline)"
+    pre_step: |
+      python3 .agent/scripts/agent_logger.py start \
+        --workflow 00_E2E_Pipeline --run-id $RUN_ID \
+        --step-id {step_id} --agent {agent} --category {category} \
+        --action {action}
+    post_step: |
+      python3 .agent/scripts/agent_logger.py end \
+        --workflow 00_E2E_Pipeline --run-id $RUN_ID \
+        --step-id {step_id} --output-bytes {output_bytes}
+    on_fail: |
+      python3 .agent/scripts/agent_logger.py fail \
+        --workflow 00_E2E_Pipeline --run-id $RUN_ID \
+        --step-id {step_id} --agent {agent} --category {category} \
+        --action {action} --error "{error_message}"
+    on_decision: |
+      python3 .agent/scripts/agent_logger.py decision \
+        --workflow 00_E2E_Pipeline --run-id $RUN_ID \
+        --step-id {step_id} --agent {agent} --category {category} \
+        --action {action} --decision {decision}
+  enforcement: |
+    ⚠️ 로깅은 step 실행의 전제조건입니다. 생략 시 QA에서 반려됩니다.
+    - init: 파이프라인 최초 실행 시 1회 (RUN_ID 생성)
+    - pre_step: 각 step 실행 직전 (START 기록)
+    - post_step: 각 step 실행 직후 (END 기록)
+    - on_fail/on_decision: 해당 이벤트 발생 시
+    모든 step은 반드시 [pre_step → step 실행 → post_step] 3단계로 실행합니다.
 
 # ── 실행 정책 ──────────────────────────────────────────
 execution_policy:

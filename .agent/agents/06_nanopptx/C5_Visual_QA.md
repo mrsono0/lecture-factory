@@ -106,6 +106,11 @@ slides_plan.json의 텍스트와 실제 이미지 내 텍스트를 대조합니�
 - **우선순위**: 높음
 ```
 
+### 실행 로그 검증 (Execution Log Checklist)
+- [ ] **로그 파일 존재**: `.agent/logs/{DATE}_06_NanoBanana_PPTX.jsonl` 파일이 존재하는가?
+- [ ] **Step 완전성**: 모든 step에 대해 START/END 쳐가 존재하는가?
+- [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
+
 ## 산출물
 - **썸네일 그리드**: `06_NanoPPTX/thumbnails/grid-*.jpg`
 - **QA 리포트**: `06_NanoPPTX/qa_report.md`

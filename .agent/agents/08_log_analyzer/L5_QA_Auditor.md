@@ -109,6 +109,10 @@
 - L2의 인사이트 패킷 (교차 검증용)
 - L3의 최적화 패킷 (교차 검증용)
 
+### 실행 로그 검증 (Execution Log Checklist)
+- [ ] **로그 파일 존재**: `.agent/logs/{DATE}_08_Log_Analysis.jsonl` 파일이 존재하는가?
+- [ ] **Step 완전성**: 모든 step에 대해 START/END 쌍이 존재하는가?
+- [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
 ## 산출물 (Output)
 - QA 검증 결과 (승인/반려 + 체크리스트)
 - (반려 시) 구체적 수정 사항 목록
