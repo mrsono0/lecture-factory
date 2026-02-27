@@ -79,9 +79,11 @@ steps:
     action: "design_structure"
     depends_on: "step_2_learner_analysis"
     input: "Learner Persona, Scope Definition, Trend Report, Output Language: Korean"
-    output: "Curriculum Structure (Skeleton)"
+    output: "Curriculum Structure Draft (01_Planning/강의구성안.md 초안)"
     notes: |
       기존 60~90분 단위 세션으로 초안 설계. A3B에서 마이크로 세션으로 세분화.
+      ⚠️ 반드시 01_Planning/강의구성안.md 파일로 저장할 것 (step_2의 학습자 분석 섹션 유지).
+      이 초안은 step_4~5의 micro_sessions 작업의 기반 입력이 되며, step_8에서 micro_sessions 데이터로 업데이트됩니다.
 
   # Phase 2: 마이크로 세션 청킹 (Gemini 최적화)
   # A3B가 기존 세션을 15~25분 마이크로 세션으로 세분화
