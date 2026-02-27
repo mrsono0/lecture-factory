@@ -86,6 +86,11 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - [ ] **tables 반영**: visual_specs/의 비교표가 §3 상세 내용에 삽입되었는가?
 - [ ] **instructor_support 반영**: 강사 지원 패킷의 팁과 FAQ가 §4 트러블슈팅에 반영되었는가?
 
+### 실행 로그 검증 (Execution Log Checklist)
+- [ ] **로그 파일 존재**: `.agent/logs/{DATE}_02_Material_Writing.jsonl` 파일이 존재하는가?
+- [ ] **Step 완전성**: 모든 step에 대해 START/END 쳐가 존재하는가?
+- [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
+
 ## 산출물: QA 리포트
 - 결함 목록 (P0, P1, P2 등급별)
 - 수정 요청 사항
