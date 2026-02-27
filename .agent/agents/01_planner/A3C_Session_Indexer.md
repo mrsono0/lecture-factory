@@ -30,6 +30,10 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **전체 세션 카탈로그**: 검색 가능한 마이크로 세션 인덱스
 - **메타데이터 중앙화**: 각 세션의 핵심 정보를 JSON 형태로 집계
 - **링크 및 참조**: 세션 간 연결을 하이퍼링크로 표현
+- **statistics 자동 집계**: `_index.json`의 `statistics` 섹션은 반드시 `sessions` 배열의 실제 데이터에서 자동 계산해야 합니다
+  - `statistics.by_day.day_N.total_min` = 해당 day의 모든 세션 `duration_min` 합
+  - `statistics.by_day.day_N.sessions` = 해당 day의 세션 개수
+  - statistics 값을 독립적으로 생성하거나 수동 입력하는 것은 금지 — 반드시 세션 데이터에서 파생
 
 ### 4. 러닝 아키텍처 문서화
 - **전체 시간 계획**: 총 소요 시간, 일자별 배분, 휴식 시간 포함
