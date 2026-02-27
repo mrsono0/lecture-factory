@@ -51,7 +51,7 @@ bun.lock
 .opencode/*
 !.opencode/oh-my-opencode.jsonc
 !.opencode/.gitignore
-!.opencode/package.json
+
 
 # ── Gemini CLI 스킬 런타임 데이터 (브라우저 상태, 인증) ──────
 .agent/skills/notebooklm/data/
@@ -72,8 +72,7 @@ Specification/
 
 # ── 참고자료 / 기획 메모 ─────────────────────────────────────
 참고자료/
-AI-native_자바기초.md
-AI-native_스프링부트기초.md
+AI-native_*.md
 
 # ── 강의 프로젝트 산출물 폴더 (날짜 prefix) ──────────────────
 # 파이프라인 실행 결과물 — 재생성 가능
@@ -101,3 +100,8 @@ AI-native_스프링부트기초.md
 .idea/
 .vscode/
 *.code-workspace
+
+
+# ── Git Worktrees (로컬 개발용)
+.worktrees/
+worktrees/
