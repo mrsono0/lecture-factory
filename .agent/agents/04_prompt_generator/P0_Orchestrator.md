@@ -50,7 +50,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ### 2. 교안별 프롬프트 파일 스캐폴딩 (Scaffolding)
 - 발견된 N개 파일 각각에 대해 **독립적인 프롬프트 파일**의 뼈대를 생성합니다.
-- 각 파일은 **5-헤딩 고정 스키마**를 따르며, 단독으로 AI에 전달 가능한 완결 문서입니다:
+- 각 파일은 **6-섹션 고정 스키마**(Role Definition + 5개 `###` 헤딩)를 따르며, 단독으로 AI에 전달 가능한 완결 문서입니다:
   ```
   파일명: {세션ID}_{세션제목}_슬라이드 생성 프롬프트.md
 
@@ -161,19 +161,15 @@ If the user provides a local folder path, you **MUST** analyze all files in that
   - `est_output_tokens` = round(output_bytes ÷ 3.3)
   - `est_cost_usd` = (est_input_tokens × input_price + est_output_tokens × output_price) ÷ 1000
 - 실패 시 `FAIL`, 재시도 시 `RETRY` 이벤트를 기록합니다.
-
-### Session-Parallel 실행 시 (세션 단위 위임을 받은 경우)
-- 세션 처리 **시작** 시 `SESSION_START` 이벤트를 기록합니다.
-  - `session_id`: 세션 식별자 (예: `"Day1_AM"`)
-  - `session_name`: 세션 표시명
-- 세션 처리 **완료** 시 `SESSION_END` 이벤트를 기록합니다.
-  - END 전용 필드(duration_sec, input/output_bytes, est_tokens, est_cost) + output_files, total_slides
-- 실패 시 `FAIL` 이벤트를 기록합니다 (`step_id`: `"session_{session_id}"`)
+- 모든 step은 `[pre_step → step 실행 → post_step]`를 정확히 1회만 수행합니다.
+- `DECISION`은 판정 기록 전용 이벤트이며 추가 `END`를 발생시키지 않습니다.
+- 반복 실행 step(step_2/4/5/6/7)은 파일·세션 단위 step_id 인스턴스 스코프를 사용합니다.
+  - 형식: `{base_step_id}::{session_id}` (예: `step_4_slide_blueprint::Day2_PM`)
 
 ### 이 파이프라인의 로깅 설정
 - **workflow**: `"04_SlidePrompt_Generation"`
 - **워크플로우 YAML**: `.agent/workflows/04_SlidePrompt_Generation.yaml`
-- **기본 실행 모델**: Session-Parallel
+- **기본 실행 모델**: Step-by-Step
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
@@ -189,7 +185,7 @@ RUN_ID=$(python3 .agent/scripts/agent_logger.py init --workflow 04_SlidePrompt_G
 python3 .agent/scripts/agent_logger.py start \
   --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
   --step-id {step_id} --agent {에이전트명} --category {카테고리} \
-  --action {액션명} --input-bytes {입력바이트수}
+  --action {액션명} --input-bytes {입력바이트수} --parallel-group {병렬그룹|none}
 
 # step END (각 step 실행 직후)
 python3 .agent/scripts/agent_logger.py end \
@@ -206,26 +202,13 @@ python3 .agent/scripts/agent_logger.py fail \
 python3 .agent/scripts/agent_logger.py decision \
   --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
   --step-id {step_id} --agent {에이전트명} --category {카테고리} \
-  --action {액션명} --decision {approved|rejected}
+  --action {액션명} --decision {approved|partial_rejected|rejected}
 
 # RETRY (재시도 시)
 python3 .agent/scripts/agent_logger.py retry \
   --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
   --step-id {step_id} --agent {에이전트명} --category {카테고리} \
   --action {액션명} --retry {재시도횟수}
-
-# SESSION_START (세션 단위 병렬 실행 시작)
-python3 .agent/scripts/agent_logger.py session-start \
-  --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
-  --step-id session_{세션ID} --agent {에이전트명} --category {카테고리} \
-  --action {액션명} --session-id {세션ID} --session-name "{세션명}" \
-  --parallel-group {병렬그룹} --input-bytes {입력바이트수}
-
-# SESSION_END (세션 단위 병렬 실행 완료)
-python3 .agent/scripts/agent_logger.py session-end \
-  --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
-  --step-id session_{세션ID} --session-id {세션ID} --session-name "{세션명}" \
-  --output-bytes {출력바이트수} --output-files {파일1} {파일2} --total-slides {슬라이드수}
 ```
 
 > ⚠️ **로깅은 step 실행보다 우선합니다.** 컨텍스트가 부족하더라도 START/END 명령어는 반드시 실행하세요. duration, tokens, cost는 자동 계산됩니다.

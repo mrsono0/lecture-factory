@@ -142,7 +142,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ### 실행 로그 검증 (Execution Log Checklist)
 - [ ] **로그 파일 존재**: `.agent/logs/{DATE}_04_SlidePrompt_Generation.jsonl` 파일이 존재하는가?
-- [ ] **Step 완전성**: 모든 step에 대해 START/END 쳐가 존재하는가?
+- [ ] **Step 완전성**: 모든 step 인스턴스에 대해 START/END 쌍이 존재하는가?
+- [ ] **반복 step 스코프**: step_2/4/5/6/7이 `{base_step_id}::{session_id}` 형식의 step_id를 사용하는가?
 - [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
 
 ## 산출물

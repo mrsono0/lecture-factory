@@ -5,6 +5,11 @@
 # ═══════════════════════════════════════════════════════════
 set -euo pipefail
 
+STRICT_WARNINGS=false
+if [ "${1:-}" = "--strict-warnings" ]; then
+  STRICT_WARNINGS=true
+fi
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 CMD_DIR="$ROOT/.claude/commands"
 AGT_DIR="$ROOT/.claude/agents"
@@ -146,6 +151,10 @@ if [ "$ERRORS" -gt 0 ]; then
   exit 1
 else
   if [ "$WARNINGS" -gt 0 ]; then
+    if [ "$STRICT_WARNINGS" = true ]; then
+      echo "❌ 검증 실패 — 경고 ${WARNINGS}건 (--strict-warnings 모드)"
+      exit 1
+    fi
     echo "⚠️ 검증 통과 (경고 ${WARNINGS}건 확인 필요)"
   else
     echo "✅ 검증 통과 — 모든 연결 정상"

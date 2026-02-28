@@ -30,7 +30,7 @@
 | `END` | 에이전트 실행 완료 후 | 소요시간, 데이터 크기, 토큰/비용 추정치 포함 |
 | `FAIL` | 에이전트 실행 실패 시 | error_message 포함 |
 | `RETRY` | 재시도 시작 시 | retry 카운트 증가 |
-| `DECISION` | QA/승인 스텝 판정 시 | decision 필드에 approved/rejected |
+| `DECISION` | QA/승인 스텝 판정 시 | decision 필드에 approved/partial_rejected/rejected |
 | `SESSION_START` | 세션 단위 병렬 실행 시작 | session_id, session_name 포함. Session-Parallel 모델 전용 |
 | `SESSION_END` | 세션 단위 병렬 실행 완료 | 세션 전체의 duration/bytes/cost + output_files 포함 |
 | `EXTERNAL_TOOL_START` | 외부 도구/API 호출 시작 | 도구명, 입력 파라미터, 타임스탬프 |
@@ -49,7 +49,7 @@
 | `ts` | string | O | ISO 8601 타임스탬프 | `"2026-02-22T14:30:05"` |
 | `status` | string | O | 이벤트 유형 | `"START"` / `"END"` / `"FAIL"` / `"RETRY"` / `"DECISION"` / `"SESSION_START"` / `"SESSION_END"` |
 | `workflow` | string | O | 파이프라인명 | `"01_Lecture_Planning"` |
-| `step_id` | string | O | 워크플로우 YAML의 step id | `"step_0_scope"` / `"session_Day1_AM"` |
+| `step_id` | string | O | 워크플로우 YAML의 step id (반복 실행은 인스턴스 스코프 권장) | `"step_0_scope"` / `"step_2_education_structure::Day1_AM"` / `"session_Day1_AM"` |
 | `agent` | string | O | 에이전트명 | `"A0_Orchestrator"` |
 | `category` | string | O | config.json의 LLM 카테고리 | `"deep"` / `"ultrabrain"` |
 | `model` | string | O | 실행 시 배정된 LLM 모델명 (model_config에서 category→model 조회) | `"anthropic/claude-opus-4-6"` |
@@ -67,7 +67,7 @@
 | `est_input_tokens` | number | O | 추정 입력 토큰 수 | `4606` |
 | `est_output_tokens` | number | O | 추정 출력 토큰 수 | `2909` |
 | `est_cost_usd` | number | O | 추정 비용 (USD) | `0.018` |
-| `decision` | string | — | QA/승인 판정 (해당 시만) | `"approved"` / `"rejected"` / `null` |
+| `decision` | string | — | QA/승인 판정 (해당 시만) | `"approved"` / `"partial_rejected"` / `"rejected"` / `null` |
 
 ### 3.3 FAIL 전용 필드
 
@@ -196,6 +196,29 @@ run_{YYYYMMDD}_{HHMMSS}
 
 ## 8. 분석 쿼리 예시 (jq)
 
+### 8.0 Analyzer 스키마 게이트 (필수)
+
+- `analyze_logs.sh`의 `summary`, `report`, `all` 명령은 집계 전에
+  `validate_logging_schema.py --strict --check-duplicate-end`를 선행 실행합니다.
+- 스키마 게이트 실패 시 집계를 중단하고 non-zero로 종료합니다.
+- 범위 제한이 필요하면 아래 스코핑 옵션을 사용합니다.
+
+```bash
+# 단일 파일
+bash .agent/scripts/analyze_logs.sh summary .agent/logs/2026-02-28_03_Slide_Generation.jsonl
+
+# 옵션 기반 지정
+bash .agent/scripts/analyze_logs.sh summary --log .agent/logs/2026-02-28_03_Slide_Generation.jsonl
+
+# run_id 범위 제한
+bash .agent/scripts/analyze_logs.sh summary --log .agent/logs/2026-02-28_03_Slide_Generation.jsonl --run-id run_20260228_021445
+
+# 시점 이후 범위 제한
+bash .agent/scripts/analyze_logs.sh summary --log .agent/logs/2026-02-28_03_Slide_Generation.jsonl --since-ts 2026-02-28T02:10:00
+```
+
+`validate_logging_schema.py`의 strict 규칙은 **필터링된 구간**에만 적용됩니다.
+
 ### 보틀넥 분석: 소요시간 TOP 5
 ```bash
 cat .agent/logs/*.jsonl | jq -s '
@@ -275,8 +298,8 @@ Lecture Factory는 두 가지 실행 모델을 지원합니다:
 
 | 실행 모델 | 설명 | 이벤트 패턴 | 대표 파이프라인 |
 |-----------|------|------------|---------------|
-| **Step-by-Step** | 오케스트레이터가 내부 에이전트를 순차/병렬 호출 | N×(START+END) | 01, 02, 05, 06, 07, 08 |
-| **Session-Parallel** | 상위 오케스트레이터가 세션 단위로 병렬 위임 | M×(SESSION_START+SESSION_END) | 03, 04 |
+| **Step-by-Step** | 오케스트레이터가 내부 에이전트를 순차/병렬 호출 | N×(START+END) | 01, 02, 04, 05, 06, 07, 08 |
+| **Session-Parallel** | 상위 오케스트레이터가 세션 단위로 병렬 위임 | M×(SESSION_START+SESSION_END) | 03 |
 
 **판단 기준**:
 - **Step-by-Step**: 오케스트레이터 자체가 워크플로우 YAML의 각 step을 직접 실행할 때
@@ -284,7 +307,7 @@ Lecture Factory는 두 가지 실행 모델을 지원합니다:
 
 **혼합 모델**: 일부 파이프라인은 상황에 따라 두 모델 모두 사용할 수 있습니다.
 - Pipeline 01: 보통 Step-by-Step이지만, 여러 강의를 병렬 기획 시 Session-Parallel 가능
-- Pipeline 03/04: 보통 Session-Parallel이지만, 단일 세션 처리 시 Step-by-Step 가능
+- Pipeline 03: 보통 Session-Parallel이지만, 단일 세션 처리 시 Step-by-Step 가능
 
 ### 9.1 공통: 파이프라인 시작 시
 1. **`run_id` 확인**: 상위에서 전달받은 `run_id`가 있으면 사용, 없으면 `run_{YYYYMMDD}_{HHMMSS}` 형식으로 자체 생성합니다.
@@ -306,6 +329,9 @@ Lecture Factory는 두 가지 실행 모델을 지원합니다:
    - `output_bytes`: 에이전트가 생성한 산출물의 UTF-8 바이트 수
    - `est_input_tokens`, `est_output_tokens`: bytes ÷ 3.3
    - `est_cost_usd`: 토큰 × 카테고리별 단가
+4. **반복 실행 스코프**: 파일/세션 반복 step은 `step_id`에 인스턴스 식별자를 포함합니다.
+   - 권장 형식: `{base_step_id}::{session_id}`
+   - 예: `step_4_slide_blueprint::Day2_PM`
 
 #### 9.2.2 실패/재시도 시
 1. **FAIL 로그**: 실패 즉시 FAIL 이벤트를 기록합니다 (`error_message` 포함).
@@ -488,7 +514,7 @@ cat .agent/logs/*.jsonl | jq -s '
 | 01 Lecture Planning | Step-by-Step | 단일 실행 (세션 없음) | 11 steps × (START+END) |
 | 02 Material Writing | Hybrid | foreach_session 병렬 + Step-by-Step | 14 agents × (START+END) + foreach_session |
 | 03 Slide Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
-| 04 SlidePrompt Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
+| 04 SlidePrompt Generation | Step-by-Step | 교안 파일 반복 실행 (step 인스턴스 스코프 권장) | N × (START+END) |
 | 05 PPTX Conversion | Step-by-Step | 세션별 개별 실행 | 9 steps × (START+END) |
 | 06 NanoBanana PPTX | Step-by-Step | 세션별 개별 실행 | 9 steps × (START+END) |
 | 07 Manus Slide | Step-by-Step | 세션별 순차 처리 | 8 steps × (START+END) |

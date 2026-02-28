@@ -46,7 +46,8 @@ logging:
     - pre_step: 각 step 실행 직전 (START 기록)
     - post_step: 각 step 실행 직후 (END 기록)
     - on_fail/on_decision: 해당 이벤트 발생 시
-    모든 step은 반드시 [pre_step → step 실행 → post_step] 3단계로 실행합니다.
+    모든 step은 반드시 [pre_step → step 실행 → post_step] 3단계로 정확히 1회 실행합니다.
+    DECISION 이벤트는 판정 기록만 수행하며 추가 post_step 또는 추가 END를 발생시키면 안 됩니다.
 
 # ───────────────────────────────────────────────────────────
 # 입력 정책 (Input Policy)

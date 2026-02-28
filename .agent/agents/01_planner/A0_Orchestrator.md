@@ -221,7 +221,7 @@ python3 .agent/scripts/agent_logger.py retry \
 | A3_Curriculum_Architect | `ultrabrain` | `opencode/gpt-5.3-codex` |
 | A3B_MicroSession_Specifier | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
 | A3C_Session_Indexer | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
-| A2_Resource_Mapper | `deep` | `anthropic/claude-opus-4-6` |
+| A2_Instructional_Designer | `deep` | `anthropic/claude-opus-4-6` |
 | A7_Differentiation_Advisor | `artistry` | `google/antigravity-gemini-3.1-pro` |
 | A5A_QA_Manager | `ultrabrain` | `opencode/gpt-5.3-codex` |
 | (기타 미지정 에이전트) | `deep` (default) | `anthropic/claude-opus-4-6` |

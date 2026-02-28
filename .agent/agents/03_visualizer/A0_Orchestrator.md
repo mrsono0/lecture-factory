@@ -69,6 +69,9 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 3. post_step → agent_logger.py end (워크플로우 YAML logging.step_hooks.post_step 참조)
 ```
 
+- `post_step`은 step당 정확히 1회만 허용됩니다.
+- `DECISION`은 승인/반려 결과를 기록하는 별도 이벤트이며 추가 `END`를 트리거하면 안 됩니다.
+
 > 이 섹션은 `.agent/logging-protocol.md`의 구현 가이드입니다. **모든 실행에서 반드시 수행**합니다.
 
 ### 로깅 초기화 (파이프라인 시작 시)
@@ -168,7 +171,7 @@ python3 .agent/scripts/agent_logger.py session-end \
 | A1_Content_Analyst | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 | A2_Terminology_Manager | `quick` | `anthropic/claude-haiku-4-5` |
 | A3_Slide_Architect | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| A4_Content_Writer | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
+| A4_Layout_Designer | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 | A5_Code_Validator | `quick` | `anthropic/claude-haiku-4-5` |
 | A6_Lab_Reproducibility_Engineer | `quick` | `anthropic/claude-haiku-4-5` |
 | A7_Visual_Design_Director | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
