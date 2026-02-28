@@ -1,0 +1,1 @@
+{"run_id":"run_fixture_p04_bad_scope","ts":"2026-02-28T12:30:00","status":"START","workflow":"04_SlidePrompt_Generation","step_id":"step_2_education_structure","agent":"04_prompt_generator/P1_Education_Structurer","category":"deep","model":"anthropic/claude-opus-4-6","action":"extract_education_elements","parallel_group":"phase_b","retry":0}

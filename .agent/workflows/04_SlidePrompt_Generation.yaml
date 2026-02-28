@@ -16,8 +16,9 @@ logging:
   model_config: ".opencode/oh-my-opencode.jsonc"
   path: ".agent/logs/{YYYY-MM-DD}_04_SlidePrompt_Generation.jsonl"
   format: "jsonl"
+  execution_model: "Step-by-Step"
   # ── 로깅 강제 정책 (MANDATORY) ────────────────────────────────────────
-  # A0 오케스트레이터는 각 step 실행 시 반드시 아래 훅을 실행합니다.
+  # P0 오케스트레이터는 각 step 실행 시 반드시 아래 훅을 실행합니다.
   # {step_id}, {agent}, {category}, {action}은 해당 step 정의에서 자동 치환됩니다.
   step_hooks:
     init: "RUN_ID=$(python3 .agent/scripts/agent_logger.py init --workflow 04_SlidePrompt_Generation)"
@@ -25,7 +26,7 @@ logging:
       python3 .agent/scripts/agent_logger.py start \
         --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
         --step-id {step_id} --agent {agent} --category {category} \
-        --action {action}
+        --action {action} --input-bytes {input_bytes} --parallel-group {parallel_group}
     post_step: |
       python3 .agent/scripts/agent_logger.py end \
         --workflow 04_SlidePrompt_Generation --run-id $RUN_ID \
@@ -46,7 +47,11 @@ logging:
     - pre_step: 각 step 실행 직전 (START 기록)
     - post_step: 각 step 실행 직후 (END 기록)
     - on_fail/on_decision: 해당 이벤트 발생 시
-    모든 step은 반드시 [pre_step → step 실행 → post_step] 3단계로 실행합니다.
+    모든 step은 반드시 [pre_step → step 실행 → post_step] 3단계로 정확히 1회 실행합니다.
+    DECISION 이벤트는 판정 기록만 수행하며 추가 post_step 또는 추가 END를 발생시키면 안 됩니다.
+    반복 실행 step(step_2/4/5/6/7)은 파일·세션 단위 step_id 인스턴스 스코프를 사용합니다.
+    - 형식: {base_step_id}::{session_id} (예: step_4_slide_blueprint::Day2_PM)
+    parallel_group가 없는 step은 `none` 값을 기록합니다.
 
 # ───────────────────────────────────────────────────────────
 # 산출물 정책 (Output Policy) — v1.1 변경
@@ -199,6 +204,7 @@ steps:
     decision:
       approved: "step_7_finalize"
       partial_rejected: "step_4_slide_blueprint (리젝된 파일의 에이전트만 재실행, 파일당 최대 2회)"
+      rejected: "step_4_slide_blueprint (전면 재작업 필요 시 재실행, 파일당 최대 2회)"
       # Note: P1 재추출이 필요한 경우 P0가 step_2(P1)부터 재실행 후 step_4(P2)를 연쇄 실행함
     description: >
       각 교안별 프롬프트 파일을 독립적으로 검증합니다.

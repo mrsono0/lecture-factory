@@ -51,7 +51,7 @@ YYYY-MM-DD_강의제목/
  A2∥A7 병렬 완료 후 A3가 양쪽 산출물 + 마이크로 세션 인덱스를 커리큐럼에 통합 (Integration Hub)
  반려 시 step_4(A3B)부터 재실행
 
-### Team 2: Writer (02_writer) — 14 agents
+### Team 2: Writer (02_writer) — 13 agents
 **팀 공통 원칙**: 초보 강사가 교안만 읽고 막힘 없이 설명할 수 있어야 합니다.
 **대본 시스템**: 모든 주요 개념에 🗣️ 강사 대본, 실습에 🎙️ 실습 가이드 대본을 포함합니다.
 **Flow**:
@@ -182,6 +182,6 @@ YYYY-MM-DD_강의제목/
  **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)` (input_bytes + output_bytes 기반, 정확도 ~85-90%)
  **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (quick=Haiku급, deep=Sonnet급, ultrabrain=Opus급)
 오케스트레이터는 실행 모델에 따라 step 또는 session 단위로 `logging-protocol.md`를 참조하여 JSONL 로그를 기록합니다.
-- **Step-by-Step**: 각 step 실행 전후로 START/END 이벤트 기록 (Pipeline 01, 02, 05, 06, 07, 08)
-- **Session-Parallel**: 세션 단위 병렬 위임 시 SESSION_START/SESSION_END 이벤트 기록 (Pipeline 03, 04)
+- **Step-by-Step**: 각 step 실행 전후로 START/END 이벤트 기록 (Pipeline 01, 02, 04, 05, 06, 07, 08)
+- **Session-Parallel**: 세션 단위 병렬 위임 시 SESSION_START/SESSION_END 이벤트 기록 (Pipeline 03)
 로그 파일(`.jsonl`)은 `.gitignore`에 의해 Git 추적에서 제외됩니다.

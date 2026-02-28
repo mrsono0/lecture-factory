@@ -1,0 +1,1 @@
+{"run_id":"run_fixture_p04_bad_decision","ts":"2026-02-28T12:20:00","status":"DECISION","workflow":"04_SlidePrompt_Generation","step_id":"step_6_qa::Day1_PM","agent":"04_prompt_generator/P4_QA_Auditor","category":"ultrabrain","model":"opencode/gpt-5.3-codex","action":"validate_prompt_quality","parallel_group":"none","retry":0,"decision":"partial-rejected"}
