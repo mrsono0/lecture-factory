@@ -143,10 +143,13 @@ YYYY-MM-DD_강의제목/
 | | | A3B MicroSession Specifier, A3C Session Indexer | `curriculum-chunking` |
 | | | A7 Differentiation Advisor | `artistry` |
 | | | A1 Trend Researcher | `research` |
-| **P02** Writer | `deep` | A2 Traceability Curator, A5 Code Validator | `quick` |
+| **P02** Writer | `deep` | A2 Traceability Curator | `quick` |
+| | | A1 Source Miner, A3 Curriculum Architect, A5 Code Validator, A7 Learner Experience Designer | `glm5` |
 | | | A4B Session Writer | `micro-writing` |
+| | | A4C Material Aggregator | `material-aggregation` |
 | | | A6 Visualization Designer, A11 Chart Specifier | `visual-engineering` |
 | | | A8 QA Editor | `ultrabrain` |
+| | | A9 Instructor Support Designer | `instructor-support-codex` |
 | | | A10 Differentiation Strategist | `artistry` |
 | **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |
 | | | A0 Orchestrator | `unspecified-low` |

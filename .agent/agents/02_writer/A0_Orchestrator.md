@@ -283,14 +283,14 @@ python3 .agent/scripts/agent_logger.py session-end \
 | 에이전트 | category | model |
 |---|---|---|
 | A0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| A1_Source_Miner | `deep` | `anthropic/claude-opus-4-6` |
+| A1_Source_Miner | `glm5` | `opencode/glm-5` |
 | A2_Traceability_Curator | `quick` | `anthropic/claude-haiku-4-5` |
-| A3_Curriculum_Architect | `deep` | `anthropic/claude-opus-4-6` |
+| A3_Curriculum_Architect | `glm5` | `opencode/glm-5` |
 | A4B_Session_Writer | `micro-writing` | `google/antigravity-gemini-3.1-pro` |
 | A4C_Material_Aggregator | `material-aggregation` | `opencode/glm-5` |
-| A5_Code_Validator | `quick` | `anthropic/claude-haiku-4-5` |
+| A5_Code_Validator | `glm5` | `opencode/glm-5` |
 | A6_Visualization_Designer | `visual-engineering` | `google/antigravity-gemini-3.1-pro` |
-| A7_Learner_Experience_Designer | `deep` | `anthropic/claude-opus-4-6` |
+| A7_Learner_Experience_Designer | `glm5` | `opencode/glm-5` |
 | A8_QA_Editor | `ultrabrain` | `opencode/gpt-5.3-codex` |
 | A9_Instructor_Support_Designer | `instructor-support-codex` | `openai/gpt-5.3-codex` |
 | A10_Differentiation_Strategist | `artistry` | `google/antigravity-gemini-3.1-pro` |
