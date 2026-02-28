@@ -6,7 +6,9 @@
     "agent_models": {
         "L0_Orchestrator":   { "category": "unspecified-low", "note": "분석 범위 결정·스크립트 실행 지시·최종 승인 — Sonnet 수준" },
         "L1_Data_Collector": { "category": "quick",           "note": "스크립트 실행·데이터 수집·스키마 검증 — 기계적 작업" },
+        "L2_Insight_Analyst": { "category": "reasoning-high", "note": "패턴·이상치 인사이트 분석 — 정밀 추론 필요" },
         "L3_Optimizer":      { "category": "ultrabrain",      "note": "비용/성능 최적화 전략 — 복잡한 트레이드오프 분석" },
+        "L4_Report_Writer":  { "category": "reasoning-high", "note": "분석 리포트 구조화·서술 — 정밀 추론 필요" },
         "L5_QA_Auditor":     { "category": "ultrabrain",      "note": "리포트 정합성·데이터 정확성 최종 검증 — 방어선" }
     }
 }

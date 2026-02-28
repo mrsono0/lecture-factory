@@ -76,6 +76,16 @@
       "model": "opencode/gpt-5.3-codex",
       "variant": "xhigh"
     },
+    // Reasoning High: targeted analysis and synthesis tasks
+    "reasoning-high": {
+      "model": "openai/gpt-5.3-codex",
+      "variant": "high"
+    },
+    // Reasoning Xhigh: maximum-depth reasoning for complex planning
+    "reasoning-xhigh": {
+      "model": "openai/gpt-5.3-codex",
+      "variant": "xhigh"
+    },
     // NEW: Micro Session Chunking - 15~25min session design
     // Gemini 3.1 Pro — 1M context for chunk_type tagging and dependency mapping
     "curriculum-chunking": {
