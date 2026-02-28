@@ -2,7 +2,7 @@
 name: nano-pptx
 description: NanoBanana PPTX 생성 파이프라인 오케스트레이터. 06_NanoBanana_PPTX 워크플로우를 실행하여 AI 이미지 기반 고품질 슬라이드를 생성합니다. GEMINI_API_KEY가 필요합니다.
 tools: Read, Edit, Write, Bash, Glob, Grep, Task
-model: opus
+model: sonnet
 ---
 
 # NanoBanana PPTX 생성 파이프라인 오케스트레이터

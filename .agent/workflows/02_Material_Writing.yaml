@@ -386,8 +386,8 @@ model_routing:
   
   # 취합 및 통합: deep 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
   A4C_Material_Aggregator:
-    category: "deep"
-    note: "보조 패킷 통합, AM/PM 분할, 최종 취합 - 고품질 모델 사용"
+    category: "material-aggregation"
+    note: "보조 패킷 통합, AM/PM 분할, 최종 취합 - opencode/glm-5"
   
   # 표 및 시각화: visual-engineering 카테고리
   A11_Chart_Specifier:
@@ -402,6 +402,10 @@ model_routing:
   A8_QA_Editor:
     category: "ultrabrain"
     note: "최종 QA (기존 설정 유지)"
+
+  A9_Instructor_Support_Designer:
+    category: "instructor-support-codex"
+    note: "강사 지원 패킷 생성 - openai/gpt-5.3-codex"
   
   # 출처 추적: quick 카테고리
   A2_Traceability_Curator:

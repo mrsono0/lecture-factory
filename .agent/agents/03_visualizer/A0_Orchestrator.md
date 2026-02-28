@@ -167,7 +167,7 @@ python3 .agent/scripts/agent_logger.py session-end \
 
 | 에이전트 | category | model |
 |---|---|---|
-| A0_Orchestrator | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
+| A0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
 | A1_Content_Analyst | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 | A2_Terminology_Manager | `quick` | `anthropic/claude-haiku-4-5` |
 | A3_Slide_Architect | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |

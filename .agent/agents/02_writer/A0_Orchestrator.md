@@ -287,12 +287,12 @@ python3 .agent/scripts/agent_logger.py session-end \
 | A2_Traceability_Curator | `quick` | `anthropic/claude-haiku-4-5` |
 | A3_Curriculum_Architect | `deep` | `anthropic/claude-opus-4-6` |
 | A4B_Session_Writer | `micro-writing` | `google/antigravity-gemini-3.1-pro` |
-| A4C_Material_Aggregator | `deep` | `anthropic/claude-opus-4-6` |
+| A4C_Material_Aggregator | `material-aggregation` | `opencode/glm-5` |
 | A5_Code_Validator | `quick` | `anthropic/claude-haiku-4-5` |
 | A6_Visualization_Designer | `visual-engineering` | `google/antigravity-gemini-3.1-pro` |
 | A7_Learner_Experience_Designer | `deep` | `anthropic/claude-opus-4-6` |
 | A8_QA_Editor | `ultrabrain` | `opencode/gpt-5.3-codex` |
-| A9_Instructor_Support_Designer | `deep` | `anthropic/claude-opus-4-6` |
+| A9_Instructor_Support_Designer | `instructor-support-codex` | `openai/gpt-5.3-codex` |
 | A10_Differentiation_Strategist | `artistry` | `google/antigravity-gemini-3.1-pro` |
 | A11_Chart_Specifier | `visual-engineering` | `google/antigravity-gemini-3.1-pro` |
 | (기타 미지정 에이전트) | `deep` (default) | `anthropic/claude-opus-4-6` |

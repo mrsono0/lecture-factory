@@ -218,7 +218,7 @@ python3 .agent/scripts/agent_logger.py retry \
 | A0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
 | A1_Trend_Researcher | `research` | `google/antigravity-gemini-3.1-pro` |
 | A5B_Learner_Analyst | `deep` | `anthropic/claude-opus-4-6` |
-| A3_Curriculum_Architect | `ultrabrain` | `opencode/gpt-5.3-codex` |
+| A3_Curriculum_Architect | `curriculum-architecture` | `opencode/glm-5` |
 | A3B_MicroSession_Specifier | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
 | A3C_Session_Indexer | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
 | A2_Instructional_Designer | `deep` | `anthropic/claude-opus-4-6` |

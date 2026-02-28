@@ -7,7 +7,7 @@
         "A0_Orchestrator":           { "category": "unspecified-low", "note": "참고자료 충분성 판단·골든 템플릿 조립·품질 게이트 — Sonnet 수준" },
         "A1_Trend_Researcher":       { "category": "research",       "note": "트렌드 리서치·SWOT 분석·소스 기반 Q&A — Gemini 3.1 Pro 1M 컨텍스트 활용" },
         "A2_Instructional_Designer": { "category": "reasoning-xhigh", "note": "학습 활동·평가 설계 — 고난도 교육 설계 추론" },
-        "A3_Curriculum_Architect":   { "category": "ultrabrain", "note": "커리큘럼 구조 설계 — 복잡한 의존성 매핑" },
+        "A3_Curriculum_Architect":   { "category": "curriculum-architecture", "note": "커리큘럼 구조 설계 — GLM-5 전용 라우팅" },
         "A3B_MicroSession_Specifier":{ "category": "curriculum-chunking", "note": "15~25min 마이크로 세션 설계 및 Gemini 최적화 태그 부여" },
         "A3C_Session_Indexer":       { "category": "curriculum-chunking", "note": "의존성 그래프 및 학습 경로 설계" },
         "A5B_Learner_Analyst":       { "category": "reasoning-xhigh", "note": "학습자 페르소나·난점 분석 — 고난도 맥락 추론" },
