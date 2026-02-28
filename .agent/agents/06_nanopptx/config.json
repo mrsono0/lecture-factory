@@ -7,6 +7,7 @@
     "optional_env": ["KLING_ACCESS_KEY", "KLING_SECRET_KEY"],
     "tools_reference": ["gemini-3-pro-image-preview", "generate_ppt.py", "pptxgenjs", "thumbnail.py"],
     "agent_models": {
+        "C0_Orchestrator": { "category": "unspecified-low", "note": "파이프라인 조율·입력 검증·승인 게이트 — Sonnet 라우팅" },
         "C2_Prompt_Engineer": { "category": "writing", "note": "이미지 프롬프트 작성 — 정밀한 문장력 필요" }
     }
 }

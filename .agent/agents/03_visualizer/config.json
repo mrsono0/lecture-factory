@@ -4,6 +4,7 @@
     "default_category": "visual-engineering",
     "tools_reference": ["notebooklm", "deep-research", "tavily-web"],
     "agent_models": {
+        "A0_Orchestrator":                 { "category": "unspecified-low", "note": "파이프라인 조율·품질 게이트 — Sonnet 라우팅" },
         "A2_Terminology_Manager":          { "category": "quick",       "note": "용어 추출 — 기계적 정규화" },
         "A5_Code_Validator":               { "category": "quick",       "note": "코드 블록 검증 — 정확성만 필요" },
         "A6_Lab_Reproducibility_Engineer": { "category": "quick",       "note": "Lab 카드 생성 — 템플릿 기반" },

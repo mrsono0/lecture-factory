@@ -175,7 +175,7 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| C0_Orchestrator | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
+| C0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
 | C1_Content_Planner | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 | C2_Prompt_Engineer | `writing` | `google/antigravity-gemini-3.1-pro` |
 | C3_Image_Generator | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |

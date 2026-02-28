@@ -138,7 +138,8 @@ YYYY-MM-DD_강의제목/
 | Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 오버라이드 카테고리 |
 |----------|:---:|---|:---:|
 | **P01** Planner | `deep` | A0 Orchestrator | `unspecified-low` |
-| | | A3 Curriculum Architect, A5A QA Manager | `ultrabrain` |
+| | | A3 Curriculum Architect | `curriculum-architecture` |
+| | | A5A QA Manager | `ultrabrain` |
 | | | A3B MicroSession Specifier, A3C Session Indexer | `curriculum-chunking` |
 | | | A7 Differentiation Advisor | `artistry` |
 | | | A1 Trend Researcher | `research` |
@@ -148,6 +149,7 @@ YYYY-MM-DD_강의제목/
 | | | A8 QA Editor | `ultrabrain` |
 | | | A10 Differentiation Strategist | `artistry` |
 | **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |
+| | | A0 Orchestrator | `unspecified-low` |
 | | | A8 Copy Tone Editor | `writing` |
 | | | A9 QA Auditor | `ultrabrain` |
 | **P04** Prompt Generator | `writing` | P0 Orchestrator | `unspecified-low` |
@@ -159,6 +161,7 @@ YYYY-MM-DD_강의제목/
 | | | B2 HTML Renderer | `visual-engineering` |
 | | | B5 Visual QA | `visual-engineering` |
 | **P06** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
+| | | C0 Orchestrator | `unspecified-low` |
 | **P07** Manus Slide | `quick` | D0 Orchestrator | `unspecified-low` |
 | | | D2 Chunk Splitter | `writing` |
 | | | D5 Visual QA | `ultrabrain` |
