@@ -210,7 +210,7 @@ layer_mapping:
 # ═══════════════════════════════════════════════════════════
 pipeline_registry:
   - { id: "01", name: "Lecture Planning",        workflow: "01_Lecture_Planning.yaml",        agents: "01_planner/",        team_size: 9  }
-  - { id: "02", name: "Material Writing",        workflow: "02_Material_Writing.yaml",        agents: "02_writer/",         team_size: 14 }
+  - { id: "02", name: "Material Writing",        workflow: "02_Material_Writing.yaml",        agents: "02_writer/",         team_size: 13 }
   - { id: "03", name: "Slide Generation",        workflow: "03_Slide_Generation.yaml",        agents: "03_visualizer/",     team_size: 11 }
   - { id: "04", name: "SlidePrompt Generation",  workflow: "04_SlidePrompt_Generation.yaml",  agents: "04_prompt_generator/", team_size: 5 }
   - { id: "05", name: "PPTX Conversion",         workflow: "05_PPTX_Conversion.yaml",         agents: "05_pptx_converter/", team_size: 6  }

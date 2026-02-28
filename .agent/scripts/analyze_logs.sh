@@ -25,6 +25,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOG_DIR="$PROJECT_ROOT/.agent/logs"
+SCHEMA_VALIDATOR="$SCRIPT_DIR/validate_logging_schema.py"
+TARGET_LOG=""
+FILTER_RUN_ID=""
+FILTER_SINCE_TS=""
 
 # ── 색상 코드 ──
 RED='\033[0;31m'
@@ -58,6 +62,15 @@ check_deps() {
 }
 
 get_log_files() {
+  if [[ -n "$TARGET_LOG" ]]; then
+    if [[ ! -f "$TARGET_LOG" ]]; then
+      fail "로그 파일을 찾을 수 없습니다: $TARGET_LOG"
+      exit 1
+    fi
+    printf '%s\0' "$TARGET_LOG"
+    return
+  fi
+
   local -a files=()
   while IFS= read -r -d '' f; do
     files+=("$f")
@@ -72,6 +85,29 @@ concat_logs() {
   while IFS= read -r -d '' f; do
     cat "$f"
   done < <(get_log_files)
+}
+
+schema_gate_or_exit() {
+  local mode="$1"
+  local -a common_args=(--strict --check-duplicate-end)
+  if [[ -n "$FILTER_RUN_ID" ]]; then
+    common_args+=(--run-id "$FILTER_RUN_ID")
+  fi
+  if [[ -n "$FILTER_SINCE_TS" ]]; then
+    common_args+=(--since-ts "$FILTER_SINCE_TS")
+  fi
+
+  local rc=0
+  while IFS= read -r -d '' f; do
+    if ! python3 "$SCHEMA_VALIDATOR" --log "$f" "${common_args[@]}"; then
+      rc=1
+    fi
+  done < <(get_log_files)
+
+  if [[ "$rc" -ne 0 ]]; then
+    fail "schema gate failed: $mode 명령 중단"
+    exit 1
+  fi
 }
 
 # ════════════════════════════════════════
@@ -557,10 +593,62 @@ main() {
   check_deps
 
   local cmd=${1:-all}
-  shift 2>/dev/null || true
+  shift || true
+
+  if [[ $# -gt 0 && "${1:0:1}" != "-" ]]; then
+    if [[ -f "$1" ]]; then
+      TARGET_LOG="$1"
+      shift
+    elif [[ -f "$PROJECT_ROOT/$1" ]]; then
+      TARGET_LOG="$PROJECT_ROOT/$1"
+      shift
+    elif [[ "$cmd" == "summary" || "$cmd" == "report" || "$cmd" == "all" || "$cmd" == "validate" ]]; then
+      fail "로그 파일을 찾을 수 없습니다: $1"
+      exit 1
+    fi
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --run-id)
+        if [[ $# -lt 2 ]]; then
+          fail "--run-id 값이 필요합니다"
+          exit 1
+        fi
+        FILTER_RUN_ID="$2"
+        shift 2
+        ;;
+      --since-ts)
+        if [[ $# -lt 2 ]]; then
+          fail "--since-ts 값이 필요합니다"
+          exit 1
+        fi
+        FILTER_SINCE_TS="$2"
+        shift 2
+        ;;
+      --log)
+        if [[ $# -lt 2 ]]; then
+          fail "--log 값이 필요합니다"
+          exit 1
+        fi
+        if [[ -f "$2" ]]; then
+          TARGET_LOG="$2"
+        elif [[ -f "$PROJECT_ROOT/$2" ]]; then
+          TARGET_LOG="$PROJECT_ROOT/$2"
+        else
+          fail "로그 파일을 찾을 수 없습니다: $2"
+          exit 1
+        fi
+        shift 2
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
 
   case "$cmd" in
-    summary)    cmd_summary ;;
+    summary)    schema_gate_or_exit "summary"; cmd_summary ;;
     bottleneck) cmd_bottleneck "${1:-5}" ;;
     cost)       cmd_cost ;;
     agent)      cmd_agent ;;
@@ -569,10 +657,16 @@ main() {
     category)   cmd_category ;;
     timeline)   cmd_timeline "${1:-}" ;;
     validate)   cmd_validate ;;
-    report)     cmd_report ;;
-    all)        cmd_all ;;
+    report)     schema_gate_or_exit "report"; cmd_report ;;
+    all)        schema_gate_or_exit "all"; cmd_all ;;
     help|-h|--help)
       echo "Usage: $0 [command] [args]"
+      echo ""
+      echo "Common options:"
+      echo "  [log_file]          특정 로그 파일만 분석"
+      echo "  --log <path>        특정 로그 파일만 분석"
+      echo "  --run-id <id>       schema gate 필터 run_id"
+      echo "  --since-ts <iso>    schema gate 필터 ts 하한"
       echo ""
       echo "Commands:"
       echo "  summary            파이프라인 실행 요약"

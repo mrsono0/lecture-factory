@@ -180,7 +180,7 @@ python3 .agent/scripts/agent_logger.py retry \
 | C2_Prompt_Engineer | `writing` | `google/antigravity-gemini-3.1-pro` |
 | C3_Image_Generator | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 | C4_PPTX_Builder | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| C5_QA_Verifier | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
+| C5_Visual_QA | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 | (기타 미지정 에이전트) | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
 ---
 

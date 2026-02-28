@@ -111,7 +111,9 @@ class AgentLogger:
         # step별 category/input_bytes/agent/action/parallel_group/retry 추적 (log_end에서 조회용)
         self._step_categories: Dict[str, str] = {}
         self._step_input_bytes: Dict[str, int] = {}
-        self._step_meta: Dict[str, Dict[str, Any]] = {}  # agent, action, parallel_group, retry
+        self._step_meta: Dict[
+            str, Dict[str, Any]
+        ] = {}  # agent, action, parallel_group, retry
 
     def _generate_run_id(self) -> str:
         """run_id 생성: run_{YYYYMMDD}_{HHMMSS}"""
@@ -123,8 +125,8 @@ class AgentLogger:
             config_path = Path(self.model_config_path)
             if config_path.exists():
                 # JSONC (JSON with comments) 처리 — 문자열 내부 // 보존
-                content = config_path.read_text(encoding='utf-8')
-                content = re.sub(r'(?<!:)//.*$', '', content, flags=re.MULTILINE)
+                content = config_path.read_text(encoding="utf-8")
+                content = re.sub(r"(?<!:)//.*$", "", content, flags=re.MULTILINE)
                 config = json.loads(content)
 
                 categories = config.get("categories", {})
@@ -285,7 +287,10 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:END] {step_id} ({duration_sec:.1f}s, ${est_cost_usd:.4f})", file=sys.stderr)
+        print(
+            f"[LOG:END] {step_id} ({duration_sec:.1f}s, ${est_cost_usd:.4f})",
+            file=sys.stderr,
+        )
         return entry
 
     def log_fail(
@@ -340,7 +345,6 @@ class AgentLogger:
         self._write_log(entry)
         print(f"[LOG:RETRY] {step_id} (retry={retry})", file=sys.stderr)
         return entry
-
 
     def log_decision(
         self,
@@ -557,7 +561,10 @@ class AgentLogger:
         }
 
         self._write_log(entry)
-        print(f"[LOG:TOOL_END] {tool_name}.{tool_action} ({duration:.1f}s, {status})", file=sys.stderr)
+        print(
+            f"[LOG:TOOL_END] {tool_name}.{tool_action} ({duration:.1f}s, {status})",
+            file=sys.stderr,
+        )
         return entry
 
     def _get_category_for_step(self, step_id: str) -> str:
@@ -606,6 +613,33 @@ def _save_state(workflow: str, run_id: str, state: Dict[str, Any]) -> None:
     p.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
 
 
+def _state_pop_step(state: Dict[str, Any], step_id: str) -> Dict[str, Any]:
+    value = state.pop(step_id, None)
+    if isinstance(value, dict):
+        return value
+    return {}
+
+
+def _state_get_ended(state: Dict[str, Any]) -> Dict[str, Any]:
+    value = state.get("__ended__", {})
+    if isinstance(value, dict):
+        return value
+    return {}
+
+
+def _state_mark_ended(state: Dict[str, Any], step_id: str) -> None:
+    ended = _state_get_ended(state)
+    ended[step_id] = datetime.now().isoformat()
+    state["__ended__"] = ended
+
+
+def _state_clear_ended(state: Dict[str, Any], step_id: str) -> None:
+    ended = _state_get_ended(state)
+    if step_id in ended:
+        ended.pop(step_id, None)
+        state["__ended__"] = ended
+
+
 # ─── CLI 진입점 ───
 
 
@@ -633,7 +667,7 @@ def main():
     --workflow 02_Material_Writing --run-id $RUN_ID \\
     --step-id step_1 --agent A1_Source_Miner --category deep \\
     --action source_mining --error "timeout after 300s"
-"""
+""",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -674,7 +708,6 @@ def main():
     p_fail.add_argument("--error", required=True)
     p_fail.add_argument("--retry", type=int, default=0)
 
-
     # ── decision ──
     p_decision = sub.add_parser("decision", help="DECISION 이벤트 기록 (QA/승인 판정)")
     p_decision.add_argument("--workflow", required=True)
@@ -683,7 +716,11 @@ def main():
     p_decision.add_argument("--agent", required=True)
     p_decision.add_argument("--category", required=True)
     p_decision.add_argument("--action", required=True)
-    p_decision.add_argument("--decision", required=True, choices=["approved", "rejected"])
+    p_decision.add_argument(
+        "--decision",
+        required=True,
+        choices=["approved", "partial_rejected", "rejected"],
+    )
     p_decision.add_argument("--parallel-group", default=None)
     p_decision.add_argument("--retry", type=int, default=0)
 
@@ -752,6 +789,7 @@ def main():
         )
         # 상태 파일에 시작 시간 + category 저장 (end에서 사용)
         state = _load_state(args.workflow, args.run_id)
+        _state_clear_ended(state, args.step_id)
         state[args.step_id] = {
             "start_time": time.time(),
             "category": args.category,
@@ -766,7 +804,22 @@ def main():
     elif args.command == "end":
         # 상태 파일에서 시작 시간 + category 복원
         state = _load_state(args.workflow, args.run_id)
-        step_state = state.pop(args.step_id, {})
+        ended = _state_get_ended(state)
+        if args.step_id in ended:
+            print(
+                f"[LOG:ERROR] duplicate END blocked: workflow={args.workflow} run_id={args.run_id} step_id={args.step_id}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
+        step_state = _state_pop_step(state, args.step_id)
+        if not step_state:
+            print(
+                f"[LOG:ERROR] END without START blocked: workflow={args.workflow} run_id={args.run_id} step_id={args.step_id}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
         start_time = step_state.get("start_time")
         category = step_state.get("category", "deep")
         input_bytes = step_state.get("input_bytes", 0)
@@ -774,7 +827,6 @@ def main():
         action = step_state.get("action")
         parallel_group = step_state.get("parallel_group")
         retry = step_state.get("retry", 0)
-        _save_state(args.workflow, args.run_id, state)
 
         duration_sec = None
         if start_time:
@@ -798,6 +850,8 @@ def main():
             duration_sec=duration_sec,
             decision=args.decision,
         )
+        _state_mark_ended(state, args.step_id)
+        _save_state(args.workflow, args.run_id, state)
 
     elif args.command == "fail":
         logger = AgentLogger(
@@ -859,6 +913,7 @@ def main():
         )
         # 상태 파일에 시작 시간 + 메타데이터 저장 (session-end에서 사용)
         state = _load_state(args.workflow, args.run_id)
+        _state_clear_ended(state, args.step_id)
         state[args.step_id] = {
             "start_time": time.time(),
             "category": args.category,
@@ -873,7 +928,22 @@ def main():
     elif args.command == "session-end":
         # 상태 파일에서 시작 시간 + 메타데이터 복원
         state = _load_state(args.workflow, args.run_id)
-        step_state = state.pop(args.step_id, {})
+        ended = _state_get_ended(state)
+        if args.step_id in ended:
+            print(
+                f"[LOG:ERROR] duplicate SESSION_END blocked: workflow={args.workflow} run_id={args.run_id} step_id={args.step_id}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
+        step_state = _state_pop_step(state, args.step_id)
+        if not step_state:
+            print(
+                f"[LOG:ERROR] SESSION_END without SESSION_START blocked: workflow={args.workflow} run_id={args.run_id} step_id={args.step_id}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
         start_time = step_state.get("start_time")
         category = step_state.get("category", "deep")
         input_bytes_state = step_state.get("input_bytes", 0)
@@ -881,7 +951,6 @@ def main():
         action = step_state.get("action")
         parallel_group = step_state.get("parallel_group")
         retry = step_state.get("retry", 0)
-        _save_state(args.workflow, args.run_id, state)
 
         duration_sec = None
         if start_time:
@@ -910,6 +979,8 @@ def main():
             duration_sec=duration_sec,
             decision=args.decision,
         )
+        _state_mark_ended(state, args.step_id)
+        _save_state(args.workflow, args.run_id, state)
 
 
 if __name__ == "__main__":
