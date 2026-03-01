@@ -21,7 +21,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 [Step 1] 3개 소스 독립 수집 (Day 단위)
     │
     ├─ Source A: 로컬 참고자료 추출
-    │   → _reference_mapping.json 기반 세션 타겟 추출
+    │   → 강의구성안 세션별 📚 참고자료 매핑 기반 세션 타겟 추출
     │   → 📚 참고자료 매핑에 명시된 파일에서 관련 내용 발췌
     │   → PDF는 pdf-official 스킬로 텍스트 추출
     │   → ⚠️ required: false (로컬에 자료가 없을 수 있음)
@@ -40,7 +40,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
         → ⚠️ required: true (항상 필수 실행)
 
 [Step 2] 세션별 팩트 패킷 통합
-    → 3개 소스 결과를 _reference_mapping.json 기반으로 세션별 분배
+    → 3개 소스 결과를 강의구성안 세션 구조 기반으로 세션별 분배
     → 각 세션별 3-Source 팩트 패킷 생성
     → 교차 검증: 소스 간 상충 내용 표시 및 우선순위 판단
 
@@ -55,11 +55,11 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ## 핵심 책임 (Responsibilities)
 1. **3-Source 독립 수집**:
-   - **Source A (로컬)**: `_reference_mapping.json`과 `📚 참고자료 매핑`을 기반으로 세션별 타겟 자료를 추출합니다. 로컬에 자료가 없을 수 있으며, 이 경우 `source_status.local: "not_found"`로 표기합니다.
+   - **Source A (로컬)**: 강의구성안의 세션별 학습 목표와 `📚 참고자료 매핑`을 기반으로 세션별 타겟 자료를 추출합니다. 로컬에 자료가 없을 수 있으며, 이 경우 `source_status.local: "not_found"`로 표기합니다.
    - **Source B (NotebookLM)**: URL이 제공된 경우 Day별 심화 질의를 수행합니다. 트렌드 리포트용이 아닌 **강의 콘텐츠 소스**로 활용합니다. 로컬과 다른 데이터를 제공할 수 있으므로 독립 소스로 취급합니다.
    - **Source C (딥리서치)**: 항상 필수 실행합니다. 웹 전체를 대상으로 최신 기술 문서와 공식 레퍼런스를 심층 탐색합니다.
 2. **세션별 팩트 패킷 통합**:
-   - 3개 소스 결과를 `_reference_mapping.json` 매핑 기반으로 세션별로 분배합니다.
+   - 3개 소스 결과를 강의구성안의 세션 구조 기반으로 세션별로 분배합니다.
    - 각 세션별 `3-Source 팩트 패킷`을 생성합니다 (local_excerpt + notebooklm + deep_research + source_status + synthesis).
 3. **교차 검증**: 소스 간 상충 내용이 있을 경우, 이를 명시하고 우선순위를 판단합니다.
 4. **보충 수집 (Context7 + Firecrawl)**: 3개 소스로도 커버되지 않는 영역이 있을 경우에만 진행합니다.
