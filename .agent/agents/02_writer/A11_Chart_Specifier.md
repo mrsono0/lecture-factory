@@ -37,7 +37,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ## 입력
 - 세션 교안 초안: A4B_Session_Writer 작성본 또는 A4_Technical_Writer 작성본
-- 세션 명세서: `01_Planning/micro_sessions/세션-{번호}-{제목}.md`
+- 세션 명세서: `01_Planning/강의구성안.md` 내 해당 세션 섹션
 - 시각화 요구사항: chunk_type (narrative/code/diagram/lab)별 필요한 시각화 유형
 
 ## 산출물
@@ -211,7 +211,7 @@ sequenceDiagram
 
 ## 입력
 - 세션 교안 초안: A4B 또는 A4 작성본
-- 세션 명세서: `01_Planning/micro_sessions/세션-{번호}-{제목}.md`
+- 세션 명세서: `01_Planning/강의구성안.md` 내 해당 세션 섹션
 - 청크 타입: narrative | code | diagram | lab
 
 ## 산출물
