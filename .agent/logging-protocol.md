@@ -140,6 +140,8 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 | `unspecified-high` | Opus/Pro | 0.015 | 0.075 |
 | `micro-writing` | Gemini 3.1 Pro | 0.003 | 0.015 |
 | `research` | Gemini 3.1 Pro | 0.002 | 0.012 |
+| `curriculum-architecture` | GLM-5 | 0.003 | 0.015 |
+| `glm5` | GLM-5 | 0.003 | 0.015 |
 
 **비용 계산:**
 ```
@@ -510,7 +512,7 @@ cat .agent/logs/*.jsonl | jq -s '
 
 | Pipeline | 기본 모델 | 세션 분할 기준 | 이벤트 패턴 |
 |----------|----------|---------------|------------|
-| 01 Lecture Planning | Step-by-Step | 단일 실행 (세션 없음) | 11 steps × (START+END) |
+| 01 Lecture Planning | Step-by-Step | 단일 실행 (세션 없음) | 9 steps × (START+END) |
 | 02 Material Writing | Hybrid | foreach_session 병렬 + Step-by-Step | 14 agents × (START+END) + foreach_session |
 | 03 Slide Generation | Session-Parallel | Day{N}_{AM/PM} 세션 단위 | N × (SESSION_START+SESSION_END) |
 | 04 SlidePrompt Generation | Step-by-Step | 교안 파일 반복 실행 (step 인스턴스 스코프 권장) | N × (START+END) |

@@ -33,7 +33,7 @@ python3 scripts/run.py ask_question.py \
 **쿼리 실행 전 (START)**:
 ```bash
 # 타임스탬프 기록 (예: 1740399600)
-echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_START","workflow":"01_Lecture_Planning","step_id":"step_1_trend_analysis","agent":"A1_Trend_Researcher","category":"deep","model":"[model]","action":"notebooklm_query","tool_name":"notebooklm","tool_action":"ask_question","tool_input_bytes":0,"notebook_id":"[notebook_id]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_START","workflow":"01_Lecture_Planning","step_id":"step_1_trend_analysis","agent":"A1_Trend_Researcher","category":"research","model":"[model]","action":"notebooklm_query","tool_name":"notebooklm","tool_action":"ask_question","tool_input_bytes":0,"notebook_id":"[notebook_id]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
 ```
 
 **쿼리 실행 후 (END)**:
@@ -41,7 +41,7 @@ echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_START","work
 # duration_sec = 종료타임스탬프 - 시작타임스탬프
 # tool_output_bytes = 응답 텍스트의 UTF-8 바이트 수
 # tool_status = "success" | "timeout" | "error"
-echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_END","workflow":"01_Lecture_Planning","step_id":"step_1_trend_analysis","agent":"A1_Trend_Researcher","category":"deep","model":"[model]","action":"notebooklm_query","tool_name":"notebooklm","tool_action":"ask_question","tool_input_bytes":0,"tool_output_bytes":0,"tool_duration_sec":0,"tool_status":"success","notebook_id":"[notebook_id]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_END","workflow":"01_Lecture_Planning","step_id":"step_1_trend_analysis","agent":"A1_Trend_Researcher","category":"research","model":"[model]","action":"notebooklm_query","tool_name":"notebooklm","tool_action":"ask_question","tool_input_bytes":0,"tool_output_bytes":0,"tool_duration_sec":0,"tool_status":"success","notebook_id":"[notebook_id]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
 ```
 
 **로깅 확인 체크포인트**:

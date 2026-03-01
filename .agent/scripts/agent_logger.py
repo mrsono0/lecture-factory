@@ -67,6 +67,9 @@ class AgentLogger:
         "ultrabrain": {"input": 0.015, "output": 0.075},
         "artistry": {"input": 0.003, "output": 0.015},
         "unspecified-high": {"input": 0.015, "output": 0.075},
+        "research": {"input": 0.002, "output": 0.012},
+        "curriculum-architecture": {"input": 0.003, "output": 0.015},
+        "glm5": {"input": 0.003, "output": 0.015},
     }
 
     BYTES_PER_TOKEN = 3.3
@@ -762,6 +765,36 @@ def main():
     p_se.add_argument("--total-slides", type=int, default=None)
     p_se.add_argument("--decision", default=None)
 
+
+    # ── external-tool-start ──
+    p_ets = sub.add_parser("external-tool-start", help="EXTERNAL_TOOL_START 이벤트 기록")
+    p_ets.add_argument("--workflow", required=True)
+    p_ets.add_argument("--run-id", required=True)
+    p_ets.add_argument("--step-id", required=True)
+    p_ets.add_argument("--agent", required=True)
+    p_ets.add_argument("--category", required=True)
+    p_ets.add_argument("--action", required=True)
+    p_ets.add_argument("--tool-name", required=True)
+    p_ets.add_argument("--tool-action", required=True)
+    p_ets.add_argument("--notebook-id", default=None)
+    p_ets.add_argument("--retry", type=int, default=0)
+
+    # ── external-tool-end ──
+    p_ete = sub.add_parser("external-tool-end", help="EXTERNAL_TOOL_END 이벤트 기록")
+    p_ete.add_argument("--workflow", required=True)
+    p_ete.add_argument("--run-id", required=True)
+    p_ete.add_argument("--step-id", required=True)
+    p_ete.add_argument("--agent", required=True)
+    p_ete.add_argument("--category", required=True)
+    p_ete.add_argument("--action", required=True)
+    p_ete.add_argument("--tool-name", required=True)
+    p_ete.add_argument("--tool-action", required=True)
+    p_ete.add_argument("--output-bytes", type=int, required=True)
+    p_ete.add_argument("--tool-status", default="success", choices=["success", "timeout", "error"])
+    p_ete.add_argument("--tool-error", default=None)
+    p_ete.add_argument("--notebook-id", default=None)
+    p_ete.add_argument("--retry", type=int, default=0)
+
     args = parser.parse_args()
 
     if args.command == "init":
@@ -982,6 +1015,62 @@ def main():
         _state_mark_ended(state, args.step_id)
         _save_state(args.workflow, args.run_id, state)
 
+
+    elif args.command == "external-tool-start":
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        start_time = logger.log_external_tool_start(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            tool_name=args.tool_name,
+            tool_action=args.tool_action,
+            notebook_id=args.notebook_id,
+            retry=args.retry,
+        )
+        # 상태 파일에 시작 시간 저장 (external-tool-end에서 사용)
+        state = _load_state(args.workflow, args.run_id)
+        ext_key = f"{args.step_id}__ext__{args.tool_name}"
+        state[ext_key] = {
+            "start_time": start_time,
+            "agent": args.agent,
+            "category": args.category,
+            "action": args.action,
+            "tool_name": args.tool_name,
+            "tool_action": args.tool_action,
+            "notebook_id": args.notebook_id,
+            "retry": args.retry,
+        }
+        _save_state(args.workflow, args.run_id, state)
+
+    elif args.command == "external-tool-end":
+        state = _load_state(args.workflow, args.run_id)
+        ext_key = f"{args.step_id}__ext__{args.tool_name}"
+        ext_state = state.pop(ext_key, None)
+        start_time = ext_state.get("start_time", time.time()) if ext_state else time.time()
+
+        logger = AgentLogger(
+            workflow=args.workflow,
+            run_id=args.run_id,
+        )
+        logger.log_external_tool_end(
+            step_id=args.step_id,
+            agent=args.agent,
+            category=args.category,
+            action=args.action,
+            tool_name=args.tool_name,
+            tool_action=args.tool_action,
+            start_time=start_time,
+            output_bytes=args.output_bytes,
+            status=args.tool_status,
+            error=args.tool_error,
+            notebook_id=args.notebook_id,
+            retry=args.retry,
+        )
+        _save_state(args.workflow, args.run_id, state)
 
 if __name__ == "__main__":
     main()

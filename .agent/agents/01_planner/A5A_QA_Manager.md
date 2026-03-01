@@ -30,6 +30,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - [ ] **로그 파일 존재**: `.agent/logs/{DATE}_01_Lecture_Planning.jsonl` 파일이 존재하는가?
 - [ ] **Step 완전성**: 모든 step(step_0 ~ step_8)에 대해 START/END 쌍이 존재하는가?
 - [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
+- [ ] **EXTERNAL_TOOL 쌍 검증**: EXTERNAL_TOOL_START가 있는 모든 항목에 대응하는 EXTERNAL_TOOL_END가 존재하는가?
+- [ ] **EXTERNAL_TOOL 카테고리**: EXTERNAL_TOOL 이벤트의 `category`가 해당 에이전트의 config.json 매핑과 일치하는가?
 
 ## 산출물
 - QA 결함 리포트 (`01_Planning/강의구성안.md` 하단 QA 검증 섹션)

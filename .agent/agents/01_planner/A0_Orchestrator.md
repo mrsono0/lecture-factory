@@ -196,7 +196,7 @@ python3 .agent/scripts/agent_logger.py fail \
 python3 .agent/scripts/agent_logger.py decision \
   --workflow 01_Lecture_Planning --run-id $RUN_ID \
   --step-id {step_id} --agent {에이전트명} --category {카테고리} \
-  --action {액션명} --decision {approved|rejected}
+  --action {액션명} --decision {approved|partial_rejected|rejected}
 
 # RETRY (재시도 시)
 python3 .agent/scripts/agent_logger.py retry \
