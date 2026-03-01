@@ -77,7 +77,7 @@ Lecture Factory agent team의 운영 규칙과 워크플로우 정의. 상세 �
 
 | # | Pipeline | Output |
 |---|---|---|
-| 1 | **Lecture Planning** | `01_Planning/강의구성안.md`, `01_Planning/micro_sessions/` |
+| 1 | **Lecture Planning** | `01_Planning/강의구성안.md`, `01_Planning/Trend_Report.md` |
 | 2 | **Material Writing** | `02_Material/강의교안_v1.0.md` |
 | 3 | **Slide Generation** | `03_Slides/{session}/슬라이드기획안.md` |
 | 4 | **Slide Prompt** | `04_SlidePrompt/{세션ID}_{세션제목}_프롬프트.md` |

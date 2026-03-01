@@ -83,15 +83,8 @@ steps:
     output_gate:
       required:
         - "01_Planning/강의구성안.md"
-        - "01_Planning/micro_sessions/_index.json"
       optional:
         - "01_Planning/Trend_Report.md"
-        - "01_Planning/micro_sessions/_flow.md"
-        - "01_Planning/micro_sessions/_dependency.mmd"
-        - "01_Planning/micro_sessions/_reference_mapping.json"
-        - "01_Planning/micro_sessions/_activities.md"
-        - "01_Planning/micro_sessions/_differentiation.md"
-        - "01_Planning/micro_sessions/세션-*.md"
     notes: |
       사용자 입력(파일, URL, 폴더)을 반드시 하위 커맨드에 $ARGUMENTS로 전달.
       딥리서치를 필수로 수행하여 강의 구성안 작성.
@@ -105,7 +98,7 @@ steps:
     depends_on: "phase_1_planning"
     input:
       - "01_Planning/강의구성안.md (Phase 1 산출물)"
-      - "01_Planning/micro_sessions/ (전체)"
+      - "01_Planning/강의구성안.md (Phase 1 산출물, 전체)"
       - "로컬 참고자료 폴더 (Phase 1에서 전달받은 것)"
       - "NotebookLM URL (Phase 1에서 전달받은 것)"
       - "딥리서치 지시 (필수)"
