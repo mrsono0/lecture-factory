@@ -53,7 +53,7 @@ session_writing_policy:
         name: "로컬 참고자료"
         required: false  # 로컬에 자료가 없을 수도 있음
         method: "📚 참고자료 매핑 기반 세션 타겟 추출"
-        input: "_reference_mapping.json + 참고자료/ 폴더"
+        input: "강의구성안 세션별 📚 참고자료 매핑 + 참고자료/ 폴더"
         
       source_b_notebooklm:
         name: "NotebookLM"
@@ -89,7 +89,7 @@ logging:
       python3 .agent/scripts/agent_logger.py start \
         --workflow 02_Material_Writing --run-id $RUN_ID \
         --step-id {step_id} --agent {agent} --category {category} \
-        --action {action}
+        --action {action} --input-bytes {input_bytes}
     post_step: |
       python3 .agent/scripts/agent_logger.py end \
         --workflow 02_Material_Writing --run-id $RUN_ID \
@@ -98,7 +98,7 @@ logging:
       python3 .agent/scripts/agent_logger.py fail \
         --workflow 02_Material_Writing --run-id $RUN_ID \
         --step-id {step_id} --agent {agent} --category {category} \
-        --action {action} --error "{error_message}"
+        --action {action} --error "{error_message}" --retry {retry}
     on_decision: |
       python3 .agent/scripts/agent_logger.py decision \
         --workflow 02_Material_Writing --run-id $RUN_ID \
@@ -394,10 +394,10 @@ model_routing:
     category: "quick"
     note: "출처 추적 구축 — 기계적 매핑"
   
-  # 코드 검증: quick 카테고리
+  # 코드 검증: glm5 카테고리
   A5_Code_Validator:
-    category: "quick"
-    note: "코드 실행 검증 — 정확성만 필요"
+    category: "glm5"
+    note: "코드 실행 검증 — opencode/glm-5 라우팅"
   
   # 차별화 전략: artistry 카테고리
   A10_Differentiation_Strategist:
