@@ -1,6 +1,6 @@
 name: "Material Writing Pipeline - Session-Based Aggregation"
-description: "마이크로 세션별 개별 집필 후 취합하는 Gemini 최적화 교안 작성 워크플로우 (Writer Team) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
-version: "4.0"
+description: "세션별 개별 집필 후 취합하는 교안 작성 워크플로우 (Writer Team) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
+version: "5.0"
 
 output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
 max_retries: 2
@@ -8,15 +8,12 @@ max_retries: 2
 # ── 세션 기반 집필 정책 ──────────────────────────────────────────
 session_writing_policy:
   enabled: true
-  input_format: "micro_session_based"
+  input_format: "session_based"
   
   # 입력 파일 위치
   input_sources:
-    session_specs: "01_Planning/micro_sessions/세션-*.md"
-    session_index: "01_Planning/micro_sessions/_index.json"
-    session_flow: "01_Planning/micro_sessions/_flow.md"
-    dependency_graph: "01_Planning/micro_sessions/_dependency.mmd"
-    reference_mapping: "01_Planning/micro_sessions/_reference_mapping.json"
+    curriculum_plan: "01_Planning/강의구성안.md"
+    trend_report: "01_Planning/Trend_Report.md"
     reference_materials: "참고자료/"
   
   # 출력 구조
@@ -27,9 +24,9 @@ session_writing_policy:
     packets: "02_Material/packets/"
     reports: "02_Material/reports/"
   
-  # Gemini 최적화 설정
-  gemini_optimized:
-    chunk_size: "15-25min"
+  # 세션 집필 최적화 설정
+  session_optimized:
+    session_duration: "60-90min"
     estimated_chars: "no_limit"
     min_chars_per_session: null
     max_chars_per_session: null
@@ -38,7 +35,7 @@ session_writing_policy:
     tone: "friendly_spoken_korean"   # ~해요, ~입니다
     
   rules:
-    - "단일 세션 집중: 각 에이전트는 1개의 마이크로 세션만 처리"
+    - "단일 세션 집중: 각 에이전트는 1개의 세션만 처리"
     - "개별 파일 출력: 각 세션은 독립된 완성된 교안 파일로 저장"
     - "7섹션 구조 필수: 모든 세션은 A0이 정의한 7섹션 구조를 완전히 준수"
     - "분량 무제한: 교육적 완결성이 최우선, 글자 수 제한 없음"
@@ -121,8 +118,7 @@ steps:
     agent: "02_writer/A1_Source_Miner"
     action: "extract_facts_3source"
     input: 
-      - "Micro Session Specs (01_Planning/micro_sessions/)"
-      - "Reference Mapping (01_Planning/micro_sessions/_reference_mapping.json)"
+      - "강의구성안 (01_Planning/강의구성안.md)"
       - "Reference Materials (참고자료/ — 있는 경우)"
       - "NotebookLM URL (제공 시 필수 실행)"
       - "Deep Research (항상 필수 실행)"
@@ -154,27 +150,26 @@ steps:
     depends_on: "step_2_traceability_setup"
     input: 
       - "3-Source Fact Packet"
-      - "Micro Session Index"
+      - "강의구성안 (세션 목록)"
       - "Output Language: Korean"
     output: "Skeleton Packet (per session)"
 
-  # Phase 2: 마이크로 세션별 개별 집필 (Gemini 최적화)
-  # NEW: A4B가 각 마이크로 세션을 개별적으로 집필 (병렬 실행)
+  # Phase 2: 세션별 개별 집필
   - id: step_4_session_writing
     agent: "02_writer/A4B_Session_Writer"
     action: "write_session_material"
     depends_on: "step_3_skeleton_design"
-    parallel_mode: "foreach_session"  # 각 마이크로 세션별 독립 실행
-    batch_size: 3  # 한 번에 처리할 세션 수 (Gemini API rate limit 고려)
+    parallel_mode: "foreach_session"  # 각 세션별 독립 실행
+    batch_size: 3  # 한 번에 처리할 세션 수 (API rate limit 고려)
     input: 
-      - "Session Spec (from 01_Planning) — 📚 참고자료 매핑 섹션 포함"
+      - "Session Spec (from 강의구성안) — 📚 참고자료 매핑 섹션 포함"
       - "Skeleton Packet"
       - "3-Source Fact Packet (세션별 통합 팩트)"
       - "Traceability Packet"
       - "Output Language: Korean"
     output: "Session Material Files (02_Material/sessions/세션-*.md)"
     notes: |
-      🎯 핵심: 각 마이크로 세션(15~25분)을 개별 파일로 집필
+      🎯 핵심: 각 세션(60~90분)을 개별 파일로 집필
       📐 필수 구조: A0이 정의한 7섹션 구조를 완전히 준수
         - §1 개요 (도입부 + 강사 대본 🗣️)
         - §2 핵심 개념 (서술형 + 비유/스토리텔링)
@@ -221,7 +216,6 @@ steps:
       - "Output Language: Korean"
     output: "Visualization Packet (Mermaid Diagrams)"
 
-  # NEW: A11이 표 및 시각화 명세 설계
   - id: step_7_chart_specification
     agent: "02_writer/A11_Chart_Specifier"
     action: "design_tables"
@@ -269,7 +263,6 @@ steps:
     output: "Differentiation Strategy (USP) per session"
 
   # Phase 4: 보조 패킷 통합 (세션별)
-  # CHANGED: A4B(시각화 삽입) → A4C(보조 패킷 인라인 통합)
   - id: step_11_enrich_sessions
     agent: "02_writer/A4C_Material_Aggregator"
     action: "enrich_sessions_with_packets"
@@ -302,29 +295,22 @@ steps:
       ⚠️ 삽입 후 7섹션 구조가 유지되는지 검증 필수
       📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md (덮어쓰기)
 
-  # Phase 4.5: AM/PM 분할 파일 생성 (NEW)
+  # Phase 4.5: AM/PM 분할 파일 생성
   - id: step_12_ampm_split
     agent: "02_writer/A4C_Material_Aggregator"
     action: "generate_ampm_files"
     depends_on: "step_11_enrich_sessions"
     input:
-      - "Enriched Session Materials (전체 106개 세션)"
+      - "Enriched Session Materials"
       - "Day-Session 경계표"
       - "Output Language: Korean"
     output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_{주제요약}.md)"
     notes: |
-      🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 10개 생성
-      📋 Day-Session 경계표:
-        - Day1 AM: 세션 001-011, PM: 세션 012-022
-        - Day2 AM: 세션 023-033, PM: 세션 034-043
-        - Day3 AM: 세션 044-054, PM: 세션 055-064
-        - Day4 AM: 세션 065-075, PM: 세션 076-085
-        - Day5 AM: 세션 086-096, PM: 세션 097-106
+      🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 생성
       📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
-      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md (총 10개)
+      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md
 
   # Phase 5: 취합 및 통합
-  # A4C가 개별 세션 파일들을 취합하여 최종 교안 생성
   - id: step_13_aggregation
     agent: "02_writer/A4C_Material_Aggregator"
     action: "aggregate_sessions"
@@ -332,19 +318,15 @@ steps:
     input: 
       - "All Enriched Session Materials"
       - "AM/PM Split Files"
-      - "Session Index"
-      - "Dependency Graph"
-      - "Flow Document"
       - "Output Language: Korean"
     output: "Aggregated Material Draft"
     notes: |
       🎯 핵심: 보조 패킷 통합 완료된 세션 파일들을 최종 취합
-      🔗 연결성 검증: 의존성 그래프 기반 세션 연결 확인
+      🔗 연결성 검증: 세션 간 연결 확인
       📝 브릿지 노트: 세션 간 전환 멘트 삽입
       📋 최종 구조:
         - 헤더 및 메타데이터
         - 목차 및 네비게이션
-        - 의존성 그래프 (Mermaid)
         - 개별 세션 내용 통합 (7섹션 구조 유지)
         - 부록 (요약, 참고자료, 로드맵)
       📁 산출물: 02_Material/강의교안_v1.0.md
@@ -379,12 +361,12 @@ steps:
 # ── 모델 라우팅 참조 (정본: .agent/agents/02_writer/config.json) ──────────────────────────────────────────
 # 아래는 참조용입니다. 실제 라우팅은 config.json을 따릅니다.
 model_routing:
-  # 세션별 집필: micro-writing 카테고리 (Gemini 최적화 마이크로 세션 서술형 집필)
+  # 세션별 집필: micro-writing 카테고리 (세션 단위 서술형 집필)
   A4B_Session_Writer:
     category: "micro-writing"
-    note: "7섹션 교안 집필 — Gemini 최적화 마이크로 세션 서술형 집필"
+    note: "7섹션 교안 집필 — 세션 단위 서술형 집필"
   
-  # 취합 및 통합: deep 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
+  # 취합 및 통합: material-aggregation 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
   A4C_Material_Aggregator:
     category: "material-aggregation"
     note: "보조 패킷 통합, AM/PM 분할, 최종 취합 - opencode/glm-5"
@@ -427,17 +409,14 @@ upstream_integration:
   # 01_Lecture_Planning 연동
   lecture_planning:
     required_inputs:
-      - "01_Planning/micro_sessions/세션-*.md"
-      - "01_Planning/micro_sessions/_index.json"
-      - "01_Planning/micro_sessions/_flow.md"
-      - "01_Planning/micro_sessions/_dependency.mmd"
-      - "01_Planning/micro_sessions/_reference_mapping.json"
+      - "01_Planning/강의구성안.md"
     optional_inputs:
+      - "01_Planning/Trend_Report.md"
       - "참고자료/ (로컬 참고자료 폴더 — 없을 수 있음)"
       - "NotebookLM URL (제공 시 필수 활용)"
     notes: |
-      v4 워크플로우는 3-Source Mandatory 정책을 적용.
-      _reference_mapping.json으로 세션별 참고자료를 타겟 추출하고,
+      v5 워크플로우는 3-Source Mandatory 정책을 적용.
+      강의구성안의 세션 구조를 기반으로 세션별 집필을 수행하고,
       NotebookLM + 딥리서치를 독립 수집하여 세션별 3-Source 팩트 패킷 생성.
       각 세션 파일은 독립적으로 처리되며, A4C가 최종 통합.
 
@@ -452,4 +431,4 @@ downstream_integration:
   prompt_generator:
     input_format: "session_based"
     notes: |
-      슬라이드 프롬프트 생성 시 마이크로 세션별로 개별 프롬프트 파일 생성.
+      슬라이드 프롬프트 생성 시 세션별로 개별 프롬프트 파일 생성.

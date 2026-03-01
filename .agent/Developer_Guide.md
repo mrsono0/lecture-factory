@@ -122,7 +122,7 @@ Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파
 
 **팀 공통 원칙**: 기획 산출물(강의구성안)만으로 교안 작성 팀이 막힘 없이 집필을 시작할 수 있어야 합니다.
 
-**에이전트 플로우 (11 Steps, 9 Agents)**: A0 → A1 → A5B → A3 → A3B → A3C → A2∥A7 → A3(통합) → A5A → A0 (승인/반려)
+**에이전트 플로우 (8 Steps, 7 Agents)**: A0 → A1 → A5B → A3 → A2∥A7 → A3(통합) → A5A → A0 (승인/반려)
 
 | 에이전트 | 역할 |
 |---|---|
@@ -130,16 +130,13 @@ Lecture Factory의 **자기 분석(Self-Observability)** 시스템입니다. 파
 | A1 (Trend Researcher) | 관련 트렌드 및 자료 조사 (NotebookLM/Web) |
 | A5B (Learner Analyst) | 학습자 페르소나, 선수 지식, 이탈 예상 지점 분석 |
 | A3 (Curriculum Architect) | A5B 산출물을 입력으로 받아 커리큘럼 구조 설계 + Integration Hub |
-| A3B (MicroSession Specifier) | 마이크로 세션 청킹 (15~25분 단위 세분화) |
-| A3C (Session Indexer) | 세션 인덱싱, 의존성 그래프, 참고자료 매핑 |
 | A2 (Instructional Designer) | 학습 활동 설계 (A7과 병렬) |
 | A7 (Differentiation Advisor) | USP 식별 (A2와 병렬) |
-| A5A (QA Manager) | 기획안 검증 (마이크로 세션 포함) |
+| A5A (QA Manager) | 기획안 검증 |
 
 - A5B → A3: A5B 산출물을 A3의 입력으로 참조
-- A3 → A3B(마이크로 세션 청킹, 15~25분) → A3C(세션 인덱싱, 의존성 그래프): Gemini 최적화 세분화
-- A2∥A7 병렬 완료 후 A3가 양쪽 산출물 + 마이크로 세션 인덱스를 커리큐럼에 통합 (Integration Hub)
-- 반려 시 step_4(A3B)부터 재실행 (최대 2회)
+- A2∥A7 병렬 완료 후 A3가 양쪽 산출물을 커리큐럼에 통합 (Integration Hub)
+- 반려 시 step_3(A3)부터 재실행 (최대 2회)
 
 ### 2단계: Writing (02_writer)
 

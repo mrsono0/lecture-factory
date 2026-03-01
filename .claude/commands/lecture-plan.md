@@ -15,4 +15,4 @@ Task(subagent_type="lecture-planner", prompt=$ARGUMENTS)
 `.agent/agents/01_planner/` 에이전트 프롬프트를 참조하여 파이프라인을 자율 실행합니다.
 
 - 입력 파싱(강의 주제 파일, NotebookLM URL, 로컬 폴더)은 서브에이전트가 판별합니다.
-- 산출물: `01_Planning/강의구성안.md`, `01_Planning/micro_sessions/` 및 관련 인덱스 파일
+- 산출물: `01_Planning/강의구성안.md`, `01_Planning/Trend_Report.md`

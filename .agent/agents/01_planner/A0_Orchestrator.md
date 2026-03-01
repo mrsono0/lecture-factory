@@ -163,8 +163,7 @@ A1의 Trend_Report.md를 검증할 때 다음 체크리스트를 반드시 실�
 ### 이 파이프라인의 로깅 설정
 - **workflow**: `"01_Lecture_Planning"`
 - **워크플로우 YAML**: `.agent/workflows/01_Lecture_Planning.yaml`
-- **기본 실행 모델**: Step-by-Step (11 steps: step_0 ~ step_10)
-- **step_4/step_5**: A3B(MicroSession Specifier), A3C(Session Indexer) — category `curriculum-chunking`으로 START/END 로깅
+- **기본 실행 모델**: Step-by-Step (9 steps: step_0 ~ step_8)
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
@@ -219,8 +218,7 @@ python3 .agent/scripts/agent_logger.py retry \
 | A1_Trend_Researcher | `research` | `google/antigravity-gemini-3.1-pro` |
 | A5B_Learner_Analyst | `deep` | `anthropic/claude-opus-4-6` |
 | A3_Curriculum_Architect | `curriculum-architecture` | `opencode/glm-5` |
-| A3B_MicroSession_Specifier | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
-| A3C_Session_Indexer | `curriculum-chunking` | `google/antigravity-gemini-3.1-pro` |
+
 | A2_Instructional_Designer | `deep` | `anthropic/claude-opus-4-6` |
 | A7_Differentiation_Advisor | `artistry` | `google/antigravity-gemini-3.1-pro` |
 | A5A_QA_Manager | `ultrabrain` | `opencode/gpt-5.3-codex` |
@@ -250,12 +248,9 @@ python3 .agent/scripts/agent_logger.py retry \
    | **산출물** | [해당 세션 종료 시 결과물] |
    ```
 3. **부록 및 QA 검증 (하단)**: 문서 하단에 다음 2가지를 반드시 포함하세요.
-   - **QA 검증 보고서 (Step 9)**: 초기 입력된 제약 조건(예: 실습 비율, 시간 총합, 환경 등)이 모두 충족되었는지 O/X 체크리스트 형태로 검증 결과 작성. 마이크로 세션 전용 QA 항목(단일 개념 준수, 15~25분 범위, 분량, 연결성, chunk_type, 의존성 그래프)도 포함.
+   - **QA 검증 보고서 (Step 7)**: 초기 입력된 제약 조건(예: 실습 비율, 시간 총합, 환경 등)이 모두 충족되었는지 O/X 체크리스트 형태로 검증 결과 작성.
    - **부록 (Appendix)**: 일차별로 필요한 소프트웨어 목록, 핵심 산출물 목록, 그리고 평가 체계 요약.
-4. **마이크로 세션 인덱스 (Step 4~5 산출물)**: 마이크로 세션 청킹 결과를 문서에 반드시 포함하세요.
-   - **`micro_sessions/` 디렉토리 구조**: `_index.json`, `_flow.md`, `_dependency.mmd`, `_reference_mapping.json`, 세션별 `.md` 파일 링크
-   - **의존성 그래프**: `_dependency.mmd`를 Mermaid 코드 블록으로 삽입하거나 파일 링크 제공
-   - **학습 경로 요약**: 기본 경로(Default Path), 보충 경로(Supplementary), 단축 경로(Accelerated)의 세션 ID 나열
+
 
 
 ## 외부 도구 호출 로깅 (EXTERNAL_TOOL) — MANDATORY

@@ -24,16 +24,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - [ ] **일관성**: 용어, 어조, 포맷이 문서 전체에서 일관된가?
 - [ ] **완결성**: 외부 링크 없이 이 문서만으로 교안 작성이 가능한가?
 
-### 마이크로 세션 검증 항목 (Micro Session Checklist)
-- [ ] **단일 개념 준수**: 각 마이크로 세션이 단 1개의 핵심 학습 목표만 다루는가?
-- [ ] **시간 범위**: 모든 마이크로 세션이 15~25분 범위 내인가?
-- [ ] **세션별 합산 정합성**: 동일 부모 세션에 속한 마이크로 세션들의 `duration_min` 합이 부모 세션 시간(기본 90분)과 정확히 일치하는가?
-- [ ] **일별 합산 정합성**: 각 Day의 마이크로 세션 `duration_min` 합이 일별 총 교육 시간(기본 360분 = 4세션×90분)과 일치하는가?
-- [ ] **_index.json statistics 정합성**: `statistics.by_day` 값이 실제 세션 데이터의 합산과 정확히 일치하는가?
-- [ ] **분량 적절성**: 각 세션의 예상 교안 분량이 3,000~4,500자 범위 내인가?
-- [ ] **세션 연결성**: 모든 세션에 선행/후행 세션 연결이 명확히 정의되었는가?
-- [ ] **chunk_type 태그**: 각 세션에 적절한 chunk_type (narrative|code|diagram|lab) 태그가 부여되었는가?
-- [ ] **의존성 그래프 완결성**: 그래프에 고립 노드(orphan)나 순환 의존성(circular dependency)이 없는가?
+
 
 ### 실행 로그 검증 (Execution Log Checklist)
 - [ ] **로그 파일 존재**: `.agent/logs/{DATE}_01_Lecture_Planning.jsonl` 파일이 존재하는가?
