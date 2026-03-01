@@ -336,23 +336,29 @@ A0_Orchestrator는 로컬 참고자료 분석 시 **pdf-official** 도구를 사
 | PDF Official | `pdf-official` | `extract` | Step 0 (로컬 참고자료 분석) |
 
 ### 로깅 명령어 템플릿
-
+> ⚠️ `agent_logger.py` CLI를 사용하여 EXTERNAL_TOOL 이벤트를 기록합니다. raw `echo`로 JSON을 수동 구성하지 마세요.
 **START (PDF 추출 직전)**:
 ```bash
-START_TIME=$(date +%s)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"[model]","action":"pdf_extract","tool_name":"pdf-official","tool_action":"extract","tool_input_bytes":[file_size],"retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+EXT_KEY=$(python3 .agent/scripts/agent_logger.py external-tool-start \
+  --workflow 01_Lecture_Planning --run-id $RUN_ID \
+  --step-id step_0_scope --agent A0_Orchestrator \
+  --category unspecified-low --action pdf_extract \
+  --tool-name pdf-official --tool-action extract)
 ```
-
 **END (PDF 추출 완료 후)**:
 ```bash
-END_TIME=$(date +%s)
-DURATION=$((END_TIME - START_TIME))
 OUTPUT_BYTES=$(wc -c < extracted_text.txt)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"01_Lecture_Planning","step_id":"step_0_scope","agent":"A0_Orchestrator","category":"unspecified-low","model":"[model]","action":"pdf_extract","tool_name":"pdf-official","tool_action":"extract","tool_input_bytes":[file_size],"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+python3 .agent/scripts/agent_logger.py external-tool-end \
+  --workflow 01_Lecture_Planning --run-id $RUN_ID \
+  --step-id step_0_scope --agent A0_Orchestrator \
+  --category unspecified-low --action pdf_extract \
+  --tool-name pdf-official --tool-action extract \
+  --ext-key $EXT_KEY --output-bytes $OUTPUT_BYTES
 ```
 
-### 검증 체크포인트
+> 💡 `EXT_KEY`는 `external-tool-start`가 stdout으로 출력하는 고유 상태 키입니다. 같은 step 내에서 PDF를 여러 번 추출해도 키 충돌이 발생하지 않습니다.
 
+### 검증 체크포인트
 | # | 검증 항목 | 기준 |
 |---|-----------|------|
 | 1 | START 로그 | 각 PDF 파일 추출 직전에 EXTERNAL_TOOL_START 기록 |

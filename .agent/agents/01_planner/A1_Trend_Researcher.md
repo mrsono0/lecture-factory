@@ -29,21 +29,29 @@ python3 scripts/run.py ask_question.py \
 
 ### NotebookLM 쿼리 로깅 (MANDATORY)
 각 NotebookLM 쿼리 실행 시 `.agent/logs/{DATE}_01_Lecture_Planning.jsonl`에 **EXTERNAL_TOOL** 이벤트를 기록해야 합니다:
-
+> ⚠️ `agent_logger.py` CLI를 사용하여 EXTERNAL_TOOL 이벤트를 기록합니다. raw `echo`로 JSON을 수동 구성하지 마세요.
 **쿼리 실행 전 (START)**:
 ```bash
-# 타임스탬프 기록 (예: 1740399600)
-echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_START","workflow":"01_Lecture_Planning","step_id":"step_1_trend_analysis","agent":"A1_Trend_Researcher","category":"research","model":"[model]","action":"notebooklm_query","tool_name":"notebooklm","tool_action":"ask_question","tool_input_bytes":0,"notebook_id":"[notebook_id]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+EXT_KEY=$(python3 .agent/scripts/agent_logger.py external-tool-start \
+  --workflow 01_Lecture_Planning --run-id $RUN_ID \
+  --step-id step_1_trend_analysis --agent A1_Trend_Researcher \
+  --category research --action notebooklm_query \
+  --tool-name notebooklm --tool-action ask_question \
+  --notebook-id "$NOTEBOOK_ID")
 ```
-
 **쿼리 실행 후 (END)**:
 ```bash
-# duration_sec = 종료타임스탬프 - 시작타임스탬프
-# tool_output_bytes = 응답 텍스트의 UTF-8 바이트 수
-# tool_status = "success" | "timeout" | "error"
-echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_END","workflow":"01_Lecture_Planning","step_id":"step_1_trend_analysis","agent":"A1_Trend_Researcher","category":"research","model":"[model]","action":"notebooklm_query","tool_name":"notebooklm","tool_action":"ask_question","tool_input_bytes":0,"tool_output_bytes":0,"tool_duration_sec":0,"tool_status":"success","notebook_id":"[notebook_id]","retry":0}' >> ".agent/logs/[DATE]_01_Lecture_Planning.jsonl"
+# OUTPUT_BYTES = 응답 텍스트의 UTF-8 바이트 수
+python3 .agent/scripts/agent_logger.py external-tool-end \
+  --workflow 01_Lecture_Planning --run-id $RUN_ID \
+  --step-id step_1_trend_analysis --agent A1_Trend_Researcher \
+  --category research --action notebooklm_query \
+  --tool-name notebooklm --tool-action ask_question \
+  --ext-key $EXT_KEY --output-bytes $OUTPUT_BYTES \
+  --notebook-id "$NOTEBOOK_ID"
 ```
 
+> 💡 `EXT_KEY`는 `external-tool-start`가 stdout으로 출력하는 고유 상태 키입니다. 같은 step 내에서 쿼리를 여러 번 실행해도 키 충돌이 발생하지 않습니다.
 **로깅 확인 체크포인트**:
 | # | 검증 항목 | 기준 |
 |---|----------|------|
@@ -51,8 +59,6 @@ echo '{"run_id":"[run_id]","ts":"[ISO8601]","status":"EXTERNAL_TOOL_END","workfl
 | 2 | EXTERNAL_TOOL_END | 각 쿼리 완료 후 기록되었는가? |
 | 3 | notebook_id | 로그에 notebook_id 필드가 포함되었는가? |
 | 4 | tool_status | 성공/실패 상태가 정확히 기록되었는가? |
-
-**미준수 시**: A0가 "NotebookLM 쿼리 로깅 누락"으로 반려
 
 ### 검증 체크포인트 (PASS/FAIL)
 Trend_Report.md 작성 전 반드시 확인:
