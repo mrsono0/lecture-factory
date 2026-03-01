@@ -142,6 +142,9 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 | `research` | Gemini 3.1 Pro | 0.002 | 0.012 |
 | `curriculum-architecture` | GLM-5 | 0.003 | 0.015 |
 | `glm5` | GLM-5 | 0.003 | 0.015 |
+| `material-aggregation` | GLM-5 | 0.003 | 0.015 |
+| `instructor-support-codex` | GPT-5.3 Codex | 0.015 | 0.075 |
+| `curriculum-chunking` | Gemini 3.1 Pro | 0.003 | 0.015 |
 
 **비용 계산:**
 ```

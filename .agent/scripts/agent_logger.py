@@ -70,6 +70,8 @@ class AgentLogger:
         "research": {"input": 0.002, "output": 0.012},
         "curriculum-architecture": {"input": 0.003, "output": 0.015},
         "glm5": {"input": 0.003, "output": 0.015},
+        "material-aggregation": {"input": 0.003, "output": 0.015},
+        "instructor-support-codex": {"input": 0.015, "output": 0.075},
     }
 
     BYTES_PER_TOKEN = 3.3
@@ -789,6 +791,7 @@ def main():
     p_ete.add_argument("--action", required=True)
     p_ete.add_argument("--tool-name", required=True)
     p_ete.add_argument("--tool-action", required=True)
+    p_ete.add_argument("--ext-key", required=True, help="external-tool-start가 stdout으로 출력한 상태 키")
     p_ete.add_argument("--output-bytes", type=int, required=True)
     p_ete.add_argument("--tool-status", default="success", choices=["success", "timeout", "error"])
     p_ete.add_argument("--tool-error", default=None)
@@ -1032,8 +1035,9 @@ def main():
             retry=args.retry,
         )
         # 상태 파일에 시작 시간 저장 (external-tool-end에서 사용)
+        # 타임스탬프 기반 키로 같은 step 내 다중 호출 충돌 방지
         state = _load_state(args.workflow, args.run_id)
-        ext_key = f"{args.step_id}__ext__{args.tool_name}"
+        ext_key = f"{args.step_id}__ext__{args.tool_name}_{int(start_time * 1000)}"
         state[ext_key] = {
             "start_time": start_time,
             "agent": args.agent,
@@ -1045,13 +1049,13 @@ def main():
             "retry": args.retry,
         }
         _save_state(args.workflow, args.run_id, state)
+        # stdout에 ext_key 출력 (bash 변수 캡처용: EXT_KEY=$(python3 ... external-tool-start ...))
+        print(ext_key)
 
     elif args.command == "external-tool-end":
         state = _load_state(args.workflow, args.run_id)
-        ext_key = f"{args.step_id}__ext__{args.tool_name}"
-        ext_state = state.pop(ext_key, None)
+        ext_state = state.pop(args.ext_key, None)
         start_time = ext_state.get("start_time", time.time()) if ext_state else time.time()
-
         logger = AgentLogger(
             workflow=args.workflow,
             run_id=args.run_id,
