@@ -91,7 +91,7 @@ steps:
     input: "Learner Persona, Scope Definition, Trend Report, Output Language: Korean"
     output: "Curriculum Structure Draft (01_Planning/강의구성안.md 초안)"
     notes: |
-      60~90분 단위 세션으로 커리큘럼 초안 설계.
+      50분 단위 세션(쉬는 시간 10분)으로 커리큘럼 초안 설계. 4시간 이상 또는 다일 강의 시 AM/PM 분할 필수.
       ⚠️ 반드시 01_Planning/강의구성안.md 파일로 저장할 것 (step_2의 학습자 분석 섹션 유지).
       이 초안은 step_4, step_5의 병렬 작업 후 step_6에서 통합됩니다.
 

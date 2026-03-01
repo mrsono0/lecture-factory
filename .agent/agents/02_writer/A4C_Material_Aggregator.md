@@ -38,7 +38,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - **부록 생성**: 전체 요약, 참고자료, 로드맵 등 추가
 
 ### 5. AM/PM 분할 파일 생성
-- **분할 기준**: Day-Session 경계표 기반
+- **분할 기준**: Day-Session 경계표 기반 (50분 단위 세션, 강의구성안 기준 동적 결정)
   - Day 1 AM: 세션 001-011, PM: 012-022
   - Day 2 AM: 세션 023-033, PM: 034-043
   - Day 3 AM: 세션 044-054, PM: 055-064
