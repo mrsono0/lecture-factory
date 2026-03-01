@@ -23,8 +23,7 @@ model: opus
 ## 파이프라인 개요
 
 ```
-A0(범위 정의) → A1(트렌드) → A5B(학습자) → A3(커리큘럼)
-→ A3B(마이크로 세션 청킹) → A3C(세션 인덱싱)
+A0(범위 정의) → A1(트렌드) → A5B(학습자) → A3(커리큐럼)
 → A2(학습 활동) ∥ A7(차별화) [병렬] → A3(통합) → A5A(QA) → A0(승인/반려)
 ```
 
@@ -32,13 +31,12 @@ A0(범위 정의) → A1(트렌드) → A5B(학습자) → A3(커리큘럼)
 
 ## 승인/반려
 
-- **승인** → 산출물 9개 파일 존재 검증 후 저장
-- **반려** → Step 4(A3B 마이크로 세션 청킹)부터 재실행 (최대 2회)
+- **승인** → 산출물 2개 파일 존재 검증 후 저장
+- **반려** → Step 3(A3 커리큐럼 설계)부터 재실행 (최대 2회)
 
 ## 산출물
 
 - `01_Planning/강의구성안.md`, `01_Planning/Trend_Report.md`
-- `01_Planning/micro_sessions/` (_index.json, _flow.md, _dependency.mmd, _reference_mapping.json, _activities.md, _differentiation.md, 세션-*.md)
 
 ## 출력 규칙
 
