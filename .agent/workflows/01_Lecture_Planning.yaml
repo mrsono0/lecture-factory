@@ -57,10 +57,13 @@ steps:
   - id: step_0_scope
     agent: "01_planner/A0_Orchestrator"
     action: "analyze_request"
-    input: "User Prompt, Lecture Topic File, NotebookLM URL (Optional), Output Language: Korean"
+    input: "User Prompt, Lecture Topic File (Optional), Reference Folder (Optional), NotebookLM URL (Optional), Output Language: Korean"
     output: "Scope Definition & Agent Task Beliefs"
     notes: |
       사용자 요청을 분석하여 스코프를 정의하고 에이전트 작업을 분배합니다.
+      ⚠️ 입력 완전성 검사: 8개 항목 파싱 → 부분/빈 입력 시 brainstorming 폴백 실행 (A0_Orchestrator.md §Phase 2 참조).
+      ⚠️ 참고자료 연동: 참고자료 폴더 지정 시 Quick Scan → brainstorming → Full Analysis 3-Phase 실행.
+      ⚠️ 참고자료 미지정 시: 주제 확정 후 A1에게 딥리서치로 전면 수집 지시.
 
   - id: step_1_trend_analysis
     agent: "01_planner/A1_Trend_Researcher"
