@@ -26,18 +26,18 @@ session_writing_policy:
   
   # 세션 집필 최적화 설정
   session_optimized:
-    session_duration: "60-90min"
+    session_duration: "50min"
     estimated_chars: "no_limit"
     min_chars_per_session: null
     max_chars_per_session: null
-    structure: "7_section_mandatory"
+    structure: "4_to_7_section_by_chunk_type"
     writing_style: "continuous_prose"  # 개조식 금지, 서술형 필수
     tone: "friendly_spoken_korean"   # ~해요, ~입니다
     
   rules:
     - "단일 세션 집중: 각 에이전트는 1개의 세션만 처리"
     - "개별 파일 출력: 각 세션은 독립된 완성된 교안 파일로 저장"
-    - "7섹션 구조 필수: 모든 세션은 A0이 정의한 7섹션 구조를 완전히 준수"
+    - "청크 타입별 4~7섹션 구조 필수: lab/code 7섹션, narrative/diagram 4섹션 필수+3섹션 선택"
     - "분량 무제한: 교육적 완결성이 최우선, 글자 수 제한 없음"
     - "서술형 강제: 개조식 요약 금지, 긴 줄글 서술형 필수"
     - "브릿지 노트: 세션 간 연결성을 위한 전환 멘트 포함"
@@ -169,15 +169,10 @@ steps:
       - "Output Language: Korean"
     output: "Session Material Files (02_Material/sessions/세션-*.md)"
     notes: |
-      🎯 핵심: 각 세션(60~90분)을 개별 파일로 집필
-      📐 필수 구조: A0이 정의한 7섹션 구조를 완전히 준수
-        - §1 개요 (도입부 + 강사 대본 🗣️)
-        - §2 핵심 개념 (서술형 + 비유/스토리텔링)
-        - §3 상세 내용 (코드 예제 + 시각화 + Mermaid)
-        - §4 실습 가이드 (단계별 표 + 🎙️ 실습 대본 + 트러블슈팅 FAQ)
-        - §5 코드 모음 (전체 실행 가능 코드)
-        - §6 요약 (마무리 + 브릿지 노트)
-        - §7 참고자료 (출처 + 강사 노트)
+      🎯 핵심: 각 세션(50분)을 개별 파일로 집필
+      📐 필수 구조: A0이 정의한 청크 타입별 4~7섹션 구조를 준수
+        - lab/code 청크: §1~§7 전부 필수
+        - narrative/diagram 청크: §1개요, §2핵심개념, §3상세내용, §6요약 필수 + §4/§5/§7 해당 시
       📝 출력 규칙:
         - 분량 제한 없음. 교육적 완결성이 최우선
         - 서술형 긴 줄글 (개조식 요약 금지)
@@ -190,7 +185,7 @@ steps:
         - 3-Source 팩트 패킷의 local_excerpt, notebooklm, deep_research 모두 반영
         - 3개 소스에 없는 내용만 자체 생성 (출처 명시)
         - 💡 강사 노트에 참고자료 출처 표기
-      🔄 기존 세션 파일이 있으면 입력으로 활용하여 7섹션 구조로 확장
+      🔄 기존 세션 파일이 있으면 입력으로 활용하여 청크 타입별 섹션 구조로 확장
       📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md
       ⚠️ 각 세션은 독립적으로 완결성을 가져야 함 (중간에 끊기지 않음)
 
@@ -292,44 +287,44 @@ steps:
         - A9: 강사 지원 자료 → ⑦ 강사 노트 섹션에 삽입
         - A10: 차별화 전략 → ② 핵심 개념 설명에 USP 반영
         - A11: 표/차트 명세 → ④ 시각화 자료 섹션에 삽입
-      ⚠️ 삽입 후 7섹션 구조가 유지되는지 검증 필수
+      ⚠️ 삽입 후 청크 타입별 섹션 구조가 유지되는지 검증 필수
       📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md (덮어쓰기)
 
   # Phase 4.5: AM/PM 분할 파일 생성
   - id: step_12_ampm_split
-    agent: "02_writer/A4C_Material_Aggregator"
-    action: "generate_ampm_files"
+    script: ".agent/scripts/aggregate_material.py"
+    action: "ampm_split"
     depends_on: "step_11_enrich_sessions"
     input:
       - "Enriched Session Materials"
-      - "Day-Session 경계표"
-      - "Output Language: Korean"
+      - "Day-Session 경계표 (강의구성안 기반)"
     output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_{주제요약}.md)"
     notes: |
+      🤖 스크립트 자동화: LLM 호출 없이 기계적 분할 수행
       🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 생성
       📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
       📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md
 
   # Phase 5: 취합 및 통합
   - id: step_13_aggregation
-    agent: "02_writer/A4C_Material_Aggregator"
-    action: "aggregate_sessions"
+    script: ".agent/scripts/aggregate_material.py"
+    action: "aggregate"
     depends_on: "step_12_ampm_split"
     input: 
       - "All Enriched Session Materials"
       - "AM/PM Split Files"
-      - "Output Language: Korean"
-    output: "Aggregated Material Draft"
+      - "강의구성안 (의존성 그래프, 메타데이터)"
+    output: "Aggregated Material Draft (02_Material/강의교안_v2.1.md)"
     notes: |
-      🎯 핵심: 보조 패킷 통합 완료된 세션 파일들을 최종 취합
-      🔗 연결성 검증: 세션 간 연결 확인
-      📝 브릿지 노트: 세션 간 전환 멘트 삽입
+      🤖 스크립트 자동화: LLM 호출 없이 기계적 취합 수행
+      🎯 핵심: 세션 파일 정렬 → 메타데이터 추출 → 목차 생성 → 본문 연결 → 부록 템플릿
       📋 최종 구조:
         - 헤더 및 메타데이터
         - 목차 및 네비게이션
-        - 개별 세션 내용 통합 (7섹션 구조 유지)
-        - 부록 (요약, 참고자료, 로드맵)
-      📁 산출물: 02_Material/강의교안_v1.0.md
+        - 개별 세션 내용 통합 (청크 타입별 섹션 구조 유지)
+        - 부록 (키워드 인덱스, 로드맵 템플릿, 강사 체크리스트)
+      📁 산출물: 02_Material/강의교안_v2.1.md
+      ⚠️ 부록의 로드맵 서술형 콘텐츠는 별도 LLM 보조 또는 템플릿으로 처리
 
   # Phase 6: 최종 QA
   - id: step_14_final_qa
@@ -351,7 +346,7 @@ steps:
       - "시각화 적절성 (표/다이어그램)"
       - "참고자료 활용도: 📚 참고자료 매핑 대비 실제 반영률 70% 이상"
       - "3-Source 교차 검증: 팩트 패킷의 3개 소스가 교안에 균형 있게 반영"
-      - "7섹션 구조 준수: 모든 세션이 7섹션 구조를 완전히 따르는지 검증"
+      - "청크 타입별 4~7섹션 구조 준수: lab/code 7섹션, narrative/diagram 4섹션 필수를 따르는지 검증"
       - "보조 패킷 통합 검증: 6개 보조 패킷이 세션 본문에 인라인 반영되었는지 확인"
       - "AM/PM 분할 정합성: Day-Session 경계표 기반 분할이 정확한지 검증"
     decision:
@@ -364,7 +359,7 @@ model_routing:
   # 세션별 집필: micro-writing 카테고리 (세션 단위 서술형 집필)
   A4B_Session_Writer:
     category: "micro-writing"
-    note: "7섹션 교안 집필 — 세션 단위 서술형 집필"
+    note: "청크 타입별 4~7섹션 교안 집필 — 세션 단위 서술형 집필"
   
   # 취합 및 통합: material-aggregation 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
   A4C_Material_Aggregator:
