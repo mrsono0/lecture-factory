@@ -2,7 +2,7 @@ name: "Material Writing Pipeline - Session-Based Aggregation"
 description: "세션별 개별 집필 후 취합하는 교안 작성 워크플로우 (Writer Team) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
 version: "5.0"
 
-output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v1.0.md"
+output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v2.1.md"
 max_retries: 2
 
 # ── 세션 기반 집필 정책 ──────────────────────────────────────────
@@ -269,7 +269,7 @@ steps:
       - "step_9_instructor_support"
       - "step_10_differentiation"
     input: 
-      - "Session Material Files (7섹션 구조)"
+      - "Session Material Files (청크 타입별 4~7섹션 구조)"
       - "Verified Code Blocks & Tech Report"
       - "Visualization Packet"
       - "Table & Chart Specifications"
@@ -420,7 +420,7 @@ downstream_integration:
   visualizer:
     input_format: "session_based"
     session_files: "02_Material/sessions/세션-*.md"
-    aggregated_material: "02_Material/강의교안_v1.0.md"
+    aggregated_material: "02_Material/강의교안_v2.1.md"
     
   # 04_Prompt_Generator 연동
   prompt_generator:
