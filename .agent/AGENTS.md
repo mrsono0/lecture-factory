@@ -135,6 +135,8 @@ YYYY-MM-DD_강의제목/
 | | | A5A QA Manager | `ultrabrain` |
 | | | A7 Differentiation Advisor | `artistry` |
 | | | A1 Trend Researcher | `research` |
+| | | A2 Instructional Designer | `deep` |
+| | | A5B Learner Analyst | `glm5` |
 | **P02** Writer | `deep` | A2 Traceability Curator | `quick` |
 | | | A1 Source Miner, A3 Curriculum Architect, A5 Code Validator, A7 Learner Experience Designer | `glm5` |
 | | | A4B Session Writer | `micro-writing` |

@@ -28,7 +28,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ### 실행 로그 검증 (Execution Log Checklist)
 - [ ] **로그 파일 존재**: `.agent/logs/{DATE}_01_Lecture_Planning.jsonl` 파일이 존재하는가?
-- [ ] **Step 완전성**: 모든 step(step_0 ~ step_10)에 대해 START/END 쌍이 존재하는가?
+- [ ] **Step 완전성**: 모든 step(step_0 ~ step_8)에 대해 START/END 쌍이 존재하는가?
 - [ ] **시간 정합성**: 각 END 이벤트의 `duration_sec`이 0 이상인가?
 
 ## 산출물
