@@ -216,7 +216,7 @@ python3 .agent/scripts/agent_logger.py retry \
 |---|---|---|
 | A0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
 | A1_Trend_Researcher | `research` | `google/antigravity-gemini-3.1-pro` |
-| A5B_Learner_Analyst | `deep` | `anthropic/claude-opus-4-6` |
+| A5B_Learner_Analyst | `glm5` | `opencode/glm-5` |
 | A3_Curriculum_Architect | `curriculum-architecture` | `opencode/glm-5` |
 
 | A2_Instructional_Designer | `deep` | `anthropic/claude-opus-4-6` |
