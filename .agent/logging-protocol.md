@@ -138,7 +138,7 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 | `ultrabrain` | Opus/Pro | 0.015 | 0.075 |
 | `artistry` | Gemini 3.1 Pro | 0.003 | 0.015 |
 | `unspecified-high` | Opus/Pro | 0.015 | 0.075 |
-| `micro-writing` | Gemini 3.1 Pro | 0.003 | 0.015 |
+| `micro-writing` | Claude Sonnet 4.6 | 0.003 | 0.015 |
 | `research` | Gemini 3.1 Pro | 0.002 | 0.012 |
 | `curriculum-architecture` | GLM-5 | 0.003 | 0.015 |
 | `glm5` | GLM-5 | 0.003 | 0.015 |
