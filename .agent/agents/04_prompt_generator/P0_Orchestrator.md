@@ -220,9 +220,9 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| P0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| P1_Education_Structurer | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| P2_Slide_Prompt_Architect | `unspecified-low` | `opencode/claude-sonnet-4-6` |
+| P0_Orchestrator | `gemini-flash` | `google/antigravity-gemini-3-flash` |
+| P1_Education_Structurer | `gemini-flash` | `google/antigravity-gemini-3-flash` |
+| P2_Slide_Prompt_Architect | `gemini-flash` | `google/antigravity-gemini-3-flash` |
 | P3_Visual_Spec_Curator | `visual-engineering` | `google/antigravity-gemini-3.1-pro` |
 | P4_QA_Auditor | `ultrabrain` | `opencode/gpt-5.3-codex` |
 | (기타 미지정 에이전트) | `writing` (default) | `google/antigravity-gemini-3.1-pro` |
