@@ -51,8 +51,8 @@ YYYY-MM-DD_강의제목/
 - Phase 1: A1 → A2 (3-Source 소스 수집 및 구조화)
 - Phase 2: A3 → A4B (골격 설계 + 세션별 집필, foreach_session 병렬)
 - Phase 3: A5 + A6 + A11 + A7 + A9 + A10 (6개 보조 패킷 병렬 생성)
-- Phase 4: A4C (보조 패킷 인라인 통합 + AM/PM 분할)
-- Phase 5: A4C (최종 취합)
+- Phase 4: A4C (보조 패킷 인라인 통합) → script (AM/PM 분할)
+- Phase 5: script (최종 취합)
 - Phase 6: A8 (최종 QA)
 
 ### Team 3: Visualizer (03_visualizer) — 11 agents
