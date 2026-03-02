@@ -50,7 +50,7 @@
 | `status` | string | O | 이벤트 유형 | `"START"` / `"END"` / `"FAIL"` / `"RETRY"` / `"DECISION"` / `"SESSION_START"` / `"SESSION_END"` |
 | `workflow` | string | O | 파이프라인명 | `"01_Lecture_Planning"` |
 | `step_id` | string | O | 워크플로우 YAML의 step id (반복 실행은 인스턴스 스코프 권장) | `"step_0_scope"` / `"step_2_education_structure::Day1_AM"` / `"session_Day1_AM"` |
-| `agent` | string | O | 에이전트명 | `"A0_Orchestrator"` |
+| `agent` | string | O | 에이전트명 (YAML 경로의 마지막 세그먼트: `01_planner/A0_Orchestrator` → `A0_Orchestrator`) | `"A0_Orchestrator"` |
 | `category` | string | O | `.agent/AGENTS.md` §Per-Agent Model Routing의 LLM 카테고리 | `"orchestration"` / `"deep-writing"` |
 | `model` | string | O | 실행 시 배정된 LLM 모델명 (model_config에서 category→model 조회) | `"anthropic/claude-opus-4-6"` |
 | `action` | string | O | 워크플로우 YAML의 action 필드 | `"analyze_request"` |
