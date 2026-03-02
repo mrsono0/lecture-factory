@@ -35,7 +35,7 @@
     "agent_models": {
         "D0_Orchestrator":       { "category": "unspecified-low", "note": "조율·입력 탐색·승인/반려 — 절차적 작업" },
         "D1_Prompt_Validator":   { "category": "quick",           "note": "6-섹션 구조 검증·PREFIX 중복 확인 — 규칙 대조" },
-        "D2_Chunk_Splitter":     { "category": "writing",         "note": "교시 단위 분할·프롬프트 최적화 — 문장력 필요" },
+        "D2_Chunk_Splitter":     { "category": "unspecified-low", "note": "교시 단위 분할·프롬프트 최적화 — Sonnet 4.6 제약 준수·바이트 동일 헤더 복제" },
         "D3_Submission_Manager": { "category": "quick",           "note": "manus_slide.py 실행·모니터링 — 기계적 작업" },
         "D4_Post_Processor":     { "category": "quick",           "note": "PPTX 후처리·청크 병합·파일 정리 — 기계적" },
         "D5_Visual_QA":          { "category": "ultrabrain",      "note": "★ 최종 방어선 — 콘텐츠 보존·디자인·발표자 노트 다관점 검증" }
