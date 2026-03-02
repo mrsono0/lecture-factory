@@ -14,31 +14,7 @@ model: sonnet
 1. **오케스트레이터 프롬프트 로드**: `.agent/agents/04_prompt_generator/P0_Orchestrator.md`를 읽고 오케스트레이터 역할(이중 대상 독립 활용 가능성 인코딩, 6-섹션 고정 스키마, N개 교안 병렬 처리, 통합 품질 관점)을 내재화합니다.
 2. **AGENTS.md 로드**: 프로젝트 루트의 `AGENTS.md`를 읽고 전체 규칙을 숙지합니다.
 3. **워크플로우 로드**: `.agent/workflows/04_SlidePrompt_Generation.yaml`을 읽고 스텝 순서를 파악합니다.
-4. **모델 라우팅 로드**: `.agent/agents/04_prompt_generator/config.json`에서 에이전트별 카테고리를 확인합니다.
+4. **모델 라우팅 로드**: `.agent/AGENTS.md` §Per-Agent Model Routing에서 에이전트별 카테고리를 확인합니다.
 5. **입력 탐색**: 미지정 시 `02_Material/` 자동 탐색. `03_Slides/` 존재 시 IR/DesignTokens 참조.
 
-## 파이프라인 개요
-
-```
-Phase A: P0(파일 발견 N개 + 스캐폴딩)
-Phase B: P1(교육 구조 ×N) ∥ P3(전역 비주얼 스펙) [병렬]
-Phase C: P2(슬라이드 명세 ×N)
-Phase D: P0(조립 ×N) → P4(QA ×N) → P0(최종 저장)
-```
-
-6-섹션 고정 스키마: ①Role ②교안 정보 ③슬라이드 지시사항 ④스타일 ⑤품질 ⑥교안 원문.
-교안 10개 이상 시 5개 단위 배치 분할.
-에이전트 프롬프트: `.agent/agents/04_prompt_generator/` 디렉토리 참조.
-
-## 승인/반려
-
-- **전체 승인** → 최종 저장
-- **부분 반려** → 리젝된 파일의 P1/P2만 재실행 (파일당 최대 2회)
-
-## 산출물
-
-- `04_SlidePrompt/{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개)
-
-## 출력 규칙
-
-- 모든 산출물은 **한국어**로 작성 (기술 용어 제외)
+> 파이프라인 흐름, 승인/반려 규칙, 산출물 정의, 출력 규칙은 모두 워크플로우 YAML과 P0_Orchestrator.md에 정의되어 있습니다. 이 문서에서 중복 기술하지 않습니다.
