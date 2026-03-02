@@ -77,9 +77,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ### 로깅 초기화 (파이프라인 시작 시)
 1. **`run_id` 확인**: 상위에서 전달받은 `run_id`가 있으면 사용, 없으면 `run_{YYYYMMDD}_{HHMMSS}` 형식으로 생성합니다.
 2. **로그 파일 경로**: `.agent/workflows/03_Slide_Generation.yaml`의 `logging.path`를 읽어 결정합니다.
-3. **config.json 로드**: `.agent/agents/03_visualizer/config.json`에서 `default_category`와 `agent_models`를 읽어 에이전트별 카테고리를 결정합니다.
-   - ⚠️ **자기 자신(A0_Orchestrator)도 `agent_models`에서 조회**합니다. 오버라이드가 있으면 해당 카테고리를 사용하고, 없으면 `default_category`를 사용합니다.
-4. **model 매핑**: 아래 '에이전트별 category→model 매핑' 테이블에서 해당 카테고리의 model 값을 직접 참조합니다. (외부 파일 조회 불필요)
+3. **카테고리 결정**: `.agent/AGENTS.md` §Per-Agent Model Routing 표에서 자신의 파이프라인(P03 Visualizer)과 에이전트명으로 카테고리를 조회합니다.
+4. **model 매핑**: `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션에서 해당 카테고리의 model 값을 참조합니다.
 
 ### Step-by-Step 실행 시
 - 각 step 실행 **직전**에 `START` 이벤트를 JSONL에 append합니다.
@@ -161,24 +160,10 @@ python3 .agent/scripts/agent_logger.py session-end \
 > ⚠️ **로깅은 step 실행보다 우선합니다.** 컨텍스트가 부족하더라도 START/END 명령어는 반드시 실행하세요. duration, tokens, cost는 자동 계산됩니다.
 
 
-### 에이전트별 category→model 매핑 (Quick Reference)
+### 에이전트별 카테고리 매핑
 
-> `config.json`과 `.opencode/oh-my-opencode.jsonc`에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
-
-| 에이전트 | category | model |
-|---|---|---|
-| A0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| A1_Content_Analyst | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| A2_Terminology_Manager | `quick` | `anthropic/claude-haiku-4-5` |
-| A3_Slide_Architect | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| A4_Layout_Designer | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| A5_Code_Validator | `quick` | `anthropic/claude-haiku-4-5` |
-| A6_Lab_Reproducibility_Engineer | `quick` | `anthropic/claude-haiku-4-5` |
-| A7_Visual_Design_Director | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| A8_Copy_Tone_Editor | `writing` | `google/antigravity-gemini-3.1-pro` |
-| A9_QA_Auditor | `ultrabrain` | `opencode/gpt-5.3-codex` |
-| A10_Trace_Citation_Keeper | `quick` | `anthropic/claude-haiku-4-5` |
-| (기타 미지정 에이전트) | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
+> `.agent/AGENTS.md` §Per-Agent Model Routing의 P03 Visualizer 섹션을 참조하세요.
+> 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션에 정의되어 있습니다.
 ---
 
 ## 시작 가이드 (Startup)

@@ -101,74 +101,61 @@ YYYY-MM-DD_강의제목/
 ---
 
 ## Per-Agent Model Routing
-
-각 파이프라인의 `config.json`에서 에이전트별 LLM 카테고리를 지정합니다.
+이 테이블은 에이전트별 LLM 카테고리의 **Single Source of Truth**입니다.
 
 ### 해석 규칙
 
-1. 오케스트레이터가 파이프라인 실행 시 `.agent/agents/{team}/config.json`을 읽습니다.
-2. 에이전트가 `agent_models`에 **있으면** → 지정된 카테고리의 모델 사용
-3. 에이전트가 `agent_models`에 **없으면** → `default_category`의 모델 사용
+1. 오케스트레이터가 파이프라인 실행 시 이 테이블에서 자신의 파이프라인과 에이전트명으로 카테고리를 조회합니다.
+2. 에이전트가 오버라이드 목록에 **있으면** → 지정된 카테고리 사용
+3. 에이전트가 오버라이드 목록에 **없으면** → 해당 파이프라인의 기본 카테고리 사용
 4. 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션 참조
+### 9개 통합 카테고리
 
-### config.json 스키마
-
-```jsonc
-{
-    "name": "팀명",
-    "default_category": "deep",           // 팀 기본 카테고리
-    "agent_models": {                      // 에이전트별 오버라이드 (선택)
-        "A5_Code_Validator": {
-            "category": "quick",           // 이 에이전트만 다른 카테고리 사용
-            "note": "코드 검증 — 정확성만 필요"
-        }
-    }
-}
-```
+| # | 카테고리 | 모델 | 용도 |
+|---|---------|------|------|
+| 1 | `orchestration` | `opencode/claude-sonnet-4-6` | A0 오케스트레이터 전용 |
+| 2 | `deep-writing` | `anthropic/claude-opus-4-6` (variant=max) | 장문 교안 집필 (최고 품질) |
+| 3 | `fast-task` | `anthropic/claude-haiku-4-5` | 기계적 작업 (검증, 실행, 변환) |
+| 4 | `visual-creative` | `google/antigravity-gemini-3.1-pro` (variant=high) | 시각 설계, 리서치, 창의적 작업 |
+| 5 | `fast-extraction` | `google/antigravity-gemini-3-flash` | 빠른 구조화 추출 (1M 컨텍스트) |
+| 6 | `structural` | `opencode/glm-5` | 구조적 분석/설계 (GLM-5) |
+| 7 | `quality-gate` | `openai/gpt-5.3-codex` (variant=xhigh) | QA/최종 방어선 (최고 추론) |
+| 8 | `codex-support` | `openai/gpt-5.3-codex` | 강사 지원 콘텐츠 생성 |
+| 9 | `korean-editing` | `google/antigravity-claude-sonnet-4-6` | 한국어 카피/톤 편집 |
 
 ### 파이프라인별 에이전트 모델 매핑
 
-| Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 오버라이드 카테고리 |
+| Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 카테고리 |
 |----------|:---:|---|:---:|
-| **P01** Planner | `deep` | A0 Orchestrator | `unspecified-low` |
-| | | A3 Curriculum Architect | `curriculum-architecture` |
-| | | A5A QA Manager | `ultrabrain` |
-| | | A7 Differentiation Advisor | `artistry` |
-| | | A1 Trend Researcher | `research` |
-| | | A2 Instructional Designer | `deep` |
-| | | A5B Learner Analyst | `glm5` |
-| **P02** Writer | `deep` | A0 Orchestrator | `unspecified-low` |
-| | | A2 Traceability Curator | `gemini-flash` |
-| | | A1 Source Miner, A3 Curriculum Architect, A5 Code Validator, A7 Learner Experience Designer | `glm5` |
-| | | A4B Session Writer | `micro-writing` (Opus 4.6 max) |
-| | | A4C Material Aggregator | `material-aggregation` |
-| | | A6 Visualization Designer, A11 Chart Specifier | `visual-engineering` |
-| | | A8 QA Editor | `ultrabrain` |
-| | | A9 Instructor Support Designer | `instructor-support-codex` |
-| | | A10 Differentiation Strategist | `artistry` |
-| **P03** Visualizer | `visual-engineering` | A2 Terminology, A6 Lab, A10 Trace | `gemini-flash` |
-| | | A5 Code Validator | `quick` |
-| | | A0 Orchestrator | `unspecified-low` |
-| | | A8 Copy Tone Editor | `antigravity-sonnet` |
-| | | A9 QA Auditor | `ultrabrain` |
-| **P04** Prompt Generator | `writing` | P0 Orchestrator | `gemini-flash` |
-| | | P1 Education Structurer | `gemini-flash` |
-| | | P2 Slide Prompt Architect | `gemini-flash` |
-| | | P3 Visual Spec Curator | `visual-engineering` |
-| | | P4 QA Auditor | `ultrabrain` |
-| **P05** PPTX Converter | `quick` | B0 Orchestrator, B1 Slide Parser | `unspecified-low` |
-| | | B2 HTML Renderer | `visual-engineering` |
-| | | B5 Visual QA | `visual-engineering` |
-| **P06** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
-| | | C0 Orchestrator | `unspecified-low` |
-| **P07** Manus Slide | `quick` | D0 Orchestrator | `unspecified-low` |
-| | | D2 Chunk Splitter | `unspecified-low` |
-| | | D5 Visual QA | `ultrabrain` |
-| **P08** Log Analyzer | `deep` | L0 Orchestrator | `unspecified-low` |
-| | | L1 Data Collector | `quick` |
-| | | L3 Optimizer, L5 QA Auditor | `ultrabrain` |
-
-> **참조**: 전체 에이전트 목록은 각 팀의 `.agent/agents/{team}/config.json` 파일을 참조하세요. 위 표는 주요 오버라이드 에이전트만 요약합니다.
+| **P01** Planner | `deep-writing` | A0 Orchestrator | `orchestration` |
+| | | A1 Trend Researcher | `visual-creative` |
+| | | A3 Curriculum Architect | `structural` |
+| | | A5A QA Manager | `quality-gate` |
+| | | A5B Learner Analyst | `structural` |
+| | | A7 Differentiation Advisor | `visual-creative` |
+| **P02** Writer | `deep-writing` | A0 Orchestrator | `orchestration` |
+| | | A1 Source Miner, A3 Curriculum Architect, A5 Code Validator, A7 Learner Experience Designer | `structural` |
+| | | A2 Traceability Curator | `fast-extraction` |
+| | | A4C Material Aggregator | `structural` |
+| | | A6 Visualization Designer, A11 Chart Specifier | `visual-creative` |
+| | | A8 QA Editor | `quality-gate` |
+| | | A9 Instructor Support Designer | `codex-support` |
+| | | A10 Differentiation Strategist | `visual-creative` |
+| **P03** Visualizer | `visual-creative` | A0 Orchestrator | `orchestration` |
+| | | A2 Terminology, A6 Lab, A10 Trace | `fast-extraction` |
+| | | A5 Code Validator | `fast-task` |
+| | | A8 Copy Tone Editor | `korean-editing` |
+| | | A9 QA Auditor | `quality-gate` |
+| **P04** Prompt Generator | `visual-creative` | P0 Orchestrator, P1 Education Structurer, P2 Slide Prompt Architect | `fast-extraction` |
+| | | P4 QA Auditor | `quality-gate` |
+| **P05** PPTX Converter | `fast-task` | B0 Orchestrator, B1 Slide Parser | `orchestration` |
+| | | B2 HTML Renderer, B5 Visual QA | `visual-creative` |
+| **P06** NanoBanana | `visual-creative` | C0 Orchestrator | `orchestration` |
+| **P07** Manus Slide | `fast-task` | D0 Orchestrator, D2 Chunk Splitter | `orchestration` |
+| | | D5 Visual QA | `quality-gate` |
+| **P08** Log Analyzer | `deep-writing` | L0 Orchestrator | `orchestration` |
+| | | L1 Data Collector | `fast-task` |
+| | | L2 Insight Analyst, L3 Optimizer, L4 Report Writer, L5 QA Auditor | `quality-gate` |
 
 ---
 
@@ -182,7 +169,7 @@ YYYY-MM-DD_강의제목/
  **이벤트 유형**: `START`, `END`, `FAIL`, `RETRY`, `DECISION`, `SESSION_START`, `SESSION_END`
  **실행 모델**: Step-by-Step (순차 실행) 또는 Session-Parallel (세션 병렬 위임), 파이프라인별 기본 모델은 `logging-protocol.md` §11 참조
  **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)` (input_bytes + output_bytes 기반, 정확도 ~85-90%)
- **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (quick=Haiku급, deep=Sonnet급, ultrabrain=Opus급)
+ **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (fast-task=Haiku급, deep-writing=Opus급, quality-gate=Codex급)
 오케스트레이터는 실행 모델에 따라 step 또는 session 단위로 `logging-protocol.md`를 참조하여 JSONL 로그를 기록합니다.
 - **Step-by-Step**: 각 step 실행 전후로 START/END 이벤트 기록 (Pipeline 01, 02, 04, 05, 06, 07, 08)
 - **Session-Parallel**: 세션 단위 병렬 위임 시 SESSION_START/SESSION_END 이벤트 기록 (Pipeline 03)

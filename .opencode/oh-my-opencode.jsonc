@@ -1,18 +1,23 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   // ============================================================
-  // Lecture Factory - Project-Specific Model Configuration
+  // Lecture Factory - Model Routing Configuration
   // ============================================================
-  // This file overrides ~/.config/opencode/oh-my-opencode.json
-  // for the _lecture-factory project only.
+  // Single Source of Truth for all model routing decisions.
+  // Categories define MODEL CAPABILITY TIERS, not agent aliases.
   //
-  // Principle: Models are inherited from global config.
-  //            Only prompt_append (domain context injection)
-  //            and select model overrides are project-specific.
+  // Resolution flow:
+  //   1. A0 Orchestrator reads .agent/AGENTS.md §Per-Agent Model Routing
+  //   2. Looks up agent → category mapping
+  //   3. This file resolves category → model
+  //
+  // Domain context (prompt_append) lives in each agent's .md file,
+  // NOT in categories. Categories are pure model routing only.
   // ============================================================
+
   // === Agent-Level Model Overrides ===
   "agents": {
-    // Main Orchestrator: Multi-pipeline coordination (7 pipelines)
+    // Main Orchestrator: Multi-pipeline coordination (8 pipelines)
     // Kimi K2.5 — Agent Swarm (100 sub-agents), tool-use #1, 256K context, ~30x cost reduction
     "sisyphus": {
       "model": "opencode/kimi-k2.5"
@@ -39,112 +44,66 @@
       "model": "opencode/gpt-5.3-codex"
     }
   },
-  // === Category-Level Model + Context Injection ===
-  // Categories are used via task(category="...", prompt="...")
-  // prompt_append injects Lecture Factory domain context
+
+  // === Category-Level Model Routing (9 Consolidated Categories) ===
+  // Used via task(category="...", prompt="...")
+  // Consolidated from 19 → 9 categories by merging same-model tiers.
+  // See .agent/plans/model-routing-consolidation-plan.md for mapping details.
   "categories": {
-    // Pipeline 02 (Material Writing): Long-form lecture scripts
-    // Requires highest quality for instructor scripts + learner narratives
-    "deep": {
-      "model": "anthropic/claude-opus-4-6",
-      "variant": "max",
-      "prompt_append": "You are writing Korean lecture materials for the Lecture Factory system. Follow these conventions:\n- Use friendly spoken Korean tone (~haeyo, ~imnida), never formal written style (~handa)\n- Include instructor scripts with the emoji prefix: '\ud83d\udde3\ufe0f \uac15\uc0ac \ub300\ubcf8 (Instructor Script):'\n- Include lab guide scripts with: '\ud83c\udf99\ufe0f \uc2e4\uc2b5 \uac00\uc774\ub4dc \ub300\ubcf8 (Lab Guide):'\n- Use rich analogies and narrative tone ('AI \uc2dc\ub300\uc758 \uc11c\uc0ac')\n- Follow Why -> What -> How structure for every new concept\n- All outputs must be in Korean (except technical terms)"
+    // --- Tier 1: Orchestration (pipeline coordination, quality gates) ---
+    // Absorbs: unspecified-low
+    "orchestration": {
+      "model": "opencode/claude-sonnet-4-6"
     },
-    // Writer A4C: Packet integration + final aggregation
-    "material-aggregation": {
-      "model": "opencode/glm-5"
-    },
-    // Writer A1/A3/A5/A7: GLM-5 routing for source mining, curriculum, code validation, learner experience
-    "glm5": {
-      "model": "opencode/glm-5"
-    },
-    // Writer A9: Instructor support writing
-    "instructor-support-codex": {
-      "model": "openai/gpt-5.3-codex"
-    },
-    // Pipeline 03 (Slide Generation) & 06 (NanoBanana): Visual planning + AI image generation
-    // Gemini 3.1 Pro — latest model, 1M context, enhanced visual reasoning
-    "visual-engineering": {
-      "model": "google/antigravity-gemini-3.1-pro",
-      "variant": "high",
-      "prompt_append": "You are creating slide storyboards for the Lecture Factory system. Follow these conventions:\n- Use Bento Grid layout with Sketch Note (ink-pen) visual style\n- One core concept per slide, max 2 new terms per slide\n- Instructor notes go in Speaker Notes area\n- Include T-BRIDGE transition slides between major sections\n- Checkpoint slides every 5-7 slides\n- All slide copy in Korean, friendly tone"
-    },
-    // Pipeline 03 Visualizer (A2/A6/A10): Mechanical extraction & tracing tasks
-    // Gemini 3 Flash — fast, 1M context, strong Korean & structured output
-    "gemini-flash": {
-      "model": "google/antigravity-gemini-3-flash"
-    },
-    // Pipeline 04/05/07 (PPTX Conversion / Manus): Mechanical transformation
-    // Fast & cheap — no creativity needed, just accurate conversion
-    // NOTE: Requires Anthropic provider auth — run /connect in OpenCode TUI
-    "quick": {
-      "model": "anthropic/claude-haiku-4-5"
-    },
-    // Pipeline 06 (Slide Prompt Generation): Precise prompt crafting
-    // 1M context window essential — embeds FULL lecture material in each prompt
-    "writing": {
-      "model": "google/antigravity-gemini-3.1-pro",
-      "variant": "high",
-      "prompt_append": "You are generating slide creation prompts for the Lecture Factory system (Pipeline 06). Follow these conventions:\n- Include the FULL lecture material markdown in section 6 (\uad50\uc548 \uc6d0\ubb38)\n- Follow the P0/P2 agent specifications for prompt structure\n- Output format must be compatible with Manus AI (Nano Banana Pro)\n- Each prompt file covers one session (AM/PM)\n- All outputs in Korean"
-    },
-    // Curriculum Design: Complex learning architecture
-    // Reasoning-specialized for dependency mapping and scaffolding
-    "ultrabrain": {
-      "model": "opencode/gpt-5.3-codex",
-      "variant": "xhigh"
-    },
-    // Planner A3: Curriculum architecture specialization
-    // Dedicated model assignment for A3_Curriculum_Architect
-    "curriculum-architecture": {
-      "model": "opencode/glm-5"
-    },
-    // Reasoning High: targeted analysis and synthesis tasks
-    "reasoning-high": {
-      "model": "openai/gpt-5.3-codex",
-      "variant": "high"
-    },
-    // Reasoning Xhigh: maximum-depth reasoning for complex planning
-    "reasoning-xhigh": {
-      "model": "openai/gpt-5.3-codex",
-      "variant": "xhigh"
-    },
-    // NEW: Micro Session Chunking - 15~25min session design
-    // Gemini 3.1 Pro — 1M context for chunk_type tagging and dependency mapping
-    "curriculum-chunking": {
-      "model": "google/antigravity-gemini-3.1-pro",
-      "variant": "high",
-      "prompt_append": "You are designing MICRO-SESSIONS (15-25min chunks) for curriculum planning. CRITICAL RULES:\n1. Each session MUST target exactly ONE learning objective\n2. Time: 15-25min (3,000-4,500 chars when written)\n3. Output estimated_chars (3000|4000|4500) and complexity tags\n4. Define clear prerequisites and dependencies\n5. Specify chunk_type: narrative|code|diagram|lab\n6. Include 🗣️ instructor script outline (1,500-2,000 chars)\n7. Include 🎙️ lab guide if applicable\n8. Use 'AI 시대의 서사' tone for analogies\n9. All outputs in Korean"
-    },
-    // Writer A4B: Session-level long-form Korean lecture writing
-    // Claude Opus 4.6 — highest Korean prose quality, dual-tone switching, narrative consistency
-    "micro-writing": {
-      "model": "anthropic/claude-opus-4-6",
-      "variant": "max",
-      "prompt_append": "You are writing a SINGLE micro-session (15-25min) lecture material. CRITICAL RULES:\n1. Output MUST be 3,000-4,500 characters (Korean, including spaces)\n2. NEVER use bullet points, lists, or tables in main narrative\n3. Use continuous prose style (novel/essay-like paragraphs only)\n4. Tone: Friendly spoken Korean (~haeyo, ~imnida), NEVER formal (~handa)\n5. Structure: Hook (previous recap) → Analogy (detailed situational drama) → Concept (line-by-line explanation) → Code/Example (if applicable) → Checkpoint Q&A\n6. Include ONLY ONE core concept per session\n7. All scripts must be verbatim-readable by instructors\n8. Use 🗣️ for instructor scripts (1,500-2,000 chars), 🎙️ for lab guides\n9. Include detailed analogies with 'AI 시대의 서사' tone\n10. All outputs must be in Korean (except technical terms)"
-    },
-    // Creative Tasks: Differentiation strategies, narrative design
-    // Gemini 3.1 Pro — latest model for creative/artistic content
-    "artistry": {
-      "model": "google/antigravity-gemini-3.1-pro",
-      "variant": "high"
-    },
-    // Research Tasks: Trend analysis, source-based research, deep web search
-    // Gemini 3.1 Pro — 1M context for large-scale research synthesis, native tool-use for bash execution
-    "research": {
-      "model": "google/antigravity-gemini-3.1-pro",
-      "variant": "high"
-    },
-    // General High-Effort: Fallback for unclassified complex tasks
-    "unspecified-high": {
+
+    // --- Tier 2: Deep Writing (long-form lecture scripts, highest quality) ---
+    // Absorbs: deep, micro-writing, unspecified-high
+    "deep-writing": {
       "model": "anthropic/claude-opus-4-6",
       "variant": "max"
     },
-    // General Low-Effort: Fallback for unclassified simple tasks
-    "unspecified-low": {
-      "model": "opencode/claude-sonnet-4-6"
+
+    // --- Tier 3: Fast Task (mechanical work — validation, conversion, execution) ---
+    // Absorbs: quick
+    "fast-task": {
+      "model": "anthropic/claude-haiku-4-5"
     },
-    // Visualizer A8: Korean copy & tone editing — Antigravity Sonnet 4.6
-    "antigravity-sonnet": {
+
+    // --- Tier 4: Visual & Creative (slides, research, artistry, 1M context) ---
+    // Absorbs: visual-engineering, artistry, research, writing, curriculum-chunking
+    "visual-creative": {
+      "model": "google/antigravity-gemini-3.1-pro",
+      "variant": "high"
+    },
+
+    // --- Tier 5: Fast Extraction (structured extraction, tracing, 1M context) ---
+    // Absorbs: gemini-flash
+    "fast-extraction": {
+      "model": "google/antigravity-gemini-3-flash"
+    },
+
+    // --- Tier 6: Structural (curriculum design, source mining, aggregation) ---
+    // Absorbs: glm5, curriculum-architecture, material-aggregation
+    "structural": {
+      "model": "opencode/glm-5"
+    },
+
+    // --- Tier 7: Quality Gate (QA defense line, maximum reasoning) ---
+    // Absorbs: ultrabrain, reasoning-high, reasoning-xhigh
+    "quality-gate": {
+      "model": "openai/gpt-5.3-codex",
+      "variant": "xhigh"
+    },
+
+    // --- Tier 8: Codex Support (instructor support content generation) ---
+    // Absorbs: instructor-support-codex
+    "codex-support": {
+      "model": "openai/gpt-5.3-codex"
+    },
+
+    // --- Tier 9: Korean Editing (copy & tone editing for Korean text) ---
+    // Absorbs: antigravity-sonnet
+    "korean-editing": {
       "model": "google/antigravity-claude-sonnet-4-6"
     }
   }
