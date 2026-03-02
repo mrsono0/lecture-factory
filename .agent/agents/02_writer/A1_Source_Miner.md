@@ -145,7 +145,7 @@ A1_Source_Miner는 5가지 외부 도구를 사용합니다. **각 도구 호출
 **START (호출 직전)**:
 ```bash
 START_TIME=$(date +%s)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"02_Material_Writing","step_id":"step_1_source_mining","agent":"A1_Source_Miner","category":"deep","model":"[model]","action":"[tool_action]","tool_name":"[tool_name]","tool_action":"[action]","tool_input_bytes":[bytes],"retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_START","workflow":"02_Material_Writing","step_id":"step_1_source_mining","agent":"A1_Source_Miner","category":"structural","model":"[model]","action":"[tool_action]","tool_name":"[tool_name]","tool_action":"[action]","tool_input_bytes":[bytes],"retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
 ```
 
 **END (호출 완료 후)**:
@@ -153,7 +153,7 @@ echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_ST
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 OUTPUT_BYTES=$(echo -n "$RESPONSE" | wc -c)
-echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"02_Material_Writing","step_id":"step_1_source_mining","agent":"A1_Source_Miner","category":"deep","model":"[model]","action":"[tool_action]","tool_name":"[tool_name]","tool_action":"[action]","tool_input_bytes":[input_bytes],"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
+echo '{"run_id":"[run_id]","ts":"'$(date -u +%FT%T)'","status":"EXTERNAL_TOOL_END","workflow":"02_Material_Writing","step_id":"step_1_source_mining","agent":"A1_Source_Miner","category":"structural","model":"[model]","action":"[tool_action]","tool_name":"[tool_name]","tool_action":"[action]","tool_input_bytes":[input_bytes],"tool_output_bytes":'"$OUTPUT_BYTES"',"tool_duration_sec":'"$DURATION"',"tool_status":"[success|error]","retry":0}' >> ".agent/logs/[DATE]_02_Material_Writing.jsonl"
 ```
 
 ### 검증 체크포인트
