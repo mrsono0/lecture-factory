@@ -138,9 +138,9 @@ YYYY-MM-DD_강의제목/
 | | | A2 Instructional Designer | `deep` |
 | | | A5B Learner Analyst | `glm5` |
 | **P02** Writer | `deep` | A0 Orchestrator | `unspecified-low` |
-| | | A2 Traceability Curator | `quick` |
+| | | A2 Traceability Curator | `gemini-flash` |
 | | | A1 Source Miner, A3 Curriculum Architect, A5 Code Validator, A7 Learner Experience Designer | `glm5` |
-| | | A4B Session Writer | `micro-writing` |
+| | | A4B Session Writer | `micro-writing` (Opus 4.6 max) |
 | | | A4C Material Aggregator | `material-aggregation` |
 | | | A6 Visualization Designer, A11 Chart Specifier | `visual-engineering` |
 | | | A8 QA Editor | `ultrabrain` |
