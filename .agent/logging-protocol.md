@@ -51,7 +51,7 @@
 | `workflow` | string | O | 파이프라인명 | `"01_Lecture_Planning"` |
 | `step_id` | string | O | 워크플로우 YAML의 step id (반복 실행은 인스턴스 스코프 권장) | `"step_0_scope"` / `"step_2_education_structure::Day1_AM"` / `"session_Day1_AM"` |
 | `agent` | string | O | 에이전트명 | `"A0_Orchestrator"` |
-| `category` | string | O | config.json의 LLM 카테고리 | `"deep"` / `"ultrabrain"` |
+| `category` | string | O | `.agent/AGENTS.md` §Per-Agent Model Routing의 LLM 카테고리 | `"orchestration"` / `"deep-writing"` |
 | `model` | string | O | 실행 시 배정된 LLM 모델명 (model_config에서 category→model 조회) | `"anthropic/claude-opus-4-6"` |
 | `action` | string | O | 워크플로우 YAML의 action 필드 | `"analyze_request"` |
 | `parallel_group` | string | — | 병렬 실행 그룹 (없으면 null) | `"phase3"` / `"batch_1"` / `null` |
@@ -334,7 +334,7 @@ Lecture Factory는 두 가지 실행 모델을 지원합니다:
 2. **`parent_run_id` 확인**: E2E 실행으로 호출된 경우 상위의 마스터 `run_id`를 `parent_run_id`로 기록합니다.
 3. 워크플로우 YAML의 `logging:` 섹션을 읽어 로그 파일 경로를 결정합니다.
 4. 로그 파일이 없으면 새로 생성, 있으면 append 모드로 엽니다.
-5. `config.json`을 읽어 에이전트별 카테고리 매핑을 로드합니다.
+5. `.agent/AGENTS.md` §Per-Agent Model Routing을 읽어 에이전트별 카테고리 매핑을 로드합니다.
 
 ### 9.2 Step-by-Step 모델
 

@@ -20,7 +20,7 @@ YYYY-MM-DD_강의제목/
 ├── 01_Planning/
 │   ├── 강의구성안.md
 │   └── Trend_Report.md
-├── 02_Material/강의교안_v1.0.md, src/, images/
+├── 02_Material/강의교안_v2.1.md, src/, images/
 ├── 03_Slides/{session}/슬라이드기획안.md
 ├── 04_SlidePrompt/{세션ID}_{세션제목}_프롬프트.md
 ├── 05_PPTX/ | 06_NanoPPTX/ | 07_ManusSlides/

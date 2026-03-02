@@ -299,6 +299,8 @@ steps:
   # Phase 4.5: AM/PM 분할 파일 생성
   - id: step_12_ampm_split
     script: ".agent/scripts/aggregate_material.py"
+    agent: "script/aggregate_material"
+    category: "fast-task"
     action: "ampm_split"
     depends_on: "step_11_enrich_sessions"
     input:
@@ -314,6 +316,8 @@ steps:
   # Phase 5: 취합 및 통합
   - id: step_13_aggregation
     script: ".agent/scripts/aggregate_material.py"
+    agent: "script/aggregate_material"
+    category: "fast-task"
     action: "aggregate"
     depends_on: "step_12_ampm_split"
     input: 
