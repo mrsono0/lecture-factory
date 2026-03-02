@@ -151,9 +151,9 @@ YYYY-MM-DD_강의제목/
 | | | A0 Orchestrator | `unspecified-low` |
 | | | A8 Copy Tone Editor | `writing` |
 | | | A9 QA Auditor | `ultrabrain` |
-| **P04** Prompt Generator | `writing` | P0 Orchestrator | `unspecified-low` |
-| | | P1 Education Structurer | `deep` |
-| | | P2 Slide Prompt Architect | `deep` |
+| **P04** Prompt Generator | `writing` | P0 Orchestrator | `gemini-flash` |
+| | | P1 Education Structurer | `gemini-flash` |
+| | | P2 Slide Prompt Architect | `gemini-flash` |
 | | | P3 Visual Spec Curator | `visual-engineering` |
 | | | P4 QA Auditor | `ultrabrain` |
 | **P05** PPTX Converter | `quick` | B0 Orchestrator, B1 Slide Parser | `unspecified-low` |
