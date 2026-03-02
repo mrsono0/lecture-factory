@@ -3,7 +3,7 @@ description: "강의 기획 워크플로우 (Planner Team) ⚠️ MUST ANALYZE C
 version: "3.0"
 
 output_path: "{YYYY-MM-DD_강의제목}/01_Planning/강의구성안.md"
-max_retries: 2  # step_7 반려 시 step_3부터 재실행 최대 횟수
+max_retries: 2  # step_8 반려 시 step_3부터 재실행 최대 횟수
 
 logging:
   enabled: true
