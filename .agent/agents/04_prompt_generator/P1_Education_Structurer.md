@@ -60,6 +60,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 | **표(Table)** | 마크다운 테이블 | 비교표/데이터 슬라이드 지시 |
 | **다이어그램** | mermaid 블록, "다이어그램", "플로우차트" | 시각화 슬라이드 지시 |
 | **전환/예고** | "다음 교시에서", "마무리" | 전환 슬라이드 배치 |
+| **🗣️ 강사 대본** | "🗣️", "강사 대본", "Script", 구어체 인용 블록 | P2 Speaker Notes 1차 소스로 전달 |
+| **🎙️ 실습 대본** | "🎙️", "실습 가이드 대본", "Lab Guide" | P2 실습 슬라이드 Speaker Notes 소스로 전달 |
 
 ### 4. 슬라이드 장수 추정
 각 교시의 학습요소 밀도를 기반으로 슬라이드 장수를 추정합니다:
@@ -131,6 +133,8 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - 코드 블록: {개수}개
 - 다이어그램: {개수}개
 - 비교표: {개수}개
+- 🗣️ 강사 대본: {있음|없음} ({개수}개소)
+- 🎙️ 실습 대본: {있음|없음} ({개수}개소)
 ```
 
 ## 주의사항
