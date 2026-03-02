@@ -142,6 +142,10 @@
     // General Low-Effort: Fallback for unclassified simple tasks
     "unspecified-low": {
       "model": "opencode/claude-sonnet-4-6"
+    },
+    // Visualizer A8: Korean copy & tone editing — Antigravity Sonnet 4.6
+    "antigravity-sonnet": {
+      "model": "google/antigravity-claude-sonnet-4-6"
     }
   }
 }

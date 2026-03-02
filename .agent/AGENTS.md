@@ -149,7 +149,7 @@ YYYY-MM-DD_강의제목/
 | **P03** Visualizer | `visual-engineering` | A2 Terminology, A6 Lab, A10 Trace | `gemini-flash` |
 | | | A5 Code Validator | `quick` |
 | | | A0 Orchestrator | `unspecified-low` |
-| | | A8 Copy Tone Editor | `writing` |
+| | | A8 Copy Tone Editor | `antigravity-sonnet` |
 | | | A9 QA Auditor | `ultrabrain` |
 | **P04** Prompt Generator | `writing` | P0 Orchestrator | `gemini-flash` |
 | | | P1 Education Structurer | `gemini-flash` |
