@@ -5,11 +5,11 @@
     "tools_reference": ["notebooklm", "deep-research", "tavily-web"],
     "agent_models": {
         "A0_Orchestrator":                 { "category": "unspecified-low", "note": "파이프라인 조율·품질 게이트 — Sonnet 라우팅" },
-        "A2_Terminology_Manager":          { "category": "quick",       "note": "용어 추출 — 기계적 정규화" },
+        "A2_Terminology_Manager":          { "category": "gemini-flash", "note": "용어 추출 — 한국어 구조화 + 1M context" },
         "A5_Code_Validator":               { "category": "quick",       "note": "코드 블록 검증 — 정확성만 필요" },
-        "A6_Lab_Reproducibility_Engineer": { "category": "quick",       "note": "Lab 카드 생성 — 템플릿 기반" },
+        "A6_Lab_Reproducibility_Engineer": { "category": "gemini-flash", "note": "Lab 카드 생성 — 한국어 구어체 가이드" },
         "A8_Copy_Tone_Editor":             { "category": "writing",     "note": "카피 톤 편집 — 문체 전문" },
         "A9_QA_Auditor":                   { "category": "ultrabrain",  "note": "최종 시각 QA — 다관점 검증" },
-        "A10_Trace_Citation_Keeper":       { "category": "quick",       "note": "출처 추적 — 기계적 대조" }
+        "A10_Trace_Citation_Keeper":       { "category": "gemini-flash", "note": "출처 추적 — 1M context 장문 대조" }
     }
 }

@@ -146,7 +146,8 @@ YYYY-MM-DD_강의제목/
 | | | A8 QA Editor | `ultrabrain` |
 | | | A9 Instructor Support Designer | `instructor-support-codex` |
 | | | A10 Differentiation Strategist | `artistry` |
-| **P03** Visualizer | `visual-engineering` | A2 Terminology, A5 Code, A6 Lab, A10 Trace | `quick` |
+| **P03** Visualizer | `visual-engineering` | A2 Terminology, A6 Lab, A10 Trace | `gemini-flash` |
+| | | A5 Code Validator | `quick` |
 | | | A0 Orchestrator | `unspecified-low` |
 | | | A8 Copy Tone Editor | `writing` |
 | | | A9 QA Auditor | `ultrabrain` |

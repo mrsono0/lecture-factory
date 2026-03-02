@@ -69,6 +69,11 @@
       "variant": "high",
       "prompt_append": "You are creating slide storyboards for the Lecture Factory system. Follow these conventions:\n- Use Bento Grid layout with Sketch Note (ink-pen) visual style\n- One core concept per slide, max 2 new terms per slide\n- Instructor notes go in Speaker Notes area\n- Include T-BRIDGE transition slides between major sections\n- Checkpoint slides every 5-7 slides\n- All slide copy in Korean, friendly tone"
     },
+    // Pipeline 03 Visualizer (A2/A6/A10): Mechanical extraction & tracing tasks
+    // Gemini 3 Flash — fast, 1M context, strong Korean & structured output
+    "gemini-flash": {
+      "model": "google/gemini-3-flash"
+    },
     // Pipeline 04/05/07 (PPTX Conversion / Manus): Mechanical transformation
     // Fast & cheap — no creativity needed, just accurate conversion
     // NOTE: Requires Anthropic provider auth — run /connect in OpenCode TUI
