@@ -28,8 +28,8 @@ model: opus
 Phase 1: A1(3-Source 수집) → A2(추적성)
 Phase 2: A3(골격) → A4B(세션별 집필, foreach 병렬)
 Phase 3: A5 ∥ A6 ∥ A11 ∥ A7 ∥ A9 ∥ A10 [6개 병렬]
-Phase 4: A4C(보조 패킷 통합) → A4C(AM/PM 분할)
-Phase 5: A4C(최종 취합)
+Phase 4: A4C(보조 패킷 통합) → script(AM/PM 분할)
+Phase 5: script(최종 취합)
 Phase 6: A8(최종 QA)
 ```
 
