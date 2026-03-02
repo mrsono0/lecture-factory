@@ -35,7 +35,7 @@ python3 scripts/run.py ask_question.py \
 EXT_KEY=$(python3 .agent/scripts/agent_logger.py external-tool-start \
   --workflow 01_Lecture_Planning --run-id $RUN_ID \
   --step-id step_1_trend_analysis --agent A1_Trend_Researcher \
-  --category research --action notebooklm_query \
+  --category visual-creative --action notebooklm_query \
   --tool-name notebooklm --tool-action ask_question \
   --notebook-id "$NOTEBOOK_ID")
 ```
@@ -45,7 +45,7 @@ EXT_KEY=$(python3 .agent/scripts/agent_logger.py external-tool-start \
 python3 .agent/scripts/agent_logger.py external-tool-end \
   --workflow 01_Lecture_Planning --run-id $RUN_ID \
   --step-id step_1_trend_analysis --agent A1_Trend_Researcher \
-  --category research --action notebooklm_query \
+  --category visual-creative --action notebooklm_query \
   --tool-name notebooklm --tool-action ask_question \
   --ext-key $EXT_KEY --output-bytes $OUTPUT_BYTES \
   --notebook-id "$NOTEBOOK_ID"

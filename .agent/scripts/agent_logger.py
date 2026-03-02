@@ -72,6 +72,16 @@ class AgentLogger:
         "glm5": {"input": 0.003, "output": 0.015},
         "material-aggregation": {"input": 0.003, "output": 0.015},
         "instructor-support-codex": {"input": 0.015, "output": 0.075},
+        # 신 9-카테고리 (AGENTS.md §Per-Agent Model Routing SSOT)
+        "orchestration": {"input": 0.003, "output": 0.015},
+        "deep-writing": {"input": 0.015, "output": 0.075},
+        "fast-task": {"input": 0.00025, "output": 0.00125},
+        "visual-creative": {"input": 0.003, "output": 0.015},
+        "fast-extraction": {"input": 0.002, "output": 0.012},
+        "structural": {"input": 0.003, "output": 0.015},
+        "quality-gate": {"input": 0.015, "output": 0.075},
+        "codex-support": {"input": 0.015, "output": 0.075},
+        "korean-editing": {"input": 0.003, "output": 0.015},
     }
 
     BYTES_PER_TOKEN = 3.3
