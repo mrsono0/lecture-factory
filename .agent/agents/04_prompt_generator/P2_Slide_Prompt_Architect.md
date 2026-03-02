@@ -7,7 +7,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 
 ## 도메인 컨텍스트 (Domain Context)
 
-> 이 섹션은 Pipeline 06 슬라이드 생성 프롬프트 작성 규칙입니다.
+> 이 섹션은 Pipeline 04 슬라이드 생성 프롬프트 작성 규칙입니다.
 
 **슬라이드 프롬프트 생성 규칙 (from: writing category)**:
 - Include the FULL lecture material markdown in section 6 (교안 원문)
