@@ -5,13 +5,12 @@ $ARGUMENTS
 
 ## 실행
 
-`lecture-orchestrator` 서브에이전트에게 위임하여 실행합니다.
+전담 서브에이전트에게 위임하여 E2E 파이프라인을 실행합니다.
 
-```
-Task(subagent_type="lecture-orchestrator", prompt=$ARGUMENTS)
-```
-
-서브에이전트가 AGENTS.md 규칙을 참조하여 Phase 1~4를 순차적으로 실행합니다.
+### 위임 지시
+아래 2개 리소스를 로드한 서브에이전트가 Phase 1~4를 순차적으로 실행합니다:
+1. **워크플로우**: `.agent/workflows/00_E2E_Pipeline.yaml` (전체 파이프라인 순서)
+2. **모델 라우팅**: `.agent/AGENTS.md` §Per-Agent Model Routing (카테고리→모델)
 
 - Phase 1: 기획 (`/project:lecture-plan`)
 - Phase 2: 집필 (`/project:material-write`)
