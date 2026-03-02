@@ -19,7 +19,7 @@ session_writing_policy:
   # 출력 구조
   output_structure:
     individual_sessions: "02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md"
-    aggregated_material: "02_Material/강의교안_v1.0.md"
+    aggregated_material: "02_Material/강의교안_v2.1.md"
     visual_specs: "02_Material/visual_specs/"
     packets: "02_Material/packets/"
     reports: "02_Material/reports/"
@@ -359,51 +359,50 @@ steps:
       approved: "Finish"
       rejected: "Go to step_4_session_writing"
 
-# ── 모델 라우팅 참조 (정본: .agent/agents/02_writer/config.json) ──────────────────────────────────────────
-# 아래는 참조용입니다. 실제 라우팅은 config.json을 따릅니다.
+# ── 모델 라우팅 (정본: .agent/AGENTS.md §Per-Agent Model Routing) ──────────────────────────────────────────
+# 아래는 .agent/AGENTS.md의 P02 Writer 섹션과 동기화된 참조입니다.
+# 카테고리→모델 매핑은 .opencode/oh-my-opencode.jsonc의 categories 섹션을 참조합니다.
+# 불일치 시 .agent/AGENTS.md가 우선합니다.
 model_routing:
-  # 세션별 집필: micro-writing 카테고리 (세션 단위 서술형 집필)
-  A4B_Session_Writer:
-    category: "micro-writing"
-    note: "청크 타입별 4~7섹션 교안 집필 — 세션 단위 서술형 집필"
-  
-  # 취합 및 통합: material-aggregation 카테고리 (보조 패킷 통합 + AM/PM 분할 + 최종 취합)
-  A4C_Material_Aggregator:
-    category: "material-aggregation"
-    note: "보조 패킷 통합, AM/PM 분할, 최종 취합 - opencode/glm-5"
-  
-  # 표 및 시각화: visual-engineering 카테고리
-  A11_Chart_Specifier:
-    category: "visual-engineering"
-    note: "표 및 Mermaid 다이어그램 설계"
-  
-  # 기존 에이전트는 기본 카테고리 유지
-  A6_Visualization_Designer:
-    category: "visual-engineering"
-    note: "시각화 설계 (기존 설정 유지)"
-  
-  A8_QA_Editor:
-    category: "ultrabrain"
-    note: "최종 QA (기존 설정 유지)"
-
-  A9_Instructor_Support_Designer:
-    category: "instructor-support-codex"
-    note: "강사 지원 패킷 생성 - openai/gpt-5.3-codex"
-  
-  # 출처 추적: gemini-flash 카테고리
-  A2_Traceability_Curator:
-    category: "gemini-flash"
-    note: "출처 추적 구축 — 구조화 매핑 + 1M context"
-  
-  # 코드 검증: glm5 카테고리
-  A5_Code_Validator:
-    category: "glm5"
-    note: "코드 실행 검증 — opencode/glm-5 라우팅"
-  
-  # 차별화 전략: artistry 카테고리
-  A10_Differentiation_Strategist:
-    category: "artistry"
-    note: "차별화 강화 — 창의적 전략"
+  _ssot: ".agent/AGENTS.md §Per-Agent Model Routing"
+  default_category: "deep-writing"  # P02 Writer 기본 카테고리
+  overrides:
+    A4B_Session_Writer:
+      category: "deep-writing"
+      note: "청크 타입별 4~7섹션 교안 집필 — P02 기본 카테고리"
+    A4C_Material_Aggregator:
+      category: "structural"
+      note: "보조 패킷 통합, AM/PM 분할, 최종 취합"
+    A11_Chart_Specifier:
+      category: "visual-creative"
+      note: "표 및 Mermaid 다이어그램 설계"
+    A6_Visualization_Designer:
+      category: "visual-creative"
+      note: "시각화 설계"
+    A8_QA_Editor:
+      category: "quality-gate"
+      note: "최종 QA — 최고 추론 모델"
+    A9_Instructor_Support_Designer:
+      category: "codex-support"
+      note: "강사 지원 패킷 생성"
+    A2_Traceability_Curator:
+      category: "fast-extraction"
+      note: "출처 추적 구축 — 1M context 구조화 매핑"
+    A5_Code_Validator:
+      category: "structural"
+      note: "코드 실행 검증"
+    A10_Differentiation_Strategist:
+      category: "visual-creative"
+      note: "차별화 강화 — 창의적 전략"
+    A1_Source_Miner:
+      category: "structural"
+      note: "3-Source 수집"
+    A3_Curriculum_Architect:
+      category: "structural"
+      note: "골격 설계"
+    A7_Learner_Experience_Designer:
+      category: "structural"
+      note: "실습 설계"
 
 # ── 업스트림/다운스트림 연동 ──────────────────────────────────────────
 upstream_integration:
