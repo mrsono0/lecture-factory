@@ -390,10 +390,10 @@ model_routing:
     category: "instructor-support-codex"
     note: "강사 지원 패킷 생성 - openai/gpt-5.3-codex"
   
-  # 출처 추적: quick 카테고리
+  # 출처 추적: gemini-flash 카테고리
   A2_Traceability_Curator:
-    category: "quick"
-    note: "출처 추적 구축 — 기계적 매핑"
+    category: "gemini-flash"
+    note: "출처 추적 구축 — 구조화 매핑 + 1M context"
   
   # 코드 검증: glm5 카테고리
   A5_Code_Validator:
