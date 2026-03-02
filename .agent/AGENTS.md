@@ -162,7 +162,7 @@ YYYY-MM-DD_강의제목/
 | **P06** NanoBanana | `visual-engineering` | C2 Prompt Engineer | `writing` |
 | | | C0 Orchestrator | `unspecified-low` |
 | **P07** Manus Slide | `quick` | D0 Orchestrator | `unspecified-low` |
-| | | D2 Chunk Splitter | `writing` |
+| | | D2 Chunk Splitter | `unspecified-low` |
 | | | D5 Visual QA | `ultrabrain` |
 | **P08** Log Analyzer | `deep` | L0 Orchestrator | `unspecified-low` |
 | | | L1 Data Collector | `quick` |
