@@ -43,7 +43,7 @@ logging:
     - on_fail/on_decision: 해당 이벤트 발생 시
     모든 step은 반드시 [pre_step → step 실행 → post_step] 3단계로 실행합니다.
 
-# 모델 라우팅: .agent/agents/01_planner/config.json 참조
+# 모델 라우팅: .agent/AGENTS.md §Per-Agent Model Routing 참조
 
 steps:
   # Phase 1: 순차 실행 — 스코프 정의 → 트렌드 리서치 → 학습자 분석 → 커리큘럼 설계
