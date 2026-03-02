@@ -5,15 +5,14 @@ $ARGUMENTS
 
 ## 실행
 
-`pptx-converter` 서브에이전트에게 위임하여 실행합니다.
+전담 서브에이전트에게 위임하여 05_PPTX_Conversion 파이프라인을 실행합니다.
 
-```
-Task(subagent_type="pptx-converter", prompt=$ARGUMENTS)
-```
-
-서브에이전트가 AGENTS.md 규칙, `.agent/workflows/05_PPTX_Conversion.yaml` 스텝 순서,
-`.agent/agents/05_pptx_converter/` 에이전트 프롬프트, `.agent/skills/pptx-official/` 스킬을
-참조하여 파이프라인을 자율 실행합니다.
+### 위임 지시
+아래 4개 리소스를 로드한 서브에이전트가 파이프라인을 자율 실행합니다:
+1. **워크플로우**: `.agent/workflows/05_PPTX_Conversion.yaml` (step 순서 & 의존성)
+2. **에이전트 프롬프트**: `.agent/agents/05_pptx_converter/` (B0~B5 역할 정의)
+3. **모델 라우팅**: `.agent/AGENTS.md` §Per-Agent Model Routing (카테고리→모델)
+4. **스킬**: `.agent/skills/pptx-official/` (PPTX 변환 스킬)
 
 - HTML 기반 PPTX 변환 (Playwright + PptxGenJS)
 - 디자인 제약: 헤더/푸터 금지, 밝은 배경색만

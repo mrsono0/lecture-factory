@@ -5,15 +5,13 @@ $ARGUMENTS
 
 ## 실행
 
-`nano-pptx` 서브에이전트에게 위임하여 실행합니다.
+전담 서브에이전트에게 위임하여 06_NanoBanana_PPTX 파이프라인을 실행합니다.
 
-```
-Task(subagent_type="nano-pptx", prompt=$ARGUMENTS)
-```
-
-서브에이전트가 AGENTS.md 규칙, `.agent/workflows/06_NanoBanana_PPTX.yaml` 스텝 순서,
-`.agent/agents/06_nanopptx/` 에이전트 프롬프트, 관련 스킬 5개를
-참조하여 파이프라인을 자율 실행합니다.
+### 위임 지시
+아래 3개 리소스를 로드한 서브에이전트가 파이프라인을 자율 실행합니다:
+1. **워크플로우**: `.agent/workflows/06_NanoBanana_PPTX.yaml` (step 순서 & 의존성)
+2. **에이전트 프롬프트**: `.agent/agents/06_nanopptx/` (C0~C5 역할 정의)
+3. **모델 라우팅**: `.agent/AGENTS.md` §Per-Agent Model Routing (카테고리→모델)
 
 - AI 이미지 기반 고품질 슬라이드 생성 (Nano Banana Pro)
 - GEMINI_API_KEY 필요
