@@ -340,7 +340,7 @@ A0_Orchestrator는 로컬 참고자료 분석 시 **pdf-official** 도구를 사
 EXT_KEY=$(python3 .agent/scripts/agent_logger.py external-tool-start \
   --workflow 01_Lecture_Planning --run-id $RUN_ID \
   --step-id step_0_scope --agent A0_Orchestrator \
-  --category unspecified-low --action pdf_extract \
+  --category orchestration --action pdf_extract \
   --tool-name pdf-official --tool-action extract)
 ```
 **END (PDF 추출 완료 후)**:
@@ -349,7 +349,7 @@ OUTPUT_BYTES=$(wc -c < extracted_text.txt)
 python3 .agent/scripts/agent_logger.py external-tool-end \
   --workflow 01_Lecture_Planning --run-id $RUN_ID \
   --step-id step_0_scope --agent A0_Orchestrator \
-  --category unspecified-low --action pdf_extract \
+  --category orchestration --action pdf_extract \
   --tool-name pdf-official --tool-action extract \
   --ext-key $EXT_KEY --output-bytes $OUTPUT_BYTES
 ```
