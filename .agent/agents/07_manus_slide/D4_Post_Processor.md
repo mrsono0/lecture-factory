@@ -21,29 +21,23 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - 슬라이드 마스터/레이아웃에 placeholder가 남아있는지 확인
 - 잔여 발견 시 `python-pptx`로 추가 제거
 
-### 2. 청크별 PPTX 병합 (분할 제출된 경우)
-분할 제출된 청크별 PPTX를 하나의 세션 PPTX로 병합합니다:
+### 2. 청크별 PPTX 병합 확인 (분할 제출된 경우)
+`manus_slide.py`의 `merge_pptx()` 함수가 분할 청크를 자동 병합합니다. D4는 병합 결과를 **검증**합니다:
 
 ```python
-# 병합 순서: 교시 순 (chunk_1of2 → chunk_2of2)
-# 병합 방법: python-pptx로 슬라이드 순서대로 합치기
-from pptx import Presentation
-
-merged = Presentation()
-# 각 청크 PPTX에서 슬라이드를 순서대로 추가
-for chunk_pptx in sorted_chunks:
-    src = Presentation(chunk_pptx)
-    for slide in src.slides:
-        # 슬라이드 복사 (레이아웃 보존)
-        ...
-merged.save(final_path)
+# 스크립트 동작 (manus_slide.py merge_pptx()):
+# 1. 첫 번째 청크의 Presentation을 기본으로 사용
+# 2. 나머지 청크의 슬라이드를 순서대로 추가 (레이아웃: Blank)
+# 3. 발표자 노트를 각 슬라이드에 보존
+# 4. 병합 후 strip_headers_footers() 자동 실행
+# 5. 임시 청크 디렉토리(.chunks_*) 자동 삭제
 ```
 
 #### 병합 시 주의사항
 - **슬라이드 순서**: 청크 순서대로 (교시 순)
 - **슬라이드 마스터**: 첫 번째 청크의 마스터를 기준으로 통일
 - **발표자 노트**: 각 청크의 노트를 그대로 보존
-- **병합 후 청크 파일**: `_chunks/` 폴더에 보관 (삭제하지 않음)
+- **병합 후 청크 파일**: 스크립트가 `.chunks_*` 임시 디렉토리를 자동 삭제합니다. 병합 전 개별 PPTX를 보존하려면 `_cleanup_chunk_dirs()` 실행 전에 별도 복사하세요.
 
 ### 3. 발표자 노트 추출
 PPTX 내 발표자 노트를 별도 마크다운 파일로 추출합니다:
@@ -63,7 +57,7 @@ PPTX 내 발표자 노트를 별도 마크다운 파일로 추출합니다:
 
 ### 4. 파일 정리
 - 최종 PPTX 파일명 규칙: `{세션ID}_{세션제목}.pptx`
-- 중복 파일 제거 (병합 전 개별 청크 PPTX는 `_chunks/`에 보관)
+- 중복 파일 제거 (청크 임시 디렉토리는 스크립트가 자동 정리)
 - `manus_task_log.json` 업데이트 (병합 정보 추가)
 
 ### 5. 파일 무결성 확인

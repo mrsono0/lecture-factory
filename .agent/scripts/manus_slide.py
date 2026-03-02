@@ -315,8 +315,8 @@ def get_api_key():
         return key
 
     env_paths = [
-        Path.cwd() / ".claude" / ".env",
-        Path(__file__).parent.parent / ".claude" / ".env",
+        Path.cwd() / ".agent" / ".env",
+        Path(__file__).parent.parent / ".env",  # .agent/scripts/ → .agent/.env
     ]
     for env_path in env_paths:
         if env_path.exists():

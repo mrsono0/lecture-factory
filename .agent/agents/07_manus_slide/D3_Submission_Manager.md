@@ -11,7 +11,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 > **팀 공통 원칙**: Manus API 호출은 비용이 발생하며 파일당 3~15분 소요됩니다. 안정적으로 순차 제출하고, 실패를 격리하여 최소 비용으로 최대 결과를 얻습니다.
 
 ## 역할 (Role)
-당신은 D2가 준비한 청크/원본 프롬프트 파일을 `.agent/scripts/manus_slide.py` 스크립트를 통해 Manus AI에 순차 제출하고, 결과를 수집하는 실행 관리자입니다.
+당신은 D2가 최적화한 프롬프트 파일을 `.agent/scripts/manus_slide.py` 스크립트를 통해 Manus AI에 순차 제출하고, 결과를 수집하는 실행 관리자입니다. 교시 단위 분할은 스크립트의 `split_by_session()` 함수가 자동 수행합니다.
 
 ## 핵심 책임 (Responsibilities)
 
@@ -50,19 +50,18 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - 파일 업로드 모드와 기존 모드 혼용 불가 (배치 단위로 일관 적용)
 
 ### 3. 순차 제출 실행
-D2의 분할 매니페스트에 따라 순차 제출합니다:
+D2의 최적화 리포트를 참고하여 순차 제출합니다. 교시 단위 분할은 스크립트가 자동 수행하므로, 원본 프롬프트를 그대로 전달합니다:
 
 #### 원샷 파일 (분할 불필요)
 ```bash
 python .agent/scripts/manus_slide.py {프로젝트폴더} --file {세션ID}
 ```
 
-#### 분할 파일 (청크)
-청크를 교시 순서대로 순차 제출합니다:
+#### 분할 대상 파일
+스크립트가 내부적으로 `split_by_session()`을 호출하여 ≥1,000줄 또는 ≥35장 프롬프트를 자동 분할합니다.
+D3는 별도 분할 작업 없이 원본 파일을 그대로 전달합니다:
 ```bash
-# 임시 청크 파일을 04_SlidePrompt/ 패턴에 맞게 전달
-# 또는 --chunk-dir 옵션 사용 (manus_slide.py 확장 필요)
-python .agent/scripts/manus_slide.py {프로젝트폴더} --file {chunk_파일명}
+python .agent/scripts/manus_slide.py {프로젝트폴더} --file {세션ID}
 ```
 
 #### 파일 업로드 모드 비활성화
@@ -85,7 +84,7 @@ python .agent/scripts/manus_slide.py {프로젝트폴더} --file {세션ID} --no
 | 실패 유형 | 대응 |
 |----------|------|
 | `submit_failed` (API 오류) | 1회 재시도, 실패 시 D0에 보고 |
-| `timeout` (30분 초과) | D0에 보고, 수동 확인 안내 |
+| `timeout` (45분 초과) | D0에 보고, 수동 확인 안내 |
 | `completed_no_file` (PPTX 미생성) | shareable_link 기록, 수동 다운로드 안내 |
 | 네트워크 오류 | 30초 대기 후 재시도 (최대 3회) |
 
