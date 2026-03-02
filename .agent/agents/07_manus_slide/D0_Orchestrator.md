@@ -81,8 +81,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ### 로깅 초기화 (파이프라인 시작 시)
 1. **`run_id` 확인**: 상위에서 전달받은 `run_id`가 있으면 사용, 없으면 `run_{YYYYMMDD}_{HHMMSS}` 형식으로 생성합니다.
 2. **로그 파일 경로**: `.agent/workflows/07_Manus_Slide.yaml`의 `logging.path`를 읽어 결정합니다.
-3. **config.json 로드**: `.agent/agents/07_manus_slide/config.json`에서 `default_category`와 `agent_models`를 읽어 에이전트별 카테고리를 결정합니다.
-   - ⚠️ **자기 자신(D0_Orchestrator)도 `agent_models`에서 조회**합니다. 오버라이드가 있으면 해당 카테고리를 사용하고, 없으면 `default_category`를 사용합니다.
+3. **카테고리 결정**: `.agent/AGENTS.md` §Per-Agent Model Routing에서 P07 Manus Slide 행을 참조하여 에이전트별 카테고리를 결정합니다.
 4. **model 매핑**: 아래 '에이전트별 category→model 매핑' 테이블에서 해당 카테고리의 model 값을 직접 참조합니다. (외부 파일 조회 불필요)
 
 ### Step-by-Step 실행 시
@@ -154,17 +153,16 @@ python3 .agent/scripts/agent_logger.py retry \
 
 ### 에이전트별 category→model 매핑 (Quick Reference)
 
-> `config.json`과 `.opencode/oh-my-opencode.jsonc`에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
-
+> `.agent/AGENTS.md` §Per-Agent Model Routing (P07 Manus Slide)에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
 | 에이전트 | category | model |
 |---|---|---|
-| D0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| D1_Prompt_Validator | `quick` | `anthropic/claude-haiku-4-5` |
-| D2_Chunk_Splitter | `writing` | `google/antigravity-gemini-3.1-pro` |
-| D3_Submission_Manager | `quick` | `anthropic/claude-haiku-4-5` |
-| D4_Post_Processor | `quick` | `anthropic/claude-haiku-4-5` |
-| D5_Visual_QA | `ultrabrain` | `opencode/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `quick` (default) | `anthropic/claude-haiku-4-5` |
+| D0_Orchestrator | `orchestration` | `opencode/claude-sonnet-4-6` |
+| D1_Prompt_Validator | `fast-task` | `anthropic/claude-haiku-4-5` |
+| D2_Chunk_Splitter | `orchestration` | `opencode/claude-sonnet-4-6` |
+| D3_Submission_Manager | `fast-task` | `anthropic/claude-haiku-4-5` |
+| D4_Post_Processor | `fast-task` | `anthropic/claude-haiku-4-5` |
+| D5_Visual_QA | `quality-gate` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `fast-task` (default) | `anthropic/claude-haiku-4-5` |
 ---
 
 ## 시작 가이드 (Startup)
