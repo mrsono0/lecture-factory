@@ -5,7 +5,7 @@ $ARGUMENTS
 
 ## 실행
 
-전담 서브에이전트에게 위임하여 03_Slide_Generation 파이프라인을 실행합니다.
+`@slide-generator` 에이전트에게 위임하여 03_Slide_Generation 파이프라인을 실행합니다.
 
 ### 위임 지시
 아래 3개 리소스를 로드한 서브에이전트가 파이프라인을 자율 실행합니다:
