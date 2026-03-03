@@ -14,7 +14,6 @@
   // Domain context (prompt_append) lives in each agent's .md file,
   // NOT in categories. Categories are pure model routing only.
   // ============================================================
-
   // === Agent-Level Model Overrides ===
   "agents": {
     // Main Orchestrator: Multi-pipeline coordination (8 pipelines)
@@ -44,7 +43,6 @@
       "model": "opencode/gpt-5.3-codex"
     }
   },
-
   // === Category-Level Model Routing (5 Consolidated Categories) ===
   // Used via task(category="...", prompt="...")
   // Consolidated from 9 → 5 categories by merging overlapping model tiers.
@@ -55,27 +53,23 @@
     "orchestration-core": {
       "model": "opencode/claude-sonnet-4-6"
     },
-
     // --- task-localization (absorbs: korean-editing, codex-support, fast-extraction, fast-task[transform]) ---
     // Korean copy-editing, instructor support, structured extraction, mechanical transforms
     "task-localization": {
-      "model": "google/antigravity-claude-sonnet-4-6"
+      "model": "anthropic/claude-sonnet-4-6"
     },
-
     // --- deep-production (absorbs: deep-writing, structural[partial]) ---
     // Long-form lecture scripts, curriculum design deep work, highest quality output
     "deep-production": {
       "model": "anthropic/claude-opus-4-6",
       "variant": "max"
     },
-
     // --- creative-research (absorbs: visual-creative) ---
     // Slides, artistry, visual engineering, research, 1M context window
     "creative-research": {
-      "model": "google/antigravity-gemini-3.1-pro",
+      "model": "opencode/glm-5",
       "variant": "high"
     },
-
     // --- strict-gatekeeper (absorbs: quality-gate, fast-task[validation]) ---
     // QA defense line, validation checks, maximum reasoning for correctness
     "strict-gatekeeper": {
