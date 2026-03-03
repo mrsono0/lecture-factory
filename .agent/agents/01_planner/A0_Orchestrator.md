@@ -284,14 +284,14 @@ python3 .agent/scripts/agent_logger.py retry \
 > `.agent/AGENTS.md` §Per-Agent Model Routing과 `.opencode/oh-my-opencode.jsonc`에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
 | 에이전트 | category | model |
 |---|---|---|
-| A0_Orchestrator | `orchestration` | `opencode/claude-sonnet-4-6` |
-| A1_Trend_Researcher | `visual-creative` | `google/antigravity-gemini-3.1-pro` |
-| A5B_Learner_Analyst | `structural` | `opencode/glm-5` |
-| A3_Curriculum_Architect | `structural` | `opencode/glm-5` |
-| A2_Instructional_Designer | `deep-writing` | `anthropic/claude-opus-4-6` |
-| A7_Differentiation_Advisor | `visual-creative` | `google/antigravity-gemini-3.1-pro` |
-| A5A_QA_Manager | `quality-gate` | `openai/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `deep-writing` (default) | `anthropic/claude-opus-4-6` |
+| A0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| A1_Trend_Researcher | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| A5B_Learner_Analyst | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| A3_Curriculum_Architect | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| A2_Instructional_Designer | `deep-production` | `anthropic/claude-opus-4-6` |
+| A7_Differentiation_Advisor | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| A5A_QA_Manager | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `deep-production` (default) | `anthropic/claude-opus-4-6` |
 ---
 
 ## 시작 가이드 (Startup)

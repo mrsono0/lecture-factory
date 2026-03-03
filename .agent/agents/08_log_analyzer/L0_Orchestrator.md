@@ -153,13 +153,13 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| L0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| L1_Data_Collector | `quick` | `anthropic/claude-haiku-4-5` |
-| L2_Insight_Analyst | `reasoning-high` | `openai/gpt-5.3-codex` |
-| L3_Optimizer | `ultrabrain` | `opencode/gpt-5.3-codex` |
-| L4_Report_Writer | `reasoning-high` | `openai/gpt-5.3-codex` |
-| L5_QA_Auditor | `ultrabrain` | `opencode/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `deep` (default) | `anthropic/claude-opus-4-6` |
+| L0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| L1_Data_Collector | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| L2_Insight_Analyst | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| L3_Optimizer | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| L4_Report_Writer | `deep-production` | `anthropic/claude-opus-4-6` |
+| L5_QA_Auditor | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `deep-production` (default) | `anthropic/claude-opus-4-6` |
 ---
 
 ## 판단 기준 (Criteria)

@@ -175,13 +175,13 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| C0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| C1_Content_Planner | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| C2_Prompt_Engineer | `writing` | `google/antigravity-gemini-3.1-pro` |
-| C3_Image_Generator | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| C4_PPTX_Builder | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| C5_Visual_QA | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
-| (기타 미지정 에이전트) | `visual-engineering` (default) | `google/antigravity-gemini-3.1-pro` |
+| C0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| C1_Content_Planner | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| C2_Prompt_Engineer | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| C3_Image_Generator | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| C4_PPTX_Builder | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| C5_Visual_QA | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `creative-research` (default) | `google/antigravity-gemini-3.1-pro` |
 ---
 
 ## 시작 가이드 (Startup)

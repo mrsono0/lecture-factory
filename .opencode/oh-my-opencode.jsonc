@@ -45,66 +45,42 @@
     }
   },
 
-  // === Category-Level Model Routing (9 Consolidated Categories) ===
+  // === Category-Level Model Routing (5 Consolidated Categories) ===
   // Used via task(category="...", prompt="...")
-  // Consolidated from 19 → 9 categories by merging same-model tiers.
+  // Consolidated from 9 → 5 categories by merging overlapping model tiers.
   // See .agent/plans/model-routing-consolidation-plan.md for mapping details.
   "categories": {
-    // --- Tier 1: Orchestration (pipeline coordination, quality gates) ---
-    // Absorbs: unspecified-low
-    "orchestration": {
+    // --- orchestration-core (absorbs: orchestration, structural[partial]) ---
+    // Pipeline coordination, curriculum architecture, source mining, aggregation
+    "orchestration-core": {
       "model": "opencode/claude-sonnet-4-6"
     },
 
-    // --- Tier 2: Deep Writing (long-form lecture scripts, highest quality) ---
-    // Absorbs: deep, micro-writing, unspecified-high
-    "deep-writing": {
+    // --- task-localization (absorbs: korean-editing, codex-support, fast-extraction, fast-task[transform]) ---
+    // Korean copy-editing, instructor support, structured extraction, mechanical transforms
+    "task-localization": {
+      "model": "google/antigravity-claude-sonnet-4-6"
+    },
+
+    // --- deep-production (absorbs: deep-writing, structural[partial]) ---
+    // Long-form lecture scripts, curriculum design deep work, highest quality output
+    "deep-production": {
       "model": "anthropic/claude-opus-4-6",
       "variant": "max"
     },
 
-    // --- Tier 3: Fast Task (mechanical work — validation, conversion, execution) ---
-    // Absorbs: quick
-    "fast-task": {
-      "model": "anthropic/claude-haiku-4-5"
-    },
-
-    // --- Tier 4: Visual & Creative (slides, research, artistry, 1M context) ---
-    // Absorbs: visual-engineering, artistry, research, writing, curriculum-chunking
-    "visual-creative": {
+    // --- creative-research (absorbs: visual-creative) ---
+    // Slides, artistry, visual engineering, research, 1M context window
+    "creative-research": {
       "model": "google/antigravity-gemini-3.1-pro",
       "variant": "high"
     },
 
-    // --- Tier 5: Fast Extraction (structured extraction, tracing, 1M context) ---
-    // Absorbs: gemini-flash
-    "fast-extraction": {
-      "model": "google/antigravity-gemini-3-flash"
-    },
-
-    // --- Tier 6: Structural (curriculum design, source mining, aggregation) ---
-    // Absorbs: glm5, curriculum-architecture, material-aggregation
-    "structural": {
-      "model": "opencode/glm-5"
-    },
-
-    // --- Tier 7: Quality Gate (QA defense line, maximum reasoning) ---
-    // Absorbs: ultrabrain, reasoning-high, reasoning-xhigh
-    "quality-gate": {
+    // --- strict-gatekeeper (absorbs: quality-gate, fast-task[validation]) ---
+    // QA defense line, validation checks, maximum reasoning for correctness
+    "strict-gatekeeper": {
       "model": "openai/gpt-5.3-codex",
       "variant": "xhigh"
-    },
-
-    // --- Tier 8: Codex Support (instructor support content generation) ---
-    // Absorbs: instructor-support-codex
-    "codex-support": {
-      "model": "openai/gpt-5.3-codex"
-    },
-
-    // --- Tier 9: Korean Editing (copy & tone editing for Korean text) ---
-    // Absorbs: antigravity-sonnet
-    "korean-editing": {
-      "model": "google/antigravity-claude-sonnet-4-6"
     }
   }
 }
