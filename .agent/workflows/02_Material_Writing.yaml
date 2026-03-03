@@ -282,9 +282,6 @@ model_routing:
   _ssot: ".agent/AGENTS.md §Per-Agent Model Routing"
   default_category: "deep-production"  # P02 Writer 기본 카테고리
   overrides:
-    A4B_Session_Writer:
-      category: "task-localization"  # sonnet, 순차 직접 집필 모드 — task() 재위임 금지
-      note: "쫘크 타입별 4~7섹션 교안 직접 집필 (sequential_direct)"
     A8_QA_Editor:
       category: "task-localization"
       note: "구어체 변환, 한국어 톤 비파괴 편집"

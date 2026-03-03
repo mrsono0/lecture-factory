@@ -173,9 +173,8 @@ A3(Curriculum Architect)의 Day-Session 경계표와 워크플로우 YAML의 `ou
 1. **step_4** (A4B): pair 파일 집필 → `02_Material/pairs/Day{N}_{AM|PM}_Part{P}_{주제}.md`
 2. **step_5a** (스크립트 pair_merge): pairs/ → `Day{N}_{AM|PM}_{주제}.md` 기계적 연결
 3. **step_5b** (A4C LLM merge_review): 머지 품질 보강 (전환 문단, 브릿지, 용어 통일)
-4. **step_11** (A4C LLM): 보조 패킷 인라인 통합
-5. **step_6** (스크립트 aggregate): AM/PM 파일 → `강의교안_v2.1.md` 취합
-6. **step_7** (A8): 최종 QA
+4. **step_6** (스크립트 aggregate): AM/PM 파일 → `강의교안_v2.1.md` 취합
+5. **step_7** (A8): 최종 QA
 **분할 출력 시 필수 규칙:**
 1. **A3 골격 패킷 확인**: A3이 AM/PM 분할 플래그를 설정했는지 확인합니다.
 2. **파일 독립성**: 각 AM/PM 파일은 독립적으로 읽을 수 있는 완전한 교안이어야 합니다 (헤더, 학습목표, 비유 표, 브릿지노트 포함).
@@ -277,7 +276,7 @@ python3 .agent/scripts/agent_logger.py retry \
 # foreach_session 배치 병렬 START (--parallel-group 포함)
 python3 .agent/scripts/agent_logger.py start \
   --workflow 02_Material_Writing --run-id $RUN_ID \
-  --step-id step_4_session_{세션ID} --agent A4B_Session_Writer --category deep-writing \
+  --step-id step_4_session_{세션ID} --agent A4B_Session_Writer --category task-localization \
   --action write_session --input-bytes {입력바이트수} --parallel-group batch_{N}
 
 # SESSION_START (세션 단위 병렬 실행 시작)
