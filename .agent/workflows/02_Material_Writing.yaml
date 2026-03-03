@@ -300,7 +300,7 @@ steps:
   - id: step_12_ampm_split
     script: ".agent/scripts/aggregate_material.py"
     agent: "script/aggregate_material"
-    category: "fast-task"
+    category: "task-localization"
     action: "ampm_split"
     depends_on: "step_11_enrich_sessions"
     input:
@@ -317,7 +317,7 @@ steps:
   - id: step_13_aggregation
     script: ".agent/scripts/aggregate_material.py"
     agent: "script/aggregate_material"
-    category: "fast-task"
+    category: "task-localization"
     action: "aggregate"
     depends_on: "step_12_ampm_split"
     input: 
@@ -369,44 +369,44 @@ steps:
 # 불일치 시 .agent/AGENTS.md가 우선합니다.
 model_routing:
   _ssot: ".agent/AGENTS.md §Per-Agent Model Routing"
-  default_category: "deep-writing"  # P02 Writer 기본 카테고리
+  default_category: "deep-production"  # P02 Writer 기본 카테고리
   overrides:
     A4B_Session_Writer:
-      category: "deep-writing"
+      category: "deep-production"
       note: "청크 타입별 4~7섹션 교안 집필 — P02 기본 카테고리"
     A4C_Material_Aggregator:
-      category: "structural"
+      category: "task-localization"
       note: "보조 패킷 통합, AM/PM 분할, 최종 취합"
     A11_Chart_Specifier:
-      category: "visual-creative"
+      category: "creative-research"
       note: "표 및 Mermaid 다이어그램 설계"
     A6_Visualization_Designer:
-      category: "visual-creative"
+      category: "creative-research"
       note: "시각화 설계"
     A8_QA_Editor:
-      category: "quality-gate"
-      note: "최종 QA — 최고 추론 모델"
+      category: "task-localization"
+      note: "구어체 변환, 한국어 톤 비파괴 편집"
     A9_Instructor_Support_Designer:
-      category: "codex-support"
-      note: "강사 지원 패킷 생성"
+      category: "deep-production"
+      note: "강사 진행 가이드·설명 대본·전환 멘트 장문 집필"
     A2_Traceability_Curator:
-      category: "fast-extraction"
+      category: "task-localization"
       note: "출처 추적 구축 — 1M context 구조화 매핑"
     A5_Code_Validator:
-      category: "structural"
-      note: "코드 실행 검증"
+      category: "strict-gatekeeper"
+      note: "코드 실행 검증 — 최고 추론 모델"
     A10_Differentiation_Strategist:
-      category: "visual-creative"
+      category: "creative-research"
       note: "차별화 강화 — 창의적 전략"
     A1_Source_Miner:
-      category: "structural"
-      note: "3-Source 수집"
+      category: "orchestration-core"
+      note: "3-Source 수집 — 비정형 소스 뼈대 팩트 추출"
     A3_Curriculum_Architect:
-      category: "structural"
+      category: "orchestration-core"
       note: "골격 설계"
     A7_Learner_Experience_Designer:
-      category: "structural"
-      note: "실습 설계"
+      category: "deep-production"
+      note: "실습 설계 — 학습자 경험 중심 상세 가이드 작성"
 
 # ── 업스트림/다운스트림 연동 ──────────────────────────────────────────
 upstream_integration:

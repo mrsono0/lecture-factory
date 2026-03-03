@@ -220,12 +220,12 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| P0_Orchestrator | `fast-extraction` | `google/antigravity-gemini-3-flash` |
-| P1_Education_Structurer | `fast-extraction` | `google/antigravity-gemini-3-flash` |
-| P2_Slide_Prompt_Architect | `fast-extraction` | `google/antigravity-gemini-3-flash` |
-| P3_Visual_Spec_Curator | `visual-creative` | `google/antigravity-gemini-3.1-pro` |
-| P4_QA_Auditor | `quality-gate` | `openai/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `visual-creative` (default) | `google/antigravity-gemini-3.1-pro` |
+| P0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| P1_Education_Structurer | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| P2_Slide_Prompt_Architect | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| P3_Visual_Spec_Curator | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| P4_QA_Auditor | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `creative-research` (default) | `google/antigravity-gemini-3.1-pro` |
 ---
 
 ## 시작 가이드 (Startup)

@@ -57,6 +57,13 @@ class AgentLogger:
 
     # 비용 테이블 (USD per 1K tokens)
     COST_TABLE = {
+        # 신 5-카테고리 (AGENTS.md §Per-Agent Model Routing SSOT)
+        "orchestration-core": {"input": 0.003, "output": 0.015},  # Sonnet tier
+        "task-localization": {"input": 0.003, "output": 0.015},  # Sonnet tier
+        "deep-production": {"input": 0.015, "output": 0.075},  # Opus tier
+        "creative-research": {"input": 0.003, "output": 0.015},  # Gemini Pro tier
+        "strict-gatekeeper": {"input": 0.015, "output": 0.075},  # Codex tier
+        # 레거시 별칭 (하위 호환성)
         "quick": {"input": 0.00025, "output": 0.00125},
         "unspecified-low": {"input": 0.003, "output": 0.015},
         "deep": {"input": 0.015, "output": 0.075},
@@ -72,7 +79,6 @@ class AgentLogger:
         "glm5": {"input": 0.003, "output": 0.015},
         "material-aggregation": {"input": 0.003, "output": 0.015},
         "instructor-support-codex": {"input": 0.015, "output": 0.075},
-        # 신 9-카테고리 (AGENTS.md §Per-Agent Model Routing SSOT)
         "orchestration": {"input": 0.003, "output": 0.015},
         "deep-writing": {"input": 0.015, "output": 0.075},
         "fast-task": {"input": 0.00025, "output": 0.00125},
@@ -166,7 +172,7 @@ class AgentLogger:
         self, input_tokens: int, output_tokens: int, category: str
     ) -> float:
         """비용 계산 (USD)"""
-        prices = self.COST_TABLE.get(category, self.COST_TABLE["deep"])
+        prices = self.COST_TABLE.get(category, self.COST_TABLE["orchestration-core"])
         input_cost = input_tokens * prices["input"] / 1000
         output_cost = output_tokens * prices["output"] / 1000
         return round(input_cost + output_cost, 6)

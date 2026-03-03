@@ -152,13 +152,13 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| B0_Orchestrator | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| B1_Slide_Parser | `unspecified-low` | `opencode/claude-sonnet-4-6` |
-| B2_HTML_Renderer | `visual-engineering` | `google/antigravity-gemini-3.1-pro` |
-| B3_Asset_Generator | `quick` (default) | `anthropic/claude-haiku-4-5` |
-| B4_PPTX_Assembler | `quick` (default) | `anthropic/claude-haiku-4-5` |
-| B5_Visual_QA | `visual-engineering` | `google/antigravity-gemini-3.1-pro` |
-| (기타 미지정 에이전트) | `quick` (default) | `anthropic/claude-haiku-4-5` |
+| B0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| B1_Slide_Parser | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| B2_HTML_Renderer | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| B3_Asset_Generator | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| B4_PPTX_Assembler | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| B5_Visual_QA | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `task-localization` (default) | `google/antigravity-claude-sonnet-4-6` |
 ---
 
 ## 시작 가이드 (Startup)

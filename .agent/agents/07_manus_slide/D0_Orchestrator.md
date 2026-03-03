@@ -156,13 +156,13 @@ python3 .agent/scripts/agent_logger.py retry \
 > `.agent/AGENTS.md` §Per-Agent Model Routing (P07 Manus Slide)에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
 | 에이전트 | category | model |
 |---|---|---|
-| D0_Orchestrator | `orchestration` | `opencode/claude-sonnet-4-6` |
-| D1_Prompt_Validator | `fast-task` | `anthropic/claude-haiku-4-5` |
-| D2_Chunk_Splitter | `orchestration` | `opencode/claude-sonnet-4-6` |
-| D3_Submission_Manager | `fast-task` | `anthropic/claude-haiku-4-5` |
-| D4_Post_Processor | `fast-task` | `anthropic/claude-haiku-4-5` |
-| D5_Visual_QA | `quality-gate` | `openai/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `fast-task` (default) | `anthropic/claude-haiku-4-5` |
+| D0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| D1_Prompt_Validator | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| D2_Chunk_Splitter | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| D3_Submission_Manager | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| D4_Post_Processor | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
+| D5_Visual_QA | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| (기타 미지정 에이전트) | `task-localization` (default) | `google/antigravity-claude-sonnet-4-6` |
 ---
 
 ## 시작 가이드 (Startup)
