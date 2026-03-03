@@ -328,6 +328,7 @@ class AgentLogger:
 
         entry = {
             "run_id": self.run_id,
+            "parent_run_id": self.parent_run_id,
             "ts": ts,
             "status": "FAIL",
             "workflow": self.workflow,
@@ -352,6 +353,7 @@ class AgentLogger:
 
         entry = {
             "run_id": self.run_id,
+            "parent_run_id": self.parent_run_id,
             "ts": ts,
             "status": "RETRY",
             "workflow": self.workflow,
@@ -590,7 +592,7 @@ class AgentLogger:
 
     def _get_category_for_step(self, step_id: str) -> str:
         """step_id에 대응하는 category 조회 (log_start에서 저장된 매핑 사용)"""
-        return self._step_categories.pop(step_id, "deep")
+        return self._step_categories.pop(step_id, "deep-production")
 
     def get_log_path(self) -> Path:
         """현재 로그 파일 경로 반환"""
@@ -850,6 +852,7 @@ def main():
             "action": args.action,
             "parallel_group": args.parallel_group,
             "retry": args.retry,
+            "parent_run_id": args.parent_run_id,
         }
         _save_state(args.workflow, args.run_id, state)
 
@@ -883,9 +886,11 @@ def main():
         duration_sec = None
         if start_time:
             duration_sec = time.time() - start_time
+        parent_run_id = step_state.get("parent_run_id")
         logger = AgentLogger(
             workflow=args.workflow,
             run_id=args.run_id,
+            parent_run_id=parent_run_id,
         )
         # category/input_bytes/meta를 수동 주입 (CLI 모드)
         logger._step_categories[args.step_id] = category
@@ -974,6 +979,7 @@ def main():
             "action": args.action,
             "parallel_group": args.parallel_group,
             "retry": args.retry,
+            "parent_run_id": args.parent_run_id,
         }
         _save_state(args.workflow, args.run_id, state)
 
@@ -1007,9 +1013,11 @@ def main():
         duration_sec = None
         if start_time:
             duration_sec = time.time() - start_time
+        parent_run_id = step_state.get("parent_run_id")
         logger = AgentLogger(
             workflow=args.workflow,
             run_id=args.run_id,
+            parent_run_id=parent_run_id,
         )
         # category/meta를 수동 주입 (CLI 모드)
         logger._step_categories[args.step_id] = category

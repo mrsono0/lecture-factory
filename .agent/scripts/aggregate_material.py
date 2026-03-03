@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""aggregate_material.py — step_5a(pair_merge) + step_12(AM/PM 분할) + step_13(최종 취합) 자동화 스크립트.
+"""aggregate_material.py — step_5a(pair_merge) + step_6(최종 취합) 자동화 스크립트.
 
 워크플로우 02_Material_Writing의 기계적 스텝들을 LLM 호출 없이 수행합니다.
 Usage:
@@ -610,12 +610,12 @@ def main() -> int:
         print(f"   → {len(files)} 파일 생성 완료")
         print()
     if action in ("ampm_split", "all"):
-        print("📋 step_12: AM/PM 분할 파일 생성...")
+        print("📋 ampm_split (legacy, 현재 미사용)...")
         files = generate_ampm_files(project_dir, halfdays)
         print(f"   → {len(files)} 파일 생성 완료")
         print()
     if action in ("aggregate", "all"):
-        print("📋 step_13: 최종 교안 취합...")
+        print("📋 step_6: 최종 교안 취합...")
         out = aggregate_sessions(project_dir, halfdays)
         print(f"   → {out}")
         print()

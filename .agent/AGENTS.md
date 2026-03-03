@@ -47,13 +47,13 @@ YYYY-MM-DD_강의제목/
 ### Team 2: Writer (02_writer) — 13 agents
 **팀 공통 원칙**: 초보 강사가 교안만 읽고 막힘 없이 설명할 수 있어야 합니다.
 **대본 시스템**: 모든 주요 개념에 🗣️ 강사 대본, 실습에 🎙️ 실습 가이드 대본을 포함합니다.
-**Flow**:
+**Flow (v6.0)**:
 - Phase 1: A1 → A2 (3-Source 소스 수집 및 구조화)
-- Phase 2: A3 → A4B (골격 설계 + 세션별 집필, foreach_session 병렬)
-- Phase 3: A5 + A6 + A11 + A7 + A9 + A10 (6개 보조 패킷 병렬 생성)
-- Phase 4: A4C (보조 패킷 인라인 통합) → script (AM/PM 분할)
-- Phase 5: script (최종 취합)
-- Phase 6: A8 (최종 QA)
+- Phase 2: A3 → A4B (골격 설계 + 세션별 순차 직접 집필, pair_size: 2)
+- Phase 3: script pair_merge → A4C merge_review (머지 품질 보강)
+- Phase 4: script aggregate (최종 취합)
+- Phase 5: A8 (최종 QA)
+> **Note**: A5, A6, A7, A9, A10, A11은 프롬프트 정의가 존재하나 v6.0 워크플로우에서는 미호출. 향후 Phase 3 보조 패킷 병렬 생성 단계로 재도입 가능.
 
 ### Team 3: Visualizer (03_visualizer) — 11 agents
 **Flow**:
@@ -131,6 +131,7 @@ YYYY-MM-DD_강의제목/
 | | | A1 Source Miner | `orchestration-core` |
 | | | A2 Traceability Curator | `task-localization` |
 | | | A3 Curriculum Architect | `orchestration-core` |
+| | | A4B Session Writer | `task-localization` |
 | | | A4C Material Aggregator | `task-localization` |
 | | | A5 Code Validator | `strict-gatekeeper` |
 | | | A6 Visualization Designer | `creative-research` |
