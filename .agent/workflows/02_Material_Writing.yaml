@@ -167,7 +167,7 @@ steps:
       - "3-Source Fact Packet (세션별 통합 팩트)"
       - "Traceability Packet"
       - "Output Language: Korean"
-    output: "Session Material Files (02_Material/sessions/세션-*.md)"
+    output: "Pair Material Files (02_Material/pairs/Day{N}_{AM|PM}_Part{P}_{주제}.md)"
     notes: |
       🎯 핵심: 각 세션(50분)을 개별 파일로 집필. 2개 세션 단위 순차 처리.
       ⚠️ task() 재위임 절대 금지 — Write 도구로 직접 파일 저장
@@ -195,22 +195,35 @@ steps:
         - 대본만 있고 본문이 없는 섹션은 불완전 산출물로 판정
         - 교안 본문 어조: 설명체 (~입니다, ~됩니다) / 강사 대본 어조: 구어체 (~해요, ~거예요)
 
-  # Phase 3: AM/PM 분할 파일 생성
-  - id: step_5_ampm_split
+  # Phase 3: pair_merge + merge_review
+  - id: step_5a_pair_merge
     script: ".agent/scripts/aggregate_material.py"
     agent: "script/aggregate_material"
     category: "task-localization"
-    action: "ampm_split"
+    action: "pair_merge"
     depends_on: "step_4_session_writing"
     input:
-      - "Session Materials"
+      - "Pair Material Files (02_Material/pairs/Day*_Part*.md)"
       - "Day-Session 경계표 (강의구성안 기반)"
-    output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_{주제요약}.md)"
+    output: "AM/PM Merged Files (02_Material/Day{N}_{AM|PM}_{주제}.md)"
     notes: |
-      🤖 스크립트 자동화: LLM 호출 없이 기계적 분할 수행
-      🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 생성
-      📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
-      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md
+      🤖 스크립트 자동화: LLM 호출 없이 기계적 연결 수행
+      🎯 핵심: pairs/ 내 Part 파일을 (day, period) 그룹별로 연결하여 Day AM/PM 파일 생성
+      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제}.md
+
+  - id: step_5b_merge_review
+    agent: "02_writer/A4C_Material_Aggregator"
+    action: "merge_review"
+    depends_on: "step_5a_pair_merge"
+    input:
+      - "AM/PM Merged Files (02_Material/Day{N}_{AM|PM}_{주제}.md)"
+      - "강의구성안 (01_Planning/강의구성안.md)"
+    output: "Quality-Enhanced AM/PM Files"
+    notes: |
+      🧠 LLM 머지 품질 보강 (step_5b): 스크립트 머지 결과의 품질 향상
+      🎯 핵심: Part 경계 전환 문단 삽입, 브릿지 노트 강화, 용어 통일
+      ⚠️ 본문 내용 수정/요약/삭제 금지 — 연결 품질만 보강
+      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제}.md (in-place 보강)
 
   # Phase 4: 취합 및 통합
   - id: step_6_aggregation
@@ -218,7 +231,7 @@ steps:
     agent: "script/aggregate_material"
     category: "task-localization"
     action: "aggregate"
-    depends_on: "step_5_ampm_split"
+    depends_on: "step_5b_merge_review"
     input: 
       - "All Session Materials"
       - "AM/PM Split Files"
@@ -259,43 +272,7 @@ steps:
     decision:
       approved: "Finish"
       rejected: "Go to step_4_session_writing"
-  # Phase 4.5: AM/PM 분할 파일 생성
-  - id: step_12_ampm_split
-    script: ".agent/scripts/aggregate_material.py"
-    agent: "script/aggregate_material"
-    category: "task-localization"
-    action: "ampm_split"
-    depends_on: "step_11_enrich_sessions"
-    input:
-      - "Enriched Session Materials"
-      - "Day-Session 경계표 (강의구성안 기반)"
-    output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_{주제요약}.md)"
-    notes: |
-      🤖 스크립트 자동화: LLM 호출 없이 기계적 분할 수행
-      🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 생성
-      📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
-      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md
-
-  # Phase 5: 취합 및 통합
-  - id: step_13_aggregation
-    script: ".agent/scripts/aggregate_material.py"
-    agent: "script/aggregate_material"
-    category: "task-localization"
-    action: "aggregate"
-    depends_on: "step_12_ampm_split"
-    input: 
-      - "All Enriched Session Materials"
-      - "AM/PM Split Files"
-      - "강의구성안 (의존성 그래프, 메타데이터)"
-    output: "Aggregated Material Draft (02_Material/강의교안_v2.1.md)"
-    notes: |
-      🤖 스크립트 자동화: LLM 호출 없이 기계적 취합 수행
-      🎯 핵심: 세션 파일 정렬 → 메타데이터 추출 → 목차 생성 → 본문 연결 → 부록 템플릿
-      📋 최종 구조:
-        - 헤더 및 메타데이터
-        - 목차 및 네비게이션
-        - 개별 세션 내용 통합 (청크 타입별 섹션 구조 유지)
-        - 부록 (키워드 인덱스, 로드맵 템플릿, 강사 체크리스트)
+  # (step_12/step_13 삭제됨 — step_5a/step_6으로 통합)
 
 # ── 모델 라우팅 (정본: .agent/AGENTS.md §Per-Agent Model Routing) ──────────────────────────────────────────
 # 아래는 .agent/AGENTS.md의 P02 Writer 섹션과 동기화된 참조입니다.

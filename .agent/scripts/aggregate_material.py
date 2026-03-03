@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""aggregate_material.py — step_12(AM/PM 분할) + step_13(최종 취합) 자동화 스크립트.
+"""aggregate_material.py — step_5a(pair_merge) + step_12(AM/PM 분할) + step_13(최종 취합) 자동화 스크립트.
 
-워크플로우 02_Material_Writing의 step_12/step_13을 LLM 호출 없이 기계적으로 수행합니다.
-
+워크플로우 02_Material_Writing의 기계적 스텝들을 LLM 호출 없이 수행합니다.
 Usage:
-    python aggregate_material.py ampm_split <project_dir>
-    python aggregate_material.py aggregate  <project_dir>
+    python aggregate_material.py pair_merge  <project_dir>  # pairs/ → Day AM/PM 파일
+    python aggregate_material.py ampm_split  <project_dir>  # sessions/ → Day AM/PM 파일
+    python aggregate_material.py aggregate   <project_dir>  # 최종 취합
     python aggregate_material.py all        <project_dir>   # ampm_split → aggregate 순차 실행
-
-Arguments:
-    project_dir: 프로젝트 루트 (예: 2026-03-01_AI-native_클로드_.../）
+    project_dir: 프로젝트 루트 (예: 2026-03-01_AI-native_클로드_...)
                  하위에 01_Planning/강의구성안.md, 02_Material/sessions/ 가 존재해야 함.
 """
 
@@ -162,6 +160,96 @@ def match_session_files(sessions_dir: Path, halfdays: list[HalfDay]) -> dict[int
 
     return mapping
 
+
+
+
+# ──────────────────────────────────────────────────────────────
+# step_5a: pair_merge — pairs/ → Day AM/PM 파일
+# ──────────────────────────────────────────────────────────────
+
+_RE_PAIR_FILE = re.compile(r"Day(\d+)_(AM|PM)_Part(\d+)_(.+?)\.md$")
+
+
+def merge_pairs(project_dir: Path) -> list[Path]:
+    """pairs/ 내 Part 파일들을 Day/AM|PM 단위로 머지하여 Day AM/PM 파일 생성."""
+    pairs_dir = project_dir / "02_Material" / "pairs"
+    material_dir = project_dir / "02_Material"
+    material_dir.mkdir(parents=True, exist_ok=True)
+
+    if not pairs_dir.exists():
+        print(f"  ⚠️ pairs/ 디렉토리 미발견: {pairs_dir}")
+        return []
+
+    # 강의 제목 추출
+    syllabus = project_dir / "01_Planning" / "강의구성안.md"
+    course_title = "강의"
+    if syllabus.exists():
+        first_line = syllabus.read_text(encoding="utf-8").splitlines()[0]
+        course_title = first_line.lstrip("# ").split("—")[0].strip()
+
+    # 1. Part 파일 수집 및 그룹핑 (day, period) → [(part_num, topic, path)]
+    groups: dict[tuple[int, str], list[tuple[int, str, Path]]] = {}
+    for f in sorted(pairs_dir.glob("Day*_Part*.md")):
+        m = _RE_PAIR_FILE.search(f.name)
+        if not m:
+            continue
+        day = int(m.group(1))
+        period = m.group(2)
+        part_num = int(m.group(3))
+        topic = m.group(4)
+        key = (day, period)
+        groups.setdefault(key, []).append((part_num, topic, f))
+
+    if not groups:
+        print("  ⚠️ pairs/ 내 Part 파일 없음")
+        return []
+
+    generated: list[Path] = []
+
+    for (day, period), parts in sorted(groups.items()):
+        parts.sort(key=lambda x: x[0])  # Part 번호 순
+
+        # 주제 요약: 첫 Part과 마지막 Part의 topic 결합
+        if len(parts) == 1:
+            topic_summary = parts[0][1]
+        else:
+            topic_summary = f"{parts[0][1]}~{parts[-1][1]}"
+        topic_summary = re.sub(r"[/\\:*?\"<>|]", "", topic_summary)
+        topic_summary = re.sub(r"\s+", "_", topic_summary)
+        if len(topic_summary) > 30:
+            topic_summary = topic_summary[:30]
+
+        filename = f"Day{day}_{period}_{topic_summary}.md"
+        out_path = material_dir / filename
+
+        content_parts: list[str] = []
+
+        # 헤더
+        content_parts.append(f"# {course_title} — Day {day} {period}")
+        content_parts.append("")
+        content_parts.append(f"> **과정명**: {course_title}")
+        content_parts.append(f"> **일자**: Day {day}")
+        content_parts.append(f"> **시간대**: {period}")
+        content_parts.append(f"> **Part 수**: {len(parts)}개")
+        content_parts.append("")
+        content_parts.append("---")
+        content_parts.append("")
+
+        # 본문: Part 파일 순서대로 연결
+        for _part_num, _topic, fpath in parts:
+            content = fpath.read_text(encoding="utf-8")
+            content_parts.append(content.rstrip())
+            content_parts.append("")
+            content_parts.append("---")
+            content_parts.append("")
+
+        out_path.write_text("\n".join(content_parts), encoding="utf-8")
+        generated.append(out_path)
+        print(
+            f"  ✅ {filename} ({len(parts)} parts, {out_path.stat().st_size:,} bytes)"
+        )
+
+    return generated
 
 # ──────────────────────────────────────────────────────────────
 # 세션 파일 메타데이터 추출
@@ -480,9 +568,9 @@ def main() -> int:
     action = sys.argv[1]
     project_dir = Path(sys.argv[2]).resolve()
 
-    if action not in ("ampm_split", "aggregate", "all"):
+    if action not in ("pair_merge", "ampm_split", "aggregate", "all"):
         print(f"❌ Unknown action: {action}")
-        print("   Valid actions: ampm_split, aggregate, all")
+        print("   Valid actions: pair_merge, ampm_split, aggregate, all")
         return 1
 
     syllabus = project_dir / "01_Planning" / "강의구성안.md"
@@ -516,12 +604,16 @@ def main() -> int:
     print()
 
     # 3. 실행
+    if action == "pair_merge":
+        print("📋 step_5a: pair_merge — pairs/ → Day AM/PM 파일...")
+        files = merge_pairs(project_dir)
+        print(f"   → {len(files)} 파일 생성 완료")
+        print()
     if action in ("ampm_split", "all"):
         print("📋 step_12: AM/PM 분할 파일 생성...")
         files = generate_ampm_files(project_dir, halfdays)
         print(f"   → {len(files)} 파일 생성 완료")
         print()
-
     if action in ("aggregate", "all"):
         print("📋 step_13: 최종 교안 취합...")
         out = aggregate_sessions(project_dir, halfdays)
