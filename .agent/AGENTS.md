@@ -112,10 +112,10 @@ YYYY-MM-DD_강의제목/
 ### 5개 통합 카테고리
 | # | 카테고리 | 모델 | 용도 |
 |---|---------|------|------|
-| 1 | `orchestration-core` | `opencode/claude-sonnet-4-6` | 파이프라인 총괄, 구조 설계, 흐름 제어 |
-| 2 | `task-localization` | `google/antigravity-claude-sonnet-4-6` | 기계적 변환, 한국어 톤 편집, 정규화 |
+| 1 | `orchestration-core` | `anthropic/claude-sonnet-4-6` | 파이프라인 총괄, 구조 설계, 흐름 제어 |
+| 2 | `task-localization` | `anthropic/claude-sonnet-4-6` | 기계적 변환, 한국어 톤 편집, 정규화 |
 | 3 | `deep-production` | `anthropic/claude-opus-4-6` (variant=max) | 장문 교안/대본/리포트 집필 |
-| 4 | `creative-research` | `google/antigravity-gemini-3.1-pro` (variant=high) | 시각 설계, 리서치, 창의적 작업 |
+| 4 | `creative-research` | `opencode/glm-5` (variant=high) | 시각 설계, 리서치, 창의적 작업 |
 | 5 | `strict-gatekeeper` | `openai/gpt-5.3-codex` (variant=xhigh) | 코드/논리/출처 검증 최종 QA |
 
 ### 파이프라인별 에이전트 모델 매핑

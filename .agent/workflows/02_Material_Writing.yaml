@@ -1,6 +1,6 @@
 name: "Material Writing Pipeline - Session-Based Aggregation"
 description: "세션별 개별 집필 후 취합하는 교안 작성 워크플로우 (Writer Team) ⚠️ MUST ANALYZE CONTEXT: If a local folder is provided, analyze its contents using list_dir/read_file BEFORE proceeding."
-version: "5.0"
+version: "6.0"
 
 output_path: "{YYYY-MM-DD_강의제목}/02_Material/강의교안_v2.1.md"
 max_retries: 2
@@ -154,13 +154,13 @@ steps:
       - "Output Language: Korean"
     output: "Skeleton Packet (per session)"
 
-  # Phase 2: 세션별 개별 집필
+  # Phase 2: 세션별 순차 직접 집필
   - id: step_4_session_writing
     agent: "02_writer/A4B_Session_Writer"
     action: "write_session_material"
     depends_on: "step_3_skeleton_design"
-    parallel_mode: "foreach_session"  # 각 세션별 독립 실행
-    batch_size: 3  # 한 번에 처리할 세션 수 (API rate limit 고려)
+    execution_mode: "sequential_direct"  # 순차 직접 집필 — task() 재위임 절대 금지
+    pair_size: 2  # 2개 세션을 연속 집필 (연속성 확보)
     input: 
       - "Session Spec (from 강의구성안) — 📚 참고자료 매핑 섹션 포함"
       - "Skeleton Packet"
@@ -169,7 +169,8 @@ steps:
       - "Output Language: Korean"
     output: "Session Material Files (02_Material/sessions/세션-*.md)"
     notes: |
-      🎯 핵심: 각 세션(50분)을 개별 파일로 집필
+      🎯 핵심: 각 세션(50분)을 개별 파일로 집필. 2개 세션 단위 순차 처리.
+      ⚠️ task() 재위임 절대 금지 — Write 도구로 직접 파일 저장
       📐 필수 구조: A0이 정의한 청크 타입별 4~7섹션 구조를 준수
         - lab/code 청크: §1~§7 전부 필수
         - narrative/diagram 청크: §1개요, §2핵심개념, §3상세내용, §6요약 필수 + §4/§5/§7 해당 시
@@ -194,108 +195,70 @@ steps:
         - 대본만 있고 본문이 없는 섹션은 불완전 산출물로 판정
         - 교안 본문 어조: 설명체 (~입니다, ~됩니다) / 강사 대본 어조: 구어체 (~해요, ~거예요)
 
-
-  # Phase 3: 시각화 및 표 설계 (병렬)
-  - id: step_5_code_validation
-    agent: "02_writer/A5_Code_Validator"
-    action: "verify_code"
+  # Phase 3: AM/PM 분할 파일 생성
+  - id: step_5_ampm_split
+    script: ".agent/scripts/aggregate_material.py"
+    agent: "script/aggregate_material"
+    category: "task-localization"
+    action: "ampm_split"
     depends_on: "step_4_session_writing"
-    parallel_group: "phase3_enhancement"
-    input: 
-      - "Session Material Files"
-      - "Output Language: Korean"
-    output: "Verified Code Blocks & Tech Report (02_Material/packets/code_validation/)"
+    input:
+      - "Session Materials"
+      - "Day-Session 경계표 (강의구성안 기반)"
+    output: "AM/PM Split Files (02_Material/Day{1-5}_{AM|PM}_{주제요약}.md)"
+    notes: |
+      🤖 스크립트 자동화: LLM 호출 없이 기계적 분할 수행
+      🎯 핵심: Day-Session 경계표 기반으로 AM/PM 분할 파일 생성
+      📝 각 AM/PM 파일은 해당 세션들을 순서대로 연결하고 Day 헤더/목차 포함
+      📁 산출물: 02_Material/Day{N}_{AM|PM}_{주제요약}.md
 
-  - id: step_6_visualization_design
-    agent: "02_writer/A6_Visualization_Designer"
-    action: "design_diagrams"
-    depends_on: "step_4_session_writing"
-    parallel_group: "phase3_enhancement"
+  # Phase 4: 취합 및 통합
+  - id: step_6_aggregation
+    script: ".agent/scripts/aggregate_material.py"
+    agent: "script/aggregate_material"
+    category: "task-localization"
+    action: "aggregate"
+    depends_on: "step_5_ampm_split"
     input: 
-      - "Session Material Files"
+      - "All Session Materials"
+      - "AM/PM Split Files"
+      - "강의구성안 (의존성 그래프, 메타데이터)"
+    output: "Aggregated Material Draft (02_Material/강의교안_v2.1.md)"
+    notes: |
+      🤖 스크립트 자동화: LLM 호출 없이 기계적 취합 수행
+      🎯 핵심: 세션 파일 정렬 → 메타데이터 추출 → 목차 생성 → 본문 연결 → 부록 템플릿
+      📋 최종 구조:
+        - 헤더 및 메타데이터
+        - 목차 및 네비게이션
+        - 개별 세션 내용 통합
+        - 부록 (키워드 인덱스, 로드맵 템플릿, 강사 체크리스트)
+      📁 산출물: 02_Material/강의교안_v2.1.md
+
+  # Phase 5: 최종 QA
+  - id: step_7_final_qa
+    agent: "02_writer/A8_QA_Editor"
+    action: "quality_assurance_v2"
+    depends_on: "step_6_aggregation"
+    input: 
+      - "Aggregated Material (v2.1)"
       - "3-Source Fact Packet"
+      - "Traceability Packet"
       - "Output Language: Korean"
-    output: "Visualization Packet (Mermaid Diagrams)"
-
-  - id: step_7_chart_specification
-    agent: "02_writer/A11_Chart_Specifier"
-    action: "design_tables"
-    depends_on: "step_4_session_writing"
-    parallel_group: "phase3_enhancement"
-    input: 
-      - "Session Material Files"
-      - "chunk_type per session"
-      - "Output Language: Korean"
-    output: "Table & Chart Specifications (02_Material/visual_specs/)"
-    notes: |
-      📊 표 설계: 비교 표, 요약 표, 단계별 표
-      📈 다이어그램: Mermaid flowchart, sequenceDiagram, classDiagram
-      🎯 청크 타입별 최적화: narrative/code/diagram/lab별 적절한 시각화
-
-  - id: step_8_learner_experience
-    agent: "02_writer/A7_Learner_Experience_Designer"
-    action: "design_labs"
-    depends_on: "step_4_session_writing"
-    parallel_group: "phase3_enhancement"
-    input: 
-      - "Session Material Files"
-      - "Learner Persona"
-      - "Output Language: Korean"
-    output: "Lab Packet & Example Sets"
-
-  - id: step_9_instructor_support
-    agent: "02_writer/A9_Instructor_Support_Designer"
-    action: "create_guide"
-    depends_on: "step_4_session_writing"
-    parallel_group: "phase3_enhancement"
-    input: 
-      - "Session Material Files"
-      - "Output Language: Korean"
-    output: "Instructor Support Packet"
-
-  - id: step_10_differentiation
-    agent: "02_writer/A10_Differentiation_Strategist"
-    action: "enhance_content"
-    depends_on: "step_4_session_writing"
-    parallel_group: "phase3_enhancement"
-    input: 
-      - "Session Material Files"
-      - "Output Language: Korean"
-    output: "Differentiation Strategy (USP) per session"
-
-  # Phase 4: 보조 패킷 통합 (세션별)
-  - id: step_11_enrich_sessions
-    agent: "02_writer/A4C_Material_Aggregator"
-    action: "enrich_sessions_with_packets"
-    depends_on:
-      - "step_5_code_validation"
-      - "step_6_visualization_design"
-      - "step_7_chart_specification"
-      - "step_8_learner_experience"
-      - "step_9_instructor_support"
-      - "step_10_differentiation"
-    input: 
-      - "Session Material Files (청크 타입별 4~7섹션 구조)"
-      - "Verified Code Blocks & Tech Report"
-      - "Visualization Packet"
-      - "Table & Chart Specifications"
-      - "Lab Packet & Example Sets"
-      - "Instructor Support Packet"
-      - "Differentiation Strategy"
-      - "Output Language: Korean"
-    output: "Enriched Session Materials (보조 패킷 통합 완료)"
-    notes: |
-      🎯 핵심: Phase 3에서 생성된 6개 보조 패킷을 세션 본문에 인라인 통합
-      📦 통합 대상 보조 패킷 6개:
-        - A5: 검증된 코드 블록 → ③ 코드 예제 및 실습 섹션에 삽입
-        - A6: Mermaid 다이어그램 → ④ 시각화 자료 섹션에 삽입
-        - A7: 실습 설계 → ⑤ 실습 가이드 섹션에 삽입
-        - A9: 강사 지원 자료 → ⑦ 강사 노트 섹션에 삽입
-        - A10: 차별화 전략 → ② 핵심 개념 설명에 USP 반영
-        - A11: 표/차트 명세 → ④ 시각화 자료 섹션에 삽입
-      ⚠️ 삽입 후 청크 타입별 섹션 구조가 유지되는지 검증 필수
-      📁 산출물: 02_Material/sessions/세션-{번호:03d}-{제목}_v1.0.md (덮어쓰기)
-
+    output: "QA Report & Final Material"
+    qa_criteria:
+      - "5대 원칙: 완전성, 명확성, 재현성, 추적성, 원본유지"
+      - "세션별 독립성 + 전체 일관성"
+      - "브릿지 노트 적절성"
+      - "용어 및 비유 일관성"
+      - "난이독 곡선 부드러움"
+      - "시각화 적절성 (표/다이어그램)"
+      - "참고자료 활용독: 📚 참고자료 매핑 대비 실제 반영률 70% 이상"
+      - "3-Source 교차 검증: 팩트 패킷의 3개 소스가 교안에 균형 있게 반영"
+      - "청크 타입별 4~7섹션 구조 준수 검증"
+      - "AM/PM 분할 정합성: Day-Session 경계표 기반 분할이 정확한지 검증"
+    decision:
+      approved: "Finish"
+      rejected: "Go to step_4_session_writing"
   # Phase 4.5: AM/PM 분할 파일 생성
   - id: step_12_ampm_split
     script: ".agent/scripts/aggregate_material.py"
@@ -333,35 +296,6 @@ steps:
         - 목차 및 네비게이션
         - 개별 세션 내용 통합 (청크 타입별 섹션 구조 유지)
         - 부록 (키워드 인덱스, 로드맵 템플릿, 강사 체크리스트)
-      📁 산출물: 02_Material/강의교안_v2.1.md
-      ⚠️ 부록의 로드맵 서술형 콘텐츠는 별도 LLM 보조 또는 템플릿으로 처리
-
-  # Phase 6: 최종 QA
-  - id: step_14_final_qa
-    agent: "02_writer/A8_QA_Editor"
-    action: "quality_assurance_v2"
-    depends_on: "step_13_aggregation"
-    input: 
-      - "Aggregated Material (v2.1)"
-      - "3-Source Fact Packet"
-      - "Traceability Packet"
-      - "Output Language: Korean"
-    output: "QA Report & Final Material"
-    qa_criteria:
-      - "5대 원칙: 완전성, 명확성, 재현성, 추적성, 원본유지"
-      - "세션별 독립성 + 전체 일관성"
-      - "브릿지 노트 적절성"
-      - "용어 및 비유 일관성"
-      - "난이도 곡선 부드러움"
-      - "시각화 적절성 (표/다이어그램)"
-      - "참고자료 활용도: 📚 참고자료 매핑 대비 실제 반영률 70% 이상"
-      - "3-Source 교차 검증: 팩트 패킷의 3개 소스가 교안에 균형 있게 반영"
-      - "청크 타입별 4~7섹션 구조 준수: lab/code 7섹션, narrative/diagram 4섹션 필수를 따르는지 검증"
-      - "보조 패킷 통합 검증: 6개 보조 패킷이 세션 본문에 인라인 반영되었는지 확인"
-      - "AM/PM 분할 정합성: Day-Session 경계표 기반 분할이 정확한지 검증"
-    decision:
-      approved: "Finish"
-      rejected: "Go to step_4_session_writing"
 
 # ── 모델 라우팅 (정본: .agent/AGENTS.md §Per-Agent Model Routing) ──────────────────────────────────────────
 # 아래는 .agent/AGENTS.md의 P02 Writer 섹션과 동기화된 참조입니다.
@@ -372,41 +306,20 @@ model_routing:
   default_category: "deep-production"  # P02 Writer 기본 카테고리
   overrides:
     A4B_Session_Writer:
-      category: "deep-production"
-      note: "청크 타입별 4~7섹션 교안 집필 — P02 기본 카테고리"
-    A4C_Material_Aggregator:
-      category: "task-localization"
-      note: "보조 패킷 통합, AM/PM 분할, 최종 취합"
-    A11_Chart_Specifier:
-      category: "creative-research"
-      note: "표 및 Mermaid 다이어그램 설계"
-    A6_Visualization_Designer:
-      category: "creative-research"
-      note: "시각화 설계"
+      category: "task-localization"  # sonnet, 순차 직접 집필 모드 — task() 재위임 금지
+      note: "쫘크 타입별 4~7섹션 교안 직접 집필 (sequential_direct)"
     A8_QA_Editor:
       category: "task-localization"
       note: "구어체 변환, 한국어 톤 비파괴 편집"
-    A9_Instructor_Support_Designer:
-      category: "deep-production"
-      note: "강사 진행 가이드·설명 대본·전환 멘트 장문 집필"
     A2_Traceability_Curator:
       category: "task-localization"
       note: "출처 추적 구축 — 1M context 구조화 매핑"
-    A5_Code_Validator:
-      category: "strict-gatekeeper"
-      note: "코드 실행 검증 — 최고 추론 모델"
-    A10_Differentiation_Strategist:
-      category: "creative-research"
-      note: "차별화 강화 — 창의적 전략"
     A1_Source_Miner:
       category: "orchestration-core"
-      note: "3-Source 수집 — 비정형 소스 뼈대 팩트 추출"
+      note: "3-Source 수집 — 비정형 소스 뉴대 팩트 추출"
     A3_Curriculum_Architect:
       category: "orchestration-core"
       note: "골격 설계"
-    A7_Learner_Experience_Designer:
-      category: "deep-production"
-      note: "실습 설계 — 학습자 경험 중심 상세 가이드 작성"
 
 # ── 업스트림/다운스트림 연동 ──────────────────────────────────────────
 upstream_integration:
@@ -419,10 +332,10 @@ upstream_integration:
       - "참고자료/ (로컬 참고자료 폴더 — 없을 수 있음)"
       - "NotebookLM URL (제공 시 필수 활용)"
     notes: |
-      v5 워크플로우는 3-Source Mandatory 정책을 적용.
-      강의구성안의 세션 구조를 기반으로 세션별 집필을 수행하고,
+      v6 워크플로우는 3-Source Mandatory 정송을 적용.
+      강의구성안의 세션 구조를 기반으로 2개 세션 단위 순차 직접 집필을 수행하고,
       NotebookLM + 딥리서치를 독립 수집하여 세션별 3-Source 팩트 패킷 생성.
-      각 세션 파일은 독립적으로 처리되며, A4C가 최종 통합.
+      task() 재위임 절대 금지 — A4B가 Write 돈구로 직접 파일 저장.
 
 downstream_integration:
   # 03_Visualizer 연동
