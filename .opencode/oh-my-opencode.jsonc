@@ -67,8 +67,7 @@
     // --- creative-research (absorbs: visual-creative) ---
     // Slides, artistry, visual engineering, research, 1M context window
     "creative-research": {
-      "model": "opencode/glm-5",
-      "variant": "high"
+      "model": "comet_qwen/qwen3.5-plus"
     },
     // --- strict-gatekeeper (absorbs: quality-gate, fast-task[validation]) ---
     // QA defense line, validation checks, maximum reasoning for correctness
