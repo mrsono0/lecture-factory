@@ -220,7 +220,7 @@ python3 .agent/scripts/agent_logger.py retry \
 
 | 에이전트 | category | model |
 |---|---|---|
-| P0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| P0_Orchestrator | `orchestration-core` | `anthropic/claude-sonnet-4-6` |
 | P1_Education_Structurer | `standard-production` | `anthropic/claude-sonnet-4-6` |
 | P2_Slide_Prompt_Architect | `premium-production` | `anthropic/claude-opus-4-6` |
 | P3_Visual_Spec_Curator | `visual-creative` | `comet_qwen/qwen3.5-plus` |
