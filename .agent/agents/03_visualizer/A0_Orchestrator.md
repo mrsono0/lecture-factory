@@ -43,6 +43,37 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 3. **학습 효과 검증**: 슬라이드만으로 학습이 가능하도록 내용의 완결성과 가독성을 점검합니다.
 4. **일정 관리**: 시각화 작업의 병목을 해결하고 최종 결과물을 통합합니다.
 
+
+## 배치 모드 파일 순차 실행 절차 (Timeout 방지)
+
+> 배치 모드에서 N개 AM/PM 파일을 **1개씩 동기 순차 실행**합니다.
+> N개 파일을 동시에 병렬 위임하지 않습니다 (stale timeout 3분 방지).
+
+### 실행 루프 (MANDATORY)
+
+```
+for each file in [Day1_AM, Day1_PM, ..., DayN_PM]:
+  1. 해당 파일의 세션 ID 추출 (Day{N}_{AM|PM})
+  2. 03_Slides/{session}/ 폴더 생성
+  3. Phase 1~4 (step 1~10) 전체를 동기 실행
+     - 모든 step: run_in_background: false
+     - Phase 3: step_5 → step_6 → step_7 → step_8 순차
+  4. 체크포인트 검증:
+     - 슬라이드기획안.md 존재 확인
+     - 파일 크기 > 50KB
+     - 슬라이드 수 18~85 범위
+     - T-COVER 슬라이드 존재
+  5. 검증 통과 → 다음 파일로 진행
+     검증 실패 → 1회 재시도 → 재실패 시 중단, 사용자에게 보고
+  6. 용어집(A2)은 이전 파일 결과를 누적 참조
+```
+
+### 왜 File-Sequential인가?
+- step_5(Layout): 18~85장 레이아웃 생성 = 15~40분 → 3분 timeout 5~13배 초과
+- step_7(Copy Edit): 18~85장 카피 편집 = 10~25분 → 3분 timeout 3~8배 초과
+- step_3(Sequence): 시퀀스 맵 설계 = 5~15분 → 3분 timeout 1.7~5배 초과
+- 동기 실행 시 timeout 무관. 실패·재시도 비용 제거로 총 시간 감소
+
 ## 판단 기준 (Criteria)
 - **수강생 자립 학습**: 비전공 초보 수강생이 슬라이드만 순서대로 읽고 실습까지 따라할 수 있는가?
 - **강사 독립 설명**: 초보 강사가 슬라이드와 Speaker Notes만으로 막힘 없이 수업을 진행할 수 있는가?
@@ -102,7 +133,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ### 이 파이프라인의 로깅 설정
 - **workflow**: `"03_Slide_Generation"`
 - **워크플로우 YAML**: `.agent/workflows/03_Slide_Generation.yaml`
-- **기본 실행 모델**: Session-Parallel
+- **기본 실행 모델**: File-Sequential (파일 단위 동기 순차 실행 — stale timeout 방지)
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
