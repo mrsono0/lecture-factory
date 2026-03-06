@@ -17,30 +17,4 @@ model: sonnet
 4. **API 키 확인**: `GEMINI_API_KEY` 환경변수. 미설정 시 사용자에게 안내.
 5. **입력 검증**: `03_Slides/` 세션별 서브폴더 탐색.
 
-## 파이프라인 개요
-
-```
-Phase 1: C0(스킬 로드 + 입력 검증)
-Phase 2: C1(slides_plan.json)
-Phase 3: C2(이미지 프롬프트)
-Phase 4: C3(Nano Banana Pro API → 16:9 PNG)
-Phase 5: C4(PPTX 조립 + Speaker Notes)
-Phase 6: C5(시각 QA + 텍스트 검증)
-Phase 7: C0(승인/반려)
-```
-
-에이전트 프롬프트: `.agent/agents/06_nanopptx/` 디렉토리 참조.
-
-## 승인/반려
-
-- **승인** → 최종 저장
-- **부분 재생성** → Step 4(C2)부터 해당 슬라이드만 재실행
-- **전체 반려** → Step 3(C1)부터 재실행 (최대 2회)
-
-## 산출물
-
-- `06_NanoPPTX/최종_프레젠테이션.pptx`, `06_NanoPPTX/변환리포트.md`, `06_NanoPPTX/images/`, `06_NanoPPTX/index.html`
-
-## 출력 규칙
-
-- 모든 산출물은 **한국어**로 작성 (기술 용어 제외)
+> 파이프라인 흐름, 승인/반려 규칙, 산출물 정의, 출력 규칙은 모두 워크플로우 YAML에 정의되어 있습니다. 이 문서에서 중복 기술하지 않습니다.
