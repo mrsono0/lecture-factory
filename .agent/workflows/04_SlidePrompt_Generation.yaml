@@ -81,6 +81,39 @@ logging:
 #   - 미존재 시: 02_Material만으로 독립 생성
 # ───────────────────────────────────────────────────────────
 
+
+# ── 파일 단위 순차 실행 정책 (Timeout 방지) ──
+file_execution:
+  enabled: true
+  description: "N개 교안 파일을 1개씩 동기 순차 실행 (step_2→4→5→6 per file)"
+  run_in_background: false
+  
+  execution_order:
+    strategy: "file_sequential_with_global_prefix"
+    description: |
+      step_1 (Discovery, 전역 1회)
+        → step_3 (Visual Spec, 전역 1회)
+        → for each file in [Day1_AM ... DayN_PM]:
+            step_2 (Education Structure, 동기)
+            → step_4 (Slide Blueprint, 동기)
+            → step_5 (Assembly, 동기)
+            → step_6 (QA, 동기)
+        → step_7 (Finalize, 일괄)
+  
+  checkpoint:
+    after_each_file: true
+    validation:
+      - "프롬프트 파일 존재 확인"
+      - "6-섹션 고정 스키마 포함 여부 (Role + 5개 ### 헤딩)"
+      - "[슬라이드 NN] 레이블 18~85개 범위"
+      - "§⑥ 교안 원문 전문 삽입 확인 (파일 크기 > 교안 원본 크기)"
+    on_failure: "해당 파일만 1회 재시도. 재실패 시 중단 후 사용자에게 보고"
+  
+  estimated_time:
+    per_file: "25~70분 (step_2 + step_4 + step_5 + step_6)"
+    total_10_files: "250~700분 (4~12시간)"
+    note: "step_3은 전역 1회, step_7은 일괄 — 루프 외부"
+
 steps:
   # ═══════════════════════════════════════════════════════════
   # Phase A: 입력 수집 및 전역 스캐폴딩
@@ -103,13 +136,12 @@ steps:
       03_Slides 산출물 존재 시 참조 가능 항목을 매핑합니다.
 
   # ═══════════════════════════════════════════════════════════
-  # Phase B: 교육 구조 추출 ∥ 비주얼 스펙 준비 (병렬)
+  # Phase B: 교육 구조 추출 + 비주얼 스펙 준비 (순차 — step_3 전역 → step_2 파일별)
   # ═══════════════════════════════════════════════════════════
   - id: step_2_education_structure
     agent: "04_prompt_generator/P1_Education_Structurer"
     action: "extract_education_elements"
     depends_on: "step_1_discovery"
-    parallel_group: "phase_b"
     input: >
       File Manifest의 각 파일 (×N),
       (선택) 03 IR/Glossary,
@@ -128,7 +160,6 @@ steps:
     agent: "04_prompt_generator/P3_Visual_Spec_Curator"
     action: "prepare_visual_template"
     depends_on: "step_1_discovery"
-    parallel_group: "phase_b"
     input: >
       (선택) 03 DesignTokens,
       기본 내장 스타일 가이드,
