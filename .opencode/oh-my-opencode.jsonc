@@ -19,61 +19,67 @@
     // Main Orchestrator: Multi-pipeline coordination (8 pipelines)
     // Kimi K2.5 — Agent Swarm (100 sub-agents), tool-use #1, 256K context, ~30x cost reduction
     "sisyphus": {
-      "model": "opencode/kimi-k2.5"
+      "model": "opencode/kimi-k2.5",
     },
     // Codebase Explorer: Pattern search within lecture materials
     // Fast & cheap - just grep/read operations
     "explore": {
-      "model": "anthropic/claude-sonnet-4-6"
+      "model": "anthropic/claude-sonnet-4-6",
     },
     // Reference Researcher: Technical docs, library lookups
     // Anthropic Sonnet 4.6 — superior document parsing & structured output quality
     "librarian": {
-      "model": "anthropic/claude-sonnet-4-6"
+      "model": "anthropic/claude-sonnet-4-6",
     },
     // Architecture Consultant: Curriculum/material structure review
     // Reasoning-specialized model for strategic decisions
     "oracle": {
       "model": "opencode/gpt-5.2",
-      "variant": "high"
+      "variant": "high",
     },
     // Deep Executor: Complex autonomous goal-oriented tasks
     // Reasoning-specialized for multi-step implementation
     "hephaestus": {
-      "model": "opencode/gpt-5.3-codex"
-    }
+      "model": "opencode/gpt-5.3-codex",
+    },
   },
-  // === Category-Level Model Routing (5 Consolidated Categories) ===
+  // === Category-Level Model Routing (6 Consolidated Categories) ===
   // Used via task(category="...", prompt="...")
-  // Consolidated from 9 → 5 categories by merging overlapping model tiers.
+  // Consolidated from 9 → 5 → 6 categories. mechanical-pipeline split from task-localization.
   // See .agent/plans/model-routing-consolidation-plan.md for mapping details.
   "categories": {
     // --- orchestration-core (absorbs: orchestration, structural[partial]) ---
     // Pipeline coordination, curriculum architecture, source mining, aggregation
     "orchestration-core": {
-      "model": "opencode/claude-sonnet-4-6"
+      "model": "anthropic/claude-sonnet-4-6",
     },
-    // --- task-localization (absorbs: korean-editing, codex-support, fast-extraction, fast-task[transform]) ---
-    // Korean copy-editing, instructor support, structured extraction, mechanical transforms
+    // --- task-localization (narrowed: korean-editing, normalization only) ---
+    // Korean copy-editing, tone normalization, terminology management, traceability curation
     "task-localization": {
-      "model": "anthropic/claude-sonnet-4-6"
+      "model": "anthropic/claude-sonnet-4-6",
     },
     // --- deep-production (absorbs: deep-writing, structural[partial]) ---
     // Long-form lecture scripts, curriculum design deep work, highest quality output
     "deep-production": {
       "model": "anthropic/claude-opus-4-6",
-      "variant": "max"
+      "variant": "max",
     },
     // --- creative-research (absorbs: visual-creative) ---
     // Slides, artistry, visual engineering, research, 1M context window
     "creative-research": {
-      "model": "comet_qwen/qwen3.5-plus"
+      "model": "comet_qwen/qwen3.5-plus",
     },
     // --- strict-gatekeeper (absorbs: quality-gate, fast-task[validation]) ---
     // QA defense line, validation checks, maximum reasoning for correctness
     "strict-gatekeeper": {
       "model": "openai/gpt-5.3-codex",
-      "variant": "xhigh"
-    }
-  }
+      "variant": "xhigh",
+    },
+    // --- mechanical-pipeline (split from task-localization) ---
+    // Mechanical transforms, pipeline processing (parsing, rendering, assembly, submission)
+    // Kimi K2.5 — tool-use specialized, ~30x cost reduction vs Sonnet
+    "mechanical-pipeline": {
+      "model": "opencode/kimi-k2.5",
+    },
+  },
 }
