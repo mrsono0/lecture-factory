@@ -280,7 +280,7 @@ steps:
 # 불일치 시 .agent/AGENTS.md가 우선합니다.
 model_routing:
   _ssot: ".agent/AGENTS.md §Per-Agent Model Routing"
-  default_category: "deep-production"  # P02 Writer 기본 카테고리
+  default_category: "standard-production"  # P02 Writer 기본 카테고리
   overrides:
     A8_QA_Editor:
       category: "task-localization"

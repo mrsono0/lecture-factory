@@ -158,7 +158,7 @@ python3 .agent/scripts/agent_logger.py retry \
 |---|---|---|
 | D0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
 | D1_Prompt_Validator | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
-| D2_Chunk_Splitter | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| D2_Chunk_Splitter | `mechanical-pipeline` | `opencode-go/kimi-k2.5` |
 | D3_Submission_Manager | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
 | D4_Post_Processor | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
 | D5_Visual_QA | `strict-gatekeeper` | `openai/gpt-5.3-codex` |

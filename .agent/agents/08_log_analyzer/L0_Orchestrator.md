@@ -155,11 +155,11 @@ python3 .agent/scripts/agent_logger.py retry \
 |---|---|---|
 | L0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
 | L1_Data_Collector | `task-localization` | `google/antigravity-claude-sonnet-4-6` |
-| L2_Insight_Analyst | `orchestration-core` | `opencode/claude-sonnet-4-6` |
-| L3_Optimizer | `orchestration-core` | `opencode/claude-sonnet-4-6` |
-| L4_Report_Writer | `deep-production` | `anthropic/claude-opus-4-6` |
+| L2_Insight_Analyst | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| L3_Optimizer | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| L4_Report_Writer | `long-context-prod` | `minimax/minimax-m2.5` |
 | L5_QA_Auditor | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `deep-production` (default) | `anthropic/claude-opus-4-6` |
+| (기타 미지정 에이전트) | `standard-production` (default) | `anthropic/claude-sonnet-4-6` |
 ---
 
 ## 판단 기준 (Criteria)
