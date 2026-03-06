@@ -17,29 +17,4 @@ model: sonnet
 4. **환경 확인**: `.agent/.env`에서 `MANUS_API_KEY` 설정 확인. `requests` 패키지 필요.
 5. **프로젝트 폴더**: 입력 있으면 해당 경로, 없으면 최신 프로젝트 자동 탐색. `04_SlidePrompt/` 필수.
 
-## 파이프라인 개요
-
-```
-Phase 1: D0(탐색 + API 확인) → D1(6섹션 구조 검증)
-Phase 2: D2(교시 단위 분할 — 1000줄+/35슬라이드+ 시)
-Phase 3: D3(manus_slide.py 순차 제출, 폴링, PPTX 다운로드)
-Phase 4: D4(청크 PPTX 병합 + 후처리) → D5(시각 QA)
-Phase 5: D0(승인/재제출/반려)
-```
-
-스크립트: `.agent/scripts/manus_slide.py` (--file, --resume, --dry-run 등 옵션).
-에이전트 프롬프트: `.agent/agents/07_manus_slide/` 디렉토리 참조.
-
-## 승인/반려
-
-- **승인** → 최종 저장
-- **부분 재제출** → Step 4(D3, 해당 청크만)
-- **반려** → Step 3(D2 분할 전략 재실행, 최대 2회)
-
-## 산출물
-
-- `07_ManusSlides/{세션ID}_{세션제목}.pptx`, `generation_report.json`, `manus_task_log.json`
-
-## 출력 규칙
-
-- 모든 산출물은 **한국어**로 작성 (기술 용어 제외)
+> 파이프라인 흐름, 승인/반려 규칙, 산출물 정의, 출력 규칙은 모두 워크플로우 YAML에 정의되어 있습니다. 이 문서에서 중복 기술하지 않습니다.
