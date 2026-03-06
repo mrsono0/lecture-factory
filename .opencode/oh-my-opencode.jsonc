@@ -43,9 +43,9 @@
       "model": "opencode/gpt-5.3-codex",
     },
   },
-  // === Category-Level Model Routing (6 Consolidated Categories) ===
+  // === Category-Level Model Routing (7 Consolidated Categories) ===
   // Used via task(category="...", prompt="...")
-  // Consolidated from 9 → 5 → 6 categories. mechanical-pipeline split from task-localization.
+  // Consolidated from 9 → 5 → 6 → 7 categories. deep-production-alt added for GLM-5.
   // See .agent/plans/model-routing-consolidation-plan.md for mapping details.
   "categories": {
     // --- orchestration-core (absorbs: orchestration, structural[partial]) ---
@@ -63,6 +63,12 @@
     "deep-production": {
       "model": "anthropic/claude-opus-4-6",
       "variant": "max",
+    },
+    // --- deep-production-alt (GLM-5 for structure/design/analysis) ---
+    // Complex structure design, curriculum architecture, data analysis, strategy
+    // GLM-5 — 744B MoE, Intelligence Index 50, agentic workflow optimized
+    "deep-production-alt": {
+      "model": "opencode-go/glm-5",
     },
     // --- creative-research (absorbs: visual-creative) ---
     // Slides, artistry, visual engineering, research, 1M context window
