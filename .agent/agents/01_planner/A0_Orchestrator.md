@@ -284,11 +284,11 @@ python3 .agent/scripts/agent_logger.py retry \
 > `.agent/AGENTS.md` §Per-Agent Model Routing과 `.opencode/oh-my-opencode.jsonc`에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
 | 에이전트 | category | model |
 |---|---|---|
-| A0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| A0_Orchestrator | `orchestration-core` | `anthropic/claude-sonnet-4-6` |
 | A1_Trend_Researcher | `premium-production` | `anthropic/claude-opus-4-6` |
 | A5B_Learner_Analyst | `standard-production` | `anthropic/claude-sonnet-4-6` |
 | A3_Curriculum_Architect | `standard-production` | `anthropic/claude-sonnet-4-6` |
-| A2_Instructional_Designer | `long-context-prod` | `minimax/minimax-m2.5` |
+| A2_Instructional_Designer | `long-context-prod` | `opencode-go/minimax-2.5` |
 | A7_Differentiation_Advisor | `standard-production` | `anthropic/claude-sonnet-4-6` |
 | A5A_QA_Manager | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
 | (기타 미지정 에이전트) | `standard-production` (default) | `anthropic/claude-sonnet-4-6` |
