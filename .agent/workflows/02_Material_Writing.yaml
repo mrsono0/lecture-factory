@@ -161,6 +161,32 @@ steps:
     depends_on: "step_3_skeleton_design"
     execution_mode: "sequential_direct"  # 순차 직접 집필 — task() 재위임 절대 금지
     pair_size: 2  # 2개 세션을 연속 집필 (연속성 확보)
+    
+    # ── 반일(AM/PM) 블록 순차 실행 정책 ──
+    halfday_execution:
+      enabled: true
+      description: "Day 단위가 아닌 반일(AM/PM) 블록 단위로 A4B를 순차 호출"
+      unit: "halfday"          # AM 또는 PM 블록 (4세션)
+      run_in_background: false  # 동기 실행 (stale timeout 방지)
+      
+      execution_order:
+        strategy: "day_sequential_halfday_sequential"
+        description: |
+          Day 1 AM → Day 1 PM → Day 2 AM → Day 2 PM → ... → Day N PM
+          같은 Day의 AM/PM은 순차. Day 간도 순차.
+      
+      checkpoint:
+        after_each_halfday: true
+        validation:
+          - "pairs/ 폴더에 해당 반일 블록의 Part 파일 존재 확인"
+          - "각 Part 파일 크기 > 10KB (빈 파일 방지)"
+          - "Part 파일 내 §1~§6 헤더 존재 확인"
+        on_failure: "해당 반일 블록만 1회 재시도. 재실패 시 중단 후 사용자에게 보고"
+      
+      estimated_time:
+        per_halfday_block: "20~60분 (4세션 × 5~15분)"
+        total_5day_course: "200~600분 (3.3~10시간)"
+        note: "동기 실행이므로 순차적으로 누적됨"
     input: 
       - "Session Spec (from 강의구성안) — 📚 참고자료 매핑 섹션 포함"
       - "Skeleton Packet"
