@@ -176,12 +176,12 @@ python3 .agent/scripts/agent_logger.py retry \
 | 에이전트 | category | model |
 |---|---|---|
 | C0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
-| C1_Content_Planner | `creative-research` | `google/antigravity-gemini-3.1-pro` |
-| C2_Prompt_Engineer | `creative-research` | `google/antigravity-gemini-3.1-pro` |
-| C3_Image_Generator | `creative-research` | `google/antigravity-gemini-3.1-pro` |
-| C4_PPTX_Builder | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| C1_Content_Planner | `visual-creative` | `comet_qwen/qwen3.5-plus` |
+| C2_Prompt_Engineer | `visual-creative` | `comet_qwen/qwen3.5-plus` |
+| C3_Image_Generator | `long-context-prod` | `minimax/minimax-m2.5` |
+| C4_PPTX_Builder | `mechanical-pipeline` | `opencode-go/kimi-k2.5` |
 | C5_Visual_QA | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `creative-research` (default) | `google/antigravity-gemini-3.1-pro` |
+| (기타 미지정 에이전트) | `visual-creative` (default) | `comet_qwen/qwen3.5-plus` |
 ---
 
 ## 시작 가이드 (Startup)

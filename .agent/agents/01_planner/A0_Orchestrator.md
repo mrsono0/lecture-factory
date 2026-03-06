@@ -285,13 +285,13 @@ python3 .agent/scripts/agent_logger.py retry \
 | 에이전트 | category | model |
 |---|---|---|
 | A0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
-| A1_Trend_Researcher | `creative-research` | `google/antigravity-gemini-3.1-pro` |
-| A5B_Learner_Analyst | `orchestration-core` | `opencode/claude-sonnet-4-6` |
-| A3_Curriculum_Architect | `orchestration-core` | `opencode/claude-sonnet-4-6` |
-| A2_Instructional_Designer | `deep-production` | `anthropic/claude-opus-4-6` |
-| A7_Differentiation_Advisor | `creative-research` | `google/antigravity-gemini-3.1-pro` |
+| A1_Trend_Researcher | `premium-production` | `anthropic/claude-opus-4-6` |
+| A5B_Learner_Analyst | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| A3_Curriculum_Architect | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| A2_Instructional_Designer | `long-context-prod` | `minimax/minimax-m2.5` |
+| A7_Differentiation_Advisor | `standard-production` | `anthropic/claude-sonnet-4-6` |
 | A5A_QA_Manager | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
-| (기타 미지정 에이전트) | `deep-production` (default) | `anthropic/claude-opus-4-6` |
+| (기타 미지정 에이전트) | `standard-production` (default) | `anthropic/claude-sonnet-4-6` |
 ---
 
 ## 시작 가이드 (Startup)
@@ -306,7 +306,7 @@ python3 .agent/scripts/agent_logger.py retry \
    - **Step 0 & 1 (스코프 및 트렌드 요약)**: 과정 개요와 A1이 분석한 핵심 트렌드 (예: AI-First 교육 패러다임, 특정 IDE/툴의 장점 등).
    - **Step 2 (학습자 페르소나 및 Pain Points)**: A5B가 분석한 타겟 학습자의 특성, 예상되는 어려움과 그 대응 전략.
    - **Step 5 (차별화 전략 USP)**: A7이 도출한 이 강의만의 고유한 차별화 포인트 3~5가지.
-2. **세션 상세표 마크다운 양식 강제**: 각 세션의 상세 내용은 절대 단순 줄글(Bullet points)이나 짧은 요약으로 나열하지 마세요. **반드시 아래의 마크다운 표(Table) 양식을 100% 사용하여 렌더링하되, 표 양식만 덩그러니 쓰지 말고, 표 전후로 '세션 간의 연결 고리'나 '쉬는 시간' 등의 맥락을 마크다운 인용구(`>`)로 자유롭게 추가하세요. 활동 내역은 최소 5줄 이상 아주 상세한 강사 대본/액션을 포함하여 길게 작성하세요.**
+2. **세션 상세표 마크다운 양식 강제**: 각 세션의 상세 내용은 절대 단순 줄글(Bullet points)이나 짧은 요약으로 나열하지 마세요. **반드시 아래의 마크다운 표(Table) 양식을 100% 사용하여 렌더링하되, 표 양식만 덩그러니 쓰지 말고, 표 전후로 '세션 간의 연결 고리'나 '쉬는 시간' 등의 맥락을 마크다운 인용구(`>`)로 자유롭게 추가하세요. 활동 내역은 최소 15줄 이상 아주 상세한 강사 대본/액션을 포함하여 길게 작성하세요.**
    ```markdown
    | 항목 | 내용 |
    |------|------|

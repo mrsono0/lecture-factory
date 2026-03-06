@@ -109,60 +109,67 @@ YYYY-MM-DD_강의제목/
 2. 에이전트가 오버라이드 목록에 **있으면** → 지정된 카테고리 사용
 3. 에이전트가 오버라이드 목록에 **없으면** → 해당 파이프라인의 기본 카테고리 사용
 4. 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션 참조
-### 7개 통합 카테고리
+### 8개 통합 카테고리 (v2.0)
 | # | 카테고리 | 모델 | 용도 |
 |---|---------|------|------|
-| 1 | `orchestration-core` | `anthropic/claude-sonnet-4-6` | 파이프라인 괄, 조율, 흐름 제어 |
+| 1 | `orchestration-core` | `anthropic/claude-sonnet-4-6` | 파이프라인 총괄, 조율, 흐름 제어 |
 | 2 | `task-localization` | `anthropic/claude-sonnet-4-6` | 한국어 톤 편집, 용어 정규화, 출처 큐레이션 |
-| 3 | `deep-production` | `anthropic/claude-opus-4-6` (variant=max) | 장문 교안/대본/리포트 집필 |
-| 4 | `deep-production-alt` | `opencode-go/glm-5` | 구조 설계, 복잡 분석, 전략 수립 (Claude/Gemini 대안) |
-| 5 | `creative-research` | `comet_qwen/qwen3.5-plus` | 시각 설계, 리서치, 창의적 작업 |
+| 3 | `premium-production` | `anthropic/claude-opus-4-6` (variant=max) | 핵심 집필, 딥리서치, 복잡 설계 (최고 품질) |
+| 4 | `long-context-prod` | `opencode-go/minimax-2.5` | 장문 교안/머지/리포트, 1M 컨텍스트 |
+| 5 | `visual-creative` | `comet_qwen/qwen3.5-plus` | 시각 설계, 이미지 프롬프트, 창의적 작업 |
 | 6 | `strict-gatekeeper` | `openai/gpt-5.3-codex` (variant=xhigh) | 코드/논리/출처 검증, 스키마 준수 최종 QA |
 | 7 | `mechanical-pipeline` | `opencode-go/kimi-k2.5` | 기계적 변환, 파이프라인 처리 (파싱/렌더링/조립/제출) |
+| 8 | `standard-production` | `anthropic/claude-sonnet-4-6` | 일반 집필, 구조 설계, 보조 콘텐츠 |
 
 ### 파이프라인별 에이전트 모델 매핑
 | Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 카테고리 |
 |----------|:---:|---|:---:|
-| **P01** Planner | `deep-production` | A0 Orchestrator | `orchestration-core` |
-| | | A1 Trend Researcher | `creative-research` |
-| | | A3 Curriculum Architect | `deep-production-alt` |
+| **P01** Planner | `standard-production` | A0 Orchestrator | `orchestration-core` |
+| | | A1 Trend Researcher | `premium-production` |
+| | | A2 Instructional Designer | `long-context-prod` |
 | | | A5A QA Manager | `strict-gatekeeper` |
-| | | A5B Learner Analyst | `deep-production-alt` |
-| | | A7 Differentiation Advisor | `creative-research` |
-| **P02** Writer | `deep-production` | A0 Orchestrator | `orchestration-core` |
-| | | A1 Source Miner | `orchestration-core` |
+| | | A5B Learner Analyst | `standard-production` |
+| | | A7 Differentiation Advisor | `standard-production` |
+| **P02** Writer | `standard-production` | A0 Orchestrator | `orchestration-core` |
+| | | A1 Source Miner | `standard-production` |
 | | | A2 Traceability Curator | `task-localization` |
-| | | A3 Curriculum Architect | `deep-production-alt` |
+| | | A3 Curriculum Architect | `standard-production` |
+| | | A4B Session Writer | `premium-production` |
+| | | A4C Material Aggregator | `long-context-prod` |
 | | | A5 Code Validator | `strict-gatekeeper` |
-| | | A6 Visualization Designer | `creative-research` |
-| | | A7 Learner Experience Designer | `deep-production` |
+| | | A6 Visualization Designer | `visual-creative` |
+| | | A7 Learner Experience Designer | `long-context-prod` |
 | | | A8 QA Editor | `task-localization` |
-| | | A9 Instructor Support Designer | `deep-production` |
-| | | A10 Differentiation Strategist | `creative-research` |
-| **P03** Visualizer | `creative-research` | A0 Orchestrator | `orchestration-core` |
+| | | A9 Instructor Support Designer | `standard-production` |
+| | | A10 Differentiation Strategist | `standard-production` |
+| | | A11 Chart Specifier | `visual-creative` |
+| **P03** Visualizer | `visual-creative` | A0 Orchestrator | `orchestration-core` |
+| | | A1 Content Analyst | `standard-production` |
 | | | A2 Terminology Manager | `task-localization` |
+| | | A4 Copywriter | `standard-production` |
 | | | A5 Code Validator | `strict-gatekeeper` |
 | | | A6 Lab Reproducibility | `strict-gatekeeper` |
 | | | A8 Copy Tone Editor | `task-localization` |
 | | | A9 QA Auditor | `strict-gatekeeper` |
 | | | A10 Trace Citation Keeper | `strict-gatekeeper` |
-| **P04** Prompt Generator | `creative-research` | P0 Orchestrator | `orchestration-core` |
-| | | P1 Education Structurer | `deep-production-alt` |
-| | | P2 Slide Prompt Architect | `strict-gatekeeper` |
-| | | P3 Visual Spec Curator | `strict-gatekeeper` |
+| **P04** Prompt Generator | `standard-production` | P0 Orchestrator | `orchestration-core` |
+| | | P1 Education Structurer | `standard-production` |
+| | | P2 Slide Prompt Architect | `premium-production` |
+| | | P3 Visual Spec Curator | `visual-creative` |
 | | | P4 QA Auditor | `strict-gatekeeper` |
 | **P05** PPTX Converter | `mechanical-pipeline` | B0 Orchestrator | `orchestration-core` |
 | | | B5 Visual QA | `strict-gatekeeper` |
-| **P06** NanoBanana | `creative-research` | C0 Orchestrator | `orchestration-core` |
+| **P06** NanoBanana | `visual-creative` | C0 Orchestrator | `orchestration-core` |
+| | | C3 Image Generator | `long-context-prod` |
+| | | C4 PPTX Builder | `mechanical-pipeline` |
 | | | C5 Visual QA | `strict-gatekeeper` |
 | **P07** Manus Slide | `mechanical-pipeline` | D0 Orchestrator | `orchestration-core` |
 | | | D1 Prompt Validator | `strict-gatekeeper` |
-| | | D2 Chunk Splitter | `orchestration-core` |
+| | | D2 Chunk Splitter | `mechanical-pipeline` |
 | | | D5 Visual QA | `strict-gatekeeper` |
-| **P08** Log Analyzer | `deep-production` | L0 Orchestrator | `orchestration-core` |
+| **P08** Log Analyzer | `standard-production` | L0 Orchestrator | `orchestration-core` |
 | | | L1 Data Collector | `mechanical-pipeline` |
-| | | L2 Insight Analyst | `deep-production-alt` |
-| | | L3 Optimizer | `deep-production-alt` |
+| | | L4 Report Writer | `long-context-prod` |
 | | | L5 QA Auditor | `strict-gatekeeper` |
 
 ---
@@ -177,7 +184,7 @@ YYYY-MM-DD_강의제목/
  **이벤트 유형**: `START`, `END`, `FAIL`, `RETRY`, `DECISION`, `SESSION_START`, `SESSION_END`
  **실행 모델**: Step-by-Step (순차 실행) 또는 Session-Parallel (세션 병렬 위임), 파이프라인별 기본 모델은 `logging-protocol.md` §11 참조
  **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)` (input_bytes + output_bytes 기반, 정확도 ~85-90%)
- **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (task-localization=Sonnet급, deep-production=Opus급, deep-production-alt=GLM-5급, strict-gatekeeper=Codex급, mechanical-pipeline=Kimi급)
+ **비용 추정**: 에이전트 카테고리별 단가 테이블 적용 (task-localization=Sonnet급, premium-production=Opus급, long-context-prod=MiniMax급, standard-production=Sonnet급, strict-gatekeeper=Codex급, mechanical-pipeline=Kimi급)
 오케스트레이터는 실행 모델에 따라 step 또는 session 단위로 `logging-protocol.md`를 참조하여 JSONL 로그를 기록합니다.
 - **Step-by-Step**: 각 step 실행 전후로 START/END 이벤트 기록 (Pipeline 01, 02, 04, 05, 06, 07, 08)
 - **Session-Parallel**: 세션 단위 병렬 위임 시 SESSION_START/SESSION_END 이벤트 기록 (Pipeline 03)

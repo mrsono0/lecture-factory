@@ -126,23 +126,22 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 
 ## 5. 비용 추정 테이블
 
-카테고리별 예상 모델 및 단가 (2026.02 기준, USD per 1K tokens):
+카테고리별 예상 모델 및 단가 (USD per 1M tokens):
 
-**신 9-카테고리** (AGENTS.md §Per-Agent Model Routing SSOT):
+**v2.0 8-카테고리** (AGENTS.md §Per-Agent Model Routing SSOT, 2026.03 기준):
 
-| category | 모델 | input ($/1K) | output ($/1K) |
+| category | 모델 | input ($/1M) | output ($/1M) |
 |----------|------|:------------:|:-------------:|
-| `orchestration` | Claude Sonnet 4.6 | 0.003 | 0.015 |
-| `deep-writing` | Claude Opus 4.6 | 0.015 | 0.075 |
-| `fast-task` | Claude Haiku 4.5 | 0.00025 | 0.00125 |
-| `visual-creative` | Gemini 3.1 Pro | 0.003 | 0.015 |
-| `fast-extraction` | Gemini 3 Flash | 0.002 | 0.012 |
-| `structural` | GLM-5 | 0.003 | 0.015 |
-| `quality-gate` | GPT-5.3 Codex | 0.015 | 0.075 |
-| `codex-support` | GPT-5.3 Codex | 0.015 | 0.075 |
-| `korean-editing` | Antigravity Sonnet | 0.003 | 0.015 |
+| `orchestration-core` | Claude Sonnet 4.6 | 3.000 | 15.000 |
+| `task-localization` | Claude Sonnet 4.6 | 3.000 | 15.000 |
+| `premium-production` | Claude Opus 4.6 | 15.000 | 75.000 |
+| `long-context-prod` | MiniMax M2.5 | 0.300 | 1.200 |
+| `visual-creative` | Qwen 3.5 Plus | 0.400 | 2.400 |
+| `strict-gatekeeper` | GPT-5.3 Codex | 1.750 | 14.000 |
+| `mechanical-pipeline` | Kimi K2.5 | 0.600 | 2.500 |
+| `standard-production` | Claude Sonnet 4.6 | 3.000 | 15.000 |
 
-**구 카테고리** (하위 호환용, 레거시 로그 분석 시 참조):
+**구 카테고리** (하위 호환용, 레거시 로그 분석 시 참조 — v1.0 이전 및 9-카테고리 시기):
 
 | category | 예상 모델 | input ($/1K) | output ($/1K) |
 |----------|-----------|:------------:|:-------------:|
@@ -164,7 +163,7 @@ est_output_tokens = round(output_bytes ÷ 3.3)
 
 **비용 계산:**
 ```
-est_cost_usd = (est_input_tokens × input_price / 1000) + (est_output_tokens × output_price / 1000)
+est_cost_usd = (est_input_tokens × input_price / 1000000) + (est_output_tokens × output_price / 1000000)
 ```
 
 > **Note**: 이 테이블은 실제 프로바이더 가격 변동에 따라 주기적으로 업데이트해야 합니다.

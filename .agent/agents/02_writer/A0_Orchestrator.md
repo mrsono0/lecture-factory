@@ -296,10 +296,26 @@ python3 .agent/scripts/agent_logger.py session-end \
 > ⚠️ **로깅은 step 실행보다 우선합니다.** 컨텍스트가 부족하더라도 START/END 명령어는 반드시 실행하세요. duration, tokens, cost는 자동 계산됩니다.
 
 
-### 에이전트별 카테고리 매핑
+### 에이전트별 category→model 매핑 (Quick Reference)
 
-> `.agent/AGENTS.md` §Per-Agent Model Routing의 P02 Writer 섹션을 참조하세요.
-> 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션에 정의되어 있습니다.
+> `.agent/AGENTS.md` §Per-Agent Model Routing에서 추출한 인라인 매핑입니다. 외부 파일 조회 없이 이 테이블을 직접 사용하세요.
+
+| 에이전트 | category | model |
+|---|---|---|
+| A0_Orchestrator | `orchestration-core` | `opencode/claude-sonnet-4-6` |
+| A1_Source_Miner | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| A2_Traceability_Curator | `task-localization` | `anthropic/claude-sonnet-4-6` |
+| A3_Curriculum_Architect | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| A4B_Session_Writer | `premium-production` | `anthropic/claude-opus-4-6` |
+| A4C_Material_Aggregator | `long-context-prod` | `minimax/minimax-m2.5` |
+| A5_Code_Validator | `strict-gatekeeper` | `openai/gpt-5.3-codex` |
+| A6_Visualization_Designer | `visual-creative` | `comet_qwen/qwen3.5-plus` |
+| A7_Learner_Experience_Designer | `long-context-prod` | `minimax/minimax-m2.5` |
+| A8_QA_Editor | `task-localization` | `anthropic/claude-sonnet-4-6` |
+| A9_Instructor_Support_Designer | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| A10_Differentiation_Strategist | `standard-production` | `anthropic/claude-sonnet-4-6` |
+| A11_Chart_Specifier | `visual-creative` | `comet_qwen/qwen3.5-plus` |
+| (기타 미지정 에이전트) | `standard-production` (default) | `anthropic/claude-sonnet-4-6` |
 ---
 
 ## 시작 가이드 (Startup)
