@@ -109,24 +109,25 @@ YYYY-MM-DD_강의제목/
 2. 에이전트가 오버라이드 목록에 **있으면** → 지정된 카테고리 사용
 3. 에이전트가 오버라이드 목록에 **없으면** → 해당 파이프라인의 기본 카테고리 사용
 4. 카테고리 → 모델 매핑은 `.opencode/oh-my-opencode.jsonc`의 `categories` 섹션 참조
-### 8개 통합 카테고리 (v2.0)
+### 9개 통합 카테고리 (v2.1)
 | # | 카테고리 | 모델 | 용도 |
 |---|---------|------|------|
 | 1 | `orchestration-core` | `anthropic/claude-sonnet-4-6` | 파이프라인 총괄, 조율, 흐름 제어 |
-| 2 | `task-localization` | `anthropic/claude-sonnet-4-6` | 한국어 톤 편집, 용어 정규화, 출처 큐레이션 |
+| 2 | `task-localization` | `openai/gpt-5.4` | 한국어 톤 편집, 용어 정규화, 출처 큐레이션 |
 | 3 | `premium-production` | `anthropic/claude-opus-4-6` (variant=max) | 핵심 집필, 딥리서치, 복잡 설계 (최고 품질) |
 | 4 | `long-context-prod` | `opencode-go/minimax-2.5` | 장문 교안/머지/리포트, 1M 컨텍스트 |
 | 5 | `visual-creative` | `comet_qwen/qwen3.5-plus` | 시각 설계, 이미지 프롬프트, 창의적 작업 |
 | 6 | `strict-gatekeeper` | `openai/gpt-5.3-codex` (variant=xhigh) | 코드/논리/출처 검증, 스키마 준수 최종 QA |
 | 7 | `mechanical-pipeline` | `opencode-go/kimi-k2.5` | 기계적 변환, 파이프라인 처리 (파싱/렌더링/조립/제출) |
 | 8 | `standard-production` | `anthropic/claude-sonnet-4-6` | 일반 집필, 구조 설계, 보조 콘텐츠 |
+| 9 | `knowledge-production` | `openai/gpt-5.4` | 전문 지식 작업: 교수설계, 장문 머지 (GDPval 83%, 1M context) |
 
 ### 파이프라인별 에이전트 모델 매핑
 | Pipeline | 기본 카테고리 | 오버라이드 에이전트 | 카테고리 |
 |----------|:---:|---|:---:|
 | **P01** Planner | `standard-production` | A0 Orchestrator | `orchestration-core` |
 | | | A1 Trend Researcher | `premium-production` |
-| | | A2 Instructional Designer | `long-context-prod` |
+| | | A2 Instructional Designer | `knowledge-production` |
 | | | A5A QA Manager | `strict-gatekeeper` |
 | | | A5B Learner Analyst | `standard-production` |
 | | | A7 Differentiation Advisor | `standard-production` |
@@ -135,7 +136,7 @@ YYYY-MM-DD_강의제목/
 | | | A2 Traceability Curator | `task-localization` |
 | | | A3 Curriculum Architect | `standard-production` |
 | | | A4B Session Writer | `premium-production` |
-| | | A4C Material Aggregator | `long-context-prod` |
+| | | A4C Material Aggregator | `knowledge-production` |
 | | | A5 Code Validator | `strict-gatekeeper` |
 | | | A6 Visualization Designer | `visual-creative` |
 | | | A7 Learner Experience Designer | `long-context-prod` |

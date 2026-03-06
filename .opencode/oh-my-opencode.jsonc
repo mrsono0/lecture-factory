@@ -43,9 +43,9 @@
       "model": "opencode/gpt-5.3-codex",
     },
   },
-  // === Category-Level Model Routing (8 v2.0 Categories) ===
+  // === Category-Level Model Routing (9 v2.1 Categories) ===
   // Used via task(category="...", prompt="...")
-  // v2.0: GLM-5 retired, MiniMax M2.5 added, categories restructured.
+  // v2.1: task-localization → GPT-5.4, knowledge-production 카테고리 추가.
   // See .agent/docs/agent-llm-optimal-mapping-v2.md for mapping details.
   "categories": {
     // --- orchestration-core ---
@@ -55,8 +55,9 @@
     },
     // --- task-localization ---
     // Korean copy-editing, tone normalization, terminology management, traceability curation
+    // GPT-5.4 — GDPval 83%, 1M context, professional knowledge work
     "task-localization": {
-      "model": "anthropic/claude-sonnet-4-6",
+      "model": "openai/gpt-5.4",
     },
     // --- premium-production (was: deep-production) ---
     // Core writing, deep research, complex design requiring highest quality
@@ -91,5 +92,10 @@
     "standard-production": {
       "model": "anthropic/claude-sonnet-4-6",
     },
+    // --- knowledge-production (NEW v2.1) ---
+    // Professional knowledge work: instructional design, long-doc merge
+    // GPT-5.4 — GDPval 83%, 1M context, 128K output
+    "knowledge-production": {
+      "model": "openai/gpt-5.4",
   },
 }
