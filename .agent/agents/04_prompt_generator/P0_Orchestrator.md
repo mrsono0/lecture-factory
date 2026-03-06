@@ -124,6 +124,39 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 - P4의 QA 리포트를 수신하고, 리젝된 블록에 대해 해당 에이전트(P1/P2)만 재실행을 지시합니다.
 - 리젝 횟수: 블록당 최대 2회. 2회 초과 시 사용자에게 에스컬레이션합니다.
 
+
+## 파일 순차 실행 절차 (Timeout 방지)
+
+> N개 교안 파일을 **1개씩 동기 순차 실행**합니다.
+> N개 파일을 동시에 병렬 위임하지 않습니다 (stale timeout 3분 방지).
+
+### 실행 흐름 (MANDATORY)
+
+```
+step_1 (Discovery, 전역 1회)
+  → step_3 (Visual Spec, 전역 1회)
+  → for each file in [Day1_AM, Day1_PM, ..., DayN_PM]:
+      step_2 (Education Structure, 동기)
+      → step_4 (Slide Blueprint, 동기)
+      → step_5 (Assembly, 동기)
+      → step_6 (QA, 동기)
+  → step_7 (Finalize, 일괄)
+```
+
+### 체크포인트 검증 (파일당)
+- 프롬프트 파일 존재 확인
+- 6-섹션 고정 스키마 포함 여부 (Role + 5개 `###` 헤딩)
+- `[슬라이드 NN]` 레이블 18~85개 범위
+- §⑥ 교안 원문 전문 삽입 확인 (파일 크기 > 교안 원본 크기)
+- 검증 통과 → 다음 파일로 진행
+- 검증 실패 → 1회 재시도 → 재실패 시 중단, 사용자에게 보고
+
+### 왜 File-Sequential인가?
+- step_2 (Education Structure): 교안 43~121KB 분석 = 5~15분 → 3분 timeout 1.7~5배 초과
+- step_4 (Slide Blueprint): 18~85장 명세 생성 = 8~25분 → 3분 timeout 2.7~8배 초과
+- step_5 (Assembly): 교안 원문 전문 삽입 + 6섹션 조립 = 10~30분 → 3분 timeout 3~10배 초과
+- 동기 실행 시 timeout 무관. 실패·재시도 비용 제거로 총 시간 감소
+
 ## 산출물
 - **프로젝트 폴더**: `{project_folder}/04_SlidePrompt/`
 - **교안별 프롬프트 파일**: `{세션ID}_{세션제목}_슬라이드 생성 프롬프트.md` (×N개, 교안당 1개)
@@ -169,7 +202,7 @@ If the user provides a local folder path, you **MUST** analyze all files in that
 ### 이 파이프라인의 로깅 설정
 - **workflow**: `"04_SlidePrompt_Generation"`
 - **워크플로우 YAML**: `.agent/workflows/04_SlidePrompt_Generation.yaml`
-- **기본 실행 모델**: Step-by-Step
+- **기본 실행 모델**: File-Sequential (파일 단위 동기 순차 실행 — stale timeout 방지)
 - **로깅 필드 참조**: `.agent/logging-protocol.md` §3 (필드 정의), §5 (비용 테이블)
 - **토큰 추정**: `est_tokens = round(bytes ÷ 3.3)`
 
