@@ -66,6 +66,33 @@ logging:
 #   - 세션간 용어집 누적 참조로 일관성 유지
 # ───────────────────────────────────────────────────────────
 
+
+# ── 파일 단위 순차 실행 정책 (Timeout 방지) ──
+file_execution:
+  enabled: true
+  description: "배치 모드에서 N개 AM/PM 파일을 1개씩 동기 순차 실행"
+  run_in_background: false  # 동기 실행 (stale timeout 방지)
+  
+  execution_order:
+    strategy: "file_sequential"
+    description: |
+      Day1_AM → Day1_PM → Day2_AM → Day2_PM → ... → Day N PM
+      파일당 Phase 1~4 (step 1~10) 전체를 동기 실행 후 다음 파일로 진행.
+  
+  checkpoint:
+    after_each_file: true
+    validation:
+      - "03_Slides/{session}/슬라이드기획안.md 파일 존재 확인"
+      - "파일 크기 > 50KB (빈 산출물 방지)"
+      - "슬라이드 수 18~85 범위 확인"
+      - "T-COVER 슬라이드 존재 확인"
+    on_failure: "해당 파일만 1회 재시도. 재실패 시 중단 후 사용자에게 보고"
+  
+  estimated_time:
+    per_file: "30~90분 (10 step × 3~9분)"
+    total_10_files: "300~900분 (5~15시간)"
+    note: "동기 실행이므로 순차적으로 누적됨"
+
 steps:
   # Phase 1: 분석 및 정규화
   - id: step_1_analysis
@@ -96,16 +123,13 @@ steps:
     input: "Slide Sequence Map, Output Language: Korean"
     output: "Design Tokens & Style Guide"
 
-  # Phase 3: 생성 및 검증
-  # ┌─ step_5 (A4 Layout) ─→ step_7 (A8 Copy) ──┐
-  # │                                              ├→ step_9 (A10 Trace)
-  # └─ step_6 (A5 Code)  ─→ step_8 (A6 Lab)  ───┘
-  # Note: step_5 ∥ step_6 만 진정한 병렬. step_7은 step_5 완료 후, step_8은 step_6 완료 후 순차 실행.
+  # Phase 3: 생성 및 검증 (전체 순차 실행 — timeout 방지)
+  # step_5 (A4 Layout) → step_6 (A5 Code) → step_7 (A8 Copy) → step_8 (A6 Lab)
+  # Note: step_5∥step_6 병렬을 순차로 변경. stale timeout(3분) 방지를 위해 모든 step 동기 실행.
   - id: step_5_layout
     agent: "03_visualizer/A4_Layout_Designer"
     action: "create_layout"
     depends_on: "step_4_design_system"
-    parallel_group: "phase3"
     input: "Slide Sequence Map, Design Tokens, Output Language: Korean"
     output: "Slide Layout Specs"
 
@@ -113,7 +137,6 @@ steps:
     agent: "03_visualizer/A5_Code_Validator"
     action: "validate_code"
     depends_on: "step_1_analysis"
-    parallel_group: "phase3"
     input: "Content Inventory (Code Blocks), Output Language: Korean"
     output: "Validated Code Blocks"
 
@@ -121,7 +144,6 @@ steps:
     agent: "03_visualizer/A8_Copy_Tone_Editor"
     action: "refine_text"
     depends_on: "step_5_layout"
-    parallel_group: "phase3"
     input: "Slide Layout Specs, Output Language: Korean"
     output: "Refined Slide Copy"
 
