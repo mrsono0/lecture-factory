@@ -19,7 +19,7 @@
     // Main Orchestrator: Multi-pipeline coordination (8 pipelines)
     // Kimi K2.5 — Agent Swarm (100 sub-agents), tool-use #1, 256K context, ~30x cost reduction
     "sisyphus": {
-      "model": "opencode/kimi-k2.5",
+      "model": "opencode-go/kimi-k2.5",
     },
     // Codebase Explorer: Pattern search within lecture materials
     // Fast & cheap - just grep/read operations
@@ -79,7 +79,7 @@
     // Mechanical transforms, pipeline processing (parsing, rendering, assembly, submission)
     // Kimi K2.5 — tool-use specialized, ~30x cost reduction vs Sonnet
     "mechanical-pipeline": {
-      "model": "opencode/kimi-k2.5",
+      "model": "opencode-go/kimi-k2.5",
     },
   },
 }
